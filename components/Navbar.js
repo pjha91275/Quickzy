@@ -33,10 +33,10 @@ const Navbar = () => {
         </Link>
 
         {/* Search */}
-        <div className="flex-1 max-w-xl mx-auto border border-green-200 rounded-md flex items-center h-12 relative">
+        <div className="flex-1 max-w-xl mx-auto border border-green-500 border-2 rounded-md flex items-center h-12 relative">
           <div className="px-4 border-r hidden md:block text-sm font-semibold text-gray-700">All Categories <IoIosArrowDown className="inline ml-1" /></div>
           <input type="text" placeholder="Search for items..." className="flex-1 px-4 outline-none text-sm text-gray-600 h-full w-full" />
-          <FiSearch className="text-gray-400 absolute right-4 text-xl" />
+          <div className="flex gap-8 bg-green-400 px-2 py-3"><div>Search</div><div><FiSearch className="text-gray-600 absolute right-4 text-xl" /></div></div>
         </div>
 
         {/* Actions */}
