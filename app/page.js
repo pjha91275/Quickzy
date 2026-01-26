@@ -25,199 +25,354 @@ import {
 } from "react-icons/fa";
 
 const categories = [
-  { name: "Cake & Milk", img: "🍰", count: 14 },
-  { name: "Organic Kiwi", img: "🥝", count: 28 },
-  { name: "Peach", img: "🍑", count: 14 },
-  { name: "Red Apple", img: "🍎", count: 54 },
-  { name: "Snack", img: "🍩", count: 56 },
-  { name: "Vegetables", img: "🥦", count: 72 },
-  { name: "Strawberry", img: "🍓", count: 36 },
-  { name: "Black plum", img: "🍇", count: 12 },
-  { name: "Custard apple", img: "🍏", count: 34 },
-  { name: "Coffee & Tea", img: "☕", count: 89 },
+  {
+    name: "Milk & Dairy",
+    img: "https://images.unsplash.com/photo-1559598467-f8b76c8155d0?q=80&w=200&auto=format&fit=crop",
+    count: 45,
+    bg: "bg-blue-50",
+  },
+  {
+    name: "Fruits",
+    img: "https://images.unsplash.com/photo-1610832958506-aa56368176cf?q=80&w=200&auto=format&fit=crop",
+    count: 32,
+    bg: "bg-orange-50",
+  },
+  {
+    name: "Tea & Coffee",
+    img: "https://images.unsplash.com/photo-1594631252845-29fc4586d5bc?q=80&w=200&auto=format&fit=crop",
+    count: 28,
+    bg: "bg-amber-50",
+  },
+  {
+    name: "Snacks",
+    img: "https://images.unsplash.com/photo-1626132646529-5006375bc858?q=80&w=200&auto=format&fit=crop",
+    count: 86,
+    bg: "bg-yellow-50",
+  },
+  {
+    name: "Personal Care",
+    img: "https://images.unsplash.com/photo-1512496011216-369fd0347ecb?q=80&w=200&auto=format&fit=crop",
+    count: 54,
+    bg: "bg-pink-50",
+  },
+  {
+    name: "Cleaning",
+    img: "https://images.unsplash.com/photo-1550963295-019dfc40c81e?q=80&w=200&auto=format&fit=crop",
+    count: 42,
+    bg: "bg-purple-50",
+  },
+  {
+    name: "Beverages",
+    img: "https://images.unsplash.com/photo-1527960669566-f882ba85a4ed?q=80&w=200&auto=format&fit=crop",
+    count: 65,
+    bg: "bg-teal-50",
+  },
+  {
+    name: "Vegetables",
+    img: "https://images.unsplash.com/photo-1597362868123-a509f5211d33?q=80&w=200&auto=format&fit=crop",
+    count: 72,
+    bg: "bg-green-50",
+  },
+  {
+    name: "Bakery",
+    img: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?q=80&w=200&auto=format&fit=crop",
+    count: 34,
+    bg: "bg-orange-100",
+  },
+  {
+    name: "Paan Corner",
+    img: "https://images.unsplash.com/photo-1596797038558-bc439226cb8e?q=80&w=200&auto=format&fit=crop",
+    count: 12,
+    bg: "bg-red-50",
+  },
 ];
 
 const products = [
   {
-    name: "Foster Farms Takeout Crispy Wings",
-    price: "$12.00",
-    oldPrice: "$15.00",
-    img: "🍗",
-    rating: 4.5,
-    tag: "Hot",
-  },
-  {
-    name: "Organic Cage-Grade A Large Eggs",
-    price: "$4.00",
-    oldPrice: "$5.50",
-    img: "🥚",
-    rating: 4.0,
-    tag: "Sale",
-  },
-  {
-    name: "Haagen-Dazs Caramel Cone Ice Cream",
-    price: "$22.00",
-    oldPrice: "$25.00",
-    img: "🍦",
-    rating: 5.0,
-    tag: "Best",
-  },
-  {
-    name: "Gorton's Beer Battered Fish Fillets",
-    price: "$14.00",
-    oldPrice: "$18.00",
-    img: "🐟",
-    rating: 4.2,
-    tag: "Sale",
-  },
-  {
-    name: "Seeds of Change Organic Quinoa",
-    price: "$5.00",
-    oldPrice: "$7.00",
-    img: "🌾",
-    rating: 4.7,
-  },
-  {
-    name: "Canada Dry Ginger Ale - 2L Bottle",
-    price: "$1.50",
-    oldPrice: "$2.00",
-    img: "🥤",
-    rating: 4.6,
-  },
-  {
-    name: "Blue Diamond Almonds Lightly Salted",
-    price: "$9.00",
-    oldPrice: "$11.00",
-    img: "🥜",
-    rating: 4.3,
-  },
-  {
-    name: "Chobani Complete Vanilla Greek Yogurt",
-    price: "$3.00",
-    oldPrice: "$4.00",
-    img: "🥣",
+    name: "Amul Taaza Milk (1L)",
+    price: "₹66",
+    oldPrice: "₹72",
+    img: "https://images.unsplash.com/photo-1528750955923-30c722059a4c?q=80&w=400&auto=format&fit=crop",
     rating: 4.8,
+    tag: "Hot",
+    vendor: "Amul",
+    discount: "8%",
   },
   {
-    name: "Encore Seafoods Stuffed Alaskan",
-    price: "$15.00",
-    oldPrice: "$19.00",
-    img: "🦐",
-    rating: 4.1,
-  },
-  {
-    name: "Angie's Boomchickapop Sweet & Salty",
-    price: "$3.49",
-    oldPrice: "$4.50",
-    img: "🍿",
-    rating: 4.9,
-  },
-];
-
-const dailyBestSells = [
-  {
-    name: "Seeds of Change Organic Quinoa",
-    price: "$5.00",
-    oldPrice: "$7.00",
-    img: "🌾",
-    rating: 4.7,
-  },
-  {
-    name: "Angie's Boomchickapop Sweet",
-    price: "$3.49",
-    oldPrice: "$4.50",
-    img: "🍿",
-    rating: 4.9,
-  },
-  {
-    name: "Foster Farms Takeout Crispy",
-    price: "$12.00",
-    oldPrice: "$15.00",
-    img: "🍗",
+    name: "Haldiram's Aloo Bhujia",
+    price: "₹95",
+    oldPrice: "₹110",
+    img: "https://images.unsplash.com/photo-1601050690597-96a92ec4e508?q=80&w=400&auto=format&fit=crop",
     rating: 4.5,
+    tag: "Sale",
+    vendor: "Haldiram",
+    discount: "13%",
   },
   {
-    name: "Blue Diamond Almonds Lightly",
-    price: "$9.00",
-    oldPrice: "$11.00",
-    img: "🥜",
-    rating: 4.3,
+    name: "Coca-Cola (1.25L)",
+    price: "₹65",
+    oldPrice: "₹75",
+    img: "https://images.unsplash.com/photo-1554866585-cd94860890b7?q=80&w=400&auto=format&fit=crop",
+    rating: 4.6,
+    tag: "Best",
+    vendor: "Coca Cola",
+    discount: "13%",
+  },
+  {
+    name: "Britannia Good Day",
+    price: "₹20",
+    oldPrice: "₹25",
+    img: "https://images.unsplash.com/photo-1558961363-fa4fdfc51ecd?q=80&w=400&auto=format&fit=crop",
+    rating: 4.7,
+    vendor: "Britannia",
+    discount: "20%",
+  },
+  {
+    name: "Lay's Magic Masala",
+    price: "₹20",
+    oldPrice: "₹22",
+    img: "https://images.unsplash.com/photo-1566478989037-eec170784d0b?q=80&w=400&auto=format&fit=crop",
+    rating: 4.4,
+    vendor: "Lay's",
+    discount: "10%",
+  },
+  {
+    name: "Surf Excel Matic",
+    price: "₹240",
+    oldPrice: "₹280",
+    img: "https://images.unsplash.com/photo-1610557892470-55d9e80c0bce?q=80&w=400&auto=format&fit=crop",
+    rating: 4.9,
+    tag: "Hot",
+    vendor: "Unilever",
+    discount: "14%",
+  },
+  {
+    name: "Nescafe Classic Jar",
+    price: "₹185",
+    oldPrice: "₹210",
+    img: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=400&auto=format&fit=crop",
+    rating: 4.8,
+    vendor: "Nestle",
+    discount: "12%",
+  },
+  {
+    name: "Tata Tea Premium",
+    price: "₹310",
+    oldPrice: "₹340",
+    img: "https://images.unsplash.com/photo-1594142411985-78082f42a78f?q=80&w=400&auto=format&fit=crop",
+    rating: 4.7,
+    vendor: "Tata Consumer",
+    discount: "9%",
+  },
+  {
+    name: "Maggi Masala Pk of 12",
+    price: "₹168",
+    oldPrice: "₹180",
+    img: "https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?q=80&w=400&auto=format&fit=crop",
+    rating: 4.9,
+    tag: "Sale",
+    vendor: "Nestle",
+    discount: "7%",
+  },
+  {
+    name: "Dettol Liquid Soap",
+    price: "₹89",
+    oldPrice: "₹99",
+    img: "https://images.unsplash.com/photo-1584622781564-1d987f7333c1?q=80&w=400&auto=format&fit=crop",
+    rating: 4.6,
+    vendor: "Reckitt",
+    discount: "10%",
   },
 ];
 
 const dealsOfTheDay = [
   {
-    name: "Seeds of Change Organic Quinoa",
-    price: "$12.85",
-    oldPrice: "$13.8",
-    img: "🥬",
+    name: "Ariel Matic Liquid",
+    price: "₹320",
+    oldPrice: "₹380",
+    img: "https://images.unsplash.com/photo-1610915641743-34e8e19d77e4?q=80&w=600&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=1000&auto=format&fit=crop",
+    vendor: "P&G",
+    discount: "15%",
   },
   {
-    name: "Perdue Simply Smart Organics Gluten",
-    price: "$12.85",
-    oldPrice: "$13.8",
-    img: "🍞",
+    name: "Dairy Milk Silk",
+    price: "₹160",
+    oldPrice: "₹180",
+    img: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?q=80&w=600&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1634591942007-88cc10bd0962?q=80&w=1000&auto=format&fit=crop",
+    vendor: "Mondelez",
+    discount: "11%",
   },
   {
-    name: "Signature Wood-Fired Mushroom",
-    price: "$12.85",
-    oldPrice: "$13.8",
-    img: "🥦",
+    name: "Dabur Honey (500g)",
+    price: "₹210",
+    oldPrice: "₹240",
+    img: "https://images.unsplash.com/photo-1587049352847-81a56d773cae?q=80&w=600&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1613533816434-2e92ec4e508?q=80&w=1000&auto=format&fit=crop",
+    vendor: "Dabur",
+    discount: "12%",
   },
   {
-    name: "Simply Lemonade with Raspberry",
-    price: "$12.85",
-    oldPrice: "$13.8",
-    img: "🍋",
+    name: "Lizol Floor Cleaner",
+    price: "₹345",
+    oldPrice: "₹380",
+    img: "https://images.unsplash.com/photo-1584622723133-7833788900c1?q=80&w=600&auto=format&fit=crop",
+    bg: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=1000&auto=format&fit=crop",
+    vendor: "Reckitt",
+    discount: "9%",
   },
 ];
 
-const listProducts = [
+const topSelling = [
   {
-    name: "Nestle Original Coffee-Mate Coffee Creamer",
-    price: "$28.85",
-    oldPrice: "$32.8",
-    img: "☕",
-    rating: 4.0,
+    name: "Parle-G Gold",
+    price: "₹10",
+    oldPrice: "₹12",
+    img: "https://images.unsplash.com/photo-1558961363-fa4fdfc51ecd?q=80&w=150&auto=format&fit=crop",
+    rating: 4.9,
+    vendor: "Parle",
+    discount: "16%",
   },
   {
-    name: "Organic Cage-Grade A Large Eggs",
-    price: "$28.85",
-    oldPrice: "$32.8",
-    img: "🥚",
-    rating: 4.0,
+    name: "Saffola Gold (5L)",
+    price: "₹845",
+    oldPrice: "₹950",
+    img: "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?q=80&w=150&auto=format&fit=crop",
+    rating: 4.8,
+    vendor: "Marico",
+    discount: "11%",
   },
   {
-    name: "Seeds of Change Organic Quinoa",
-    price: "$28.85",
-    oldPrice: "$32.8",
-    img: "🌾",
-    rating: 4.0,
+    name: "Fortune Atta (10kg)",
+    price: "₹415",
+    oldPrice: "₹450",
+    img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?q=80&w=150&auto=format&fit=crop",
+    rating: 4.7,
+    vendor: "Adani Wilmar",
+    discount: "8%",
+  },
+];
+
+const trending = [
+  {
+    name: "Dark Fantasy Choco",
+    price: "₹35",
+    oldPrice: "₹45",
+    img: "https://images.unsplash.com/photo-1558961363-fa4fdfc51ecd?q=80&w=150&auto=format&fit=crop",
+    rating: 4.8,
+    vendor: "ITC",
+    discount: "22%",
+  },
+  {
+    name: "Kissan Ketchup",
+    price: "₹120",
+    oldPrice: "₹140",
+    img: "https://images.unsplash.com/photo-1505253149613-112d21d9f6a9?q=80&w=150&auto=format&fit=crop",
+    rating: 4.6,
+    vendor: "HUL",
+    discount: "14%",
+  },
+  {
+    name: "Red Label Tea",
+    price: "₹480",
+    oldPrice: "₹520",
+    img: "https://images.unsplash.com/photo-1594142411985-78082f42a78f?q=80&w=150&auto=format&fit=crop",
+    rating: 4.7,
+    vendor: "HUL",
+    discount: "8%",
+  },
+];
+
+const recentlyAdded = [
+  {
+    name: "Lindt Dark Chocolate",
+    price: "₹245",
+    oldPrice: "₹295",
+    img: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?q=80&w=150&auto=format&fit=crop",
+    rating: 4.9,
+    vendor: "Lindt",
+    discount: "17%",
+  },
+  {
+    name: "Epigamia Yogurt",
+    price: "₹45",
+    oldPrice: "₹50",
+    img: "https://images.unsplash.com/photo-1488477181946-6428a0291777?q=80&w=150&auto=format&fit=crop",
+    rating: 4.7,
+    vendor: "Drums Food",
+    discount: "10%",
+  },
+  {
+    name: "Hershey's Syrup",
+    price: "₹185",
+    oldPrice: "₹210",
+    img: "https://images.unsplash.com/photo-1587049352847-81a56d773cae?q=80&w=150&auto=format&fit=crop",
+    rating: 4.8,
+    vendor: "Hershey's",
+    discount: "12%",
+  },
+];
+
+const topRated = [
+  {
+    name: "Daawat Rozana Rice",
+    price: "₹385",
+    oldPrice: "₹450",
+    img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=150&auto=format&fit=crop",
+    rating: 5.0,
+    vendor: "Daawat",
+    discount: "14%",
+  },
+  {
+    name: "Everest Masala",
+    price: "₹65",
+    oldPrice: "₹75",
+    img: "https://images.unsplash.com/photo-1596797038558-bc439226cb8e?q=80&w=150&auto=format&fit=crop",
+    rating: 4.9,
+    vendor: "Everest",
+    discount: "13%",
+  },
+  {
+    name: "Cadbury Bournvita",
+    price: "₹210",
+    oldPrice: "₹230",
+    img: "https://images.unsplash.com/photo-1550963295-019dfc40c81e?q=80&w=150&auto=format&fit=crop",
+    rating: 4.9,
+    vendor: "Mondelez",
+    discount: "9%",
   },
 ];
 
 export default function Home() {
   return (
-  <>
+    <>
       <main className="container mx-auto px-4 py-8 space-y-12">
         {/* --- Hero Slider --- */}
-        <section className="bg-green-100 rounded-3xl overflow-hidden relative h-[400px] flex items-center px-16 bg-[url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2574&auto=format&fit=crop')] bg-cover bg-center">
-          <div className="absolute inset-0 bg-gradient-to-r from-green-100/90 to-transparent"></div>
-          <div className="relative z-10 max-w-lg space-y-6">
-            <h1 className="text-6xl font-bold text-gray-800 leading-tight">
-              Fresh Vegetables <br /> Big discount
+        <section
+          className="bg-blue-50 rounded-3xl overflow-hidden relative h-[420px] flex items-center px-8 md:px-16 bg-cover bg-center"
+          style={{
+            backgroundImage:
+              "url('https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=2574&auto=format&fit=crop')",
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-50/90 via-blue-50/40 to-transparent"></div>
+          <div className="relative z-10 max-w-xl space-y-6">
+            <h1 className="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight">
+              Instant Delivery at your doorstep
             </h1>
-            <p className="text-gray-500 text-xl tracking-wide">
-              Save up to 50% off on your first order
+            <p className="text-gray-500 text-lg md:text-xl tracking-wide max-w-md">
+              Get groceries, electronics, and essentials delivered in 10
+              minutes.
             </p>
-            <div className="bg-white rounded-full p-2 flex max-w-sm shadow-sm">
+            <div className="bg-white rounded-full p-2 flex max-w-md shadow-md border border-gray-100">
               <input
-                type="email"
-                placeholder="Your email address"
-                className="flex-1 px-4 outline-none text-gray-600"
+                type="text"
+                placeholder="Search for essentials..."
+                className="flex-1 px-4 outline-none text-gray-600 bg-transparent"
               />
-              <button className="bg-green-600 text-white rounded-full px-8 py-3 font-semibold hover:bg-green-700 transition">
-                Subscribe
+              <button className="bg-green-600 text-white rounded-full px-6 md:px-8 py-3 font-bold hover:bg-green-700 transition">
+                Order Now
               </button>
             </div>
           </div>
@@ -229,7 +384,7 @@ export default function Home() {
             <h2 className="text-2xl font-bold text-gray-800">
               Featured Categories
             </h2>
-            <div className="flex gap-4 text-sm font-semibold text-gray-600">  
+            <div className="flex gap-4 text-sm font-semibold text-gray-600">
               <span className="cursor-pointer hover:text-green-600">
                 Cake & Milk
               </span>
@@ -248,11 +403,15 @@ export default function Home() {
             {categories.map((cat, idx) => (
               <div
                 key={idx}
-                className="bg-green-50 hover:shadow-lg transition-shadow border rounded-lg p-5 flex flex-col items-center justify-center text-center cursor-pointer group"
+                className={`${cat.bg} hover:shadow-lg transition-shadow border rounded-lg p-5 flex flex-col items-center justify-center text-center cursor-pointer group`}
               >
-                <span className="text-5xl mb-7 group-hover:scale-110 transition-transform">
-                  {cat.img}
-                </span>
+                <div className="w-16 h-16 mb-4 flex items-center justify-center overflow-hidden">
+                  <img
+                    src={cat.img}
+                    alt={cat.name}
+                    className="w-full h-full object-contain group-hover:scale-110 transition-transform"
+                  />
+                </div>
                 <h6 className="font-bold text-gray-700 text-sm">{cat.name}</h6>
                 <p className="text-[14px] text-gray-400">{cat.count} items</p>
               </div>
@@ -261,48 +420,56 @@ export default function Home() {
         </section>
 
         {/* --- Banners --- */}
-        <section className="grid md:grid-cols-3 gap-6">
-          <div className="bg-yellow-100 rounded-xl p-8 relative overflow-hidden h-60 flex items-center">
-            <div className="relative z-10">
-              <h4 className="font-bold text-lg mb-4 text-gray-800">
-                Everyday Fresh & <br />
-                Clean with Our <br />
-                Products
+        <section className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+          <div className="bg-amber-100 rounded-2xl p-8 relative overflow-hidden h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition">
+            <div className="relative z-10 max-w-[180px]">
+              <h4 className="font-bold text-xl mb-4 text-gray-800 leading-tight">
+                Premium Fresh Quality Products
               </h4>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-xs font-bold flex items-center gap-1">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors">
                 Shop Now <FiArrowRight />
               </button>
             </div>
-            <div className="absolute right-0 bottom-0 text-8xl opacity-20">
-              🧅
+            <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
+              <img
+                src="https://images.unsplash.com/photo-1628102422295-a461c3605658?q=80&w=400&auto=format&fit=crop"
+                alt="fruits"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
-          <div className="bg-pink-100 rounded-lg p-8 relative overflow-hidden h-60 flex items-center">
-            <div className="relative z-10">
-              <h4 className="font-bold text-lg mb-4 text-gray-800">
-                Make your Breakfast <br />
-                Healthy and Easy
+          <div className="bg-pink-100 rounded-2xl p-8 relative overflow-hidden h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition">
+            <div className="relative z-10 max-w-[180px]">
+              <h4 className="font-bold text-xl mb-4 text-gray-800 leading-tight">
+                Healthy Breakfast & Instant Tea
               </h4>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-xs font-bold flex items-center gap-1">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors">
                 Shop Now <FiArrowRight />
               </button>
             </div>
-            <div className="absolute right-0 bottom-0 text-8xl opacity-20">
-              🥛
+            <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
+              <img
+                src="https://images.unsplash.com/photo-1513442542250-854d436a73f2?q=80&w=400&auto=format&fit=crop"
+                alt="breakfast"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
-          <div className="bg-blue-100 rounded-lg p-8 relative overflow-hidden h-60 flex items-center">
-            <div className="relative z-10">
-              <h4 className="font-bold text-lg mb-4 text-gray-800">
-                The best Organic <br />
-                Products Online
+          <div className="bg-blue-100 rounded-2xl p-8 relative overflow-hidden h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition">
+            <div className="relative z-10 max-w-[180px]">
+              <h4 className="font-bold text-xl mb-4 text-gray-800 leading-tight">
+                The Best Grocery Deals Online
               </h4>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded text-xs font-bold flex items-center gap-1">
+              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors">
                 Shop Now <FiArrowRight />
               </button>
             </div>
-            <div className="absolute right-0 bottom-0 text-8xl opacity-20">
-              🥦
+            <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
+              <img
+                src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=400&auto=format&fit=crop"
+                alt="vegetables"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
         </section>
@@ -336,8 +503,12 @@ export default function Home() {
                     {prod.tag}
                   </span>
                 )}
-                <div className="h-40 flex items-center justify-center text-6xl group-hover:scale-105 transition-transform cursor-pointer">
-                  {prod.img}
+                <div className="h-40 flex items-center justify-center text-9xl group-hover:scale-105 transition-transform cursor-pointer overflow-hidden p-4">
+                  <img
+                    src={prod.img}
+                    alt={prod.name}
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <div className="text-xs text-gray-400 mb-2">Snack</div>
                 <h3 className="font-bold text-gray-700 text-sm mb-1 leading-snug cursor-pointer hover:text-green-600">
@@ -356,16 +527,29 @@ export default function Home() {
                   ))}
                   <span className="text-gray-400 ml-2">({prod.rating})</span>
                 </div>
+                <div className="text-xs text-gray-400 mb-3">
+                  By{" "}
+                  <span className="text-green-600 font-bold">
+                    {prod.vendor}
+                  </span>
+                </div>
                 <div className="flex justify-between items-center mt-3">
-                  <div>
-                    <span className="text-green-600 font-bold text-lg">
-                      {prod.price}
-                    </span>
-                    <span className="text-gray-400 text-sm line-through ml-2">
-                      {prod.oldPrice}
-                    </span>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-2">
+                      <span className="text-green-600 font-bold text-lg">
+                        {prod.price}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-400 text-xs line-through">
+                        {prod.oldPrice}
+                      </span>
+                      <span className="text-green-600 text-xs font-bold">
+                        ({prod.discount})
+                      </span>
+                    </div>
                   </div>
-                  <button className="bg-green-100 text-green-600 hover:bg-green-600 hover:text-white p-2 rounded-md transition-colors font-bold text-xs flex items-center gap-1">
+                  <button className="bg-green-100 text-green-600 hover:bg-green-600 hover:text-white px-4 py-2 rounded-lg transition-colors font-bold text-xs flex items-center gap-2">
                     Add <FiShoppingCart />
                   </button>
                 </div>
@@ -376,60 +560,204 @@ export default function Home() {
 
         {/* --- Daily Best Sells --- */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">
-            Daily Best Sells
-          </h2>
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Banner */}
-            <div className="lg:w-1/4 bg-[url('https://images.unsplash.com/photo-1518843875459-f738682238a6?q=80&w=2542&auto=format&fit=crop')] bg-cover bg-center rounded-2xl p-8 flex flex-col justify-start relative overflow-hidden">
-              <div className="absolute inset-0 bg-black/20"></div>
-              <div className="relative z-10">
-                <h3 className="text-2xl font-bold text-white mb-6">
-                  Bring nature into your home
-                </h3>
-                <button className="bg-green-600 text-white px-4 py-2 rounded text-xs font-bold flex items-center gap-1 w-fit hover:bg-green-700 transition">
-                  Shop Now <FiArrowRight />
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div className="flex items-center gap-6">
+              <h2 className="text-3xl font-bold text-gray-800 tracking-tight">
+                Daily Best Sells
+              </h2>
+              <div className="flex gap-2">
+                <button className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-green-600 hover:text-white transition shadow-sm border">
+                  <FiArrowRight className="rotate-180" />
+                </button>
+                <button className="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 hover:bg-green-600 hover:text-white transition shadow-sm border">
+                  <FiArrowRight />
                 </button>
               </div>
             </div>
-            {/* Cards */}
-            <div className="lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-              {dailyBestSells.map((prod, idx) => (
+
+            <div className="flex flex-wrap gap-6 text-sm font-bold text-gray-600">
+              <span className="text-green-600 cursor-pointer">All</span>
+              <span className="hover:text-green-600 cursor-pointer">
+                Deals Of the Day
+              </span>
+              <span className="hover:text-green-600 cursor-pointer transition">
+                Beauty
+              </span>
+              <span className="hover:text-green-600 cursor-pointer transition">
+                Bread & Juice
+              </span>
+              <span className="hover:text-green-600 cursor-pointer transition">
+                Drinks
+              </span>
+              <span className="hover:text-green-600 cursor-pointer transition">
+                Milks
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Banner */}
+            <div
+              className="lg:w-1/4 h-[520px] bg-cover bg-center rounded-2xl p-10 flex flex-col justify-start relative overflow-hidden shadow-md border"
+              style={{
+                backgroundImage:
+                  "url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=1000&auto=format&fit=crop')",
+              }}
+            >
+              <div className="relative z-10">
+                <h3 className="text-white text-5xl font-extrabold mb-10 leading-tight">
+                  Premium Products Best Quality
+                </h3>
+                <button className="bg-green-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 w-fit hover:bg-green-700 transition shadow-lg">
+                  Order Now <FiArrowRight className="text-sm" />
+                </button>
+              </div>
+              <div className="absolute inset-0 bg-black/20"></div>
+            </div>
+
+            {/* Cards Grid */}
+            <div className="lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                {
+                  name: "Daawat Basmati Rice (5kg)",
+                  price: "₹450",
+                  old: "₹520",
+                  img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=400&auto=format&fit=crop",
+                  cat: "Staples",
+                  sold: 108,
+                  total: 387,
+                  badge: "13%",
+                  badgeColor: "bg-green-400",
+                },
+                {
+                  name: "Happilo Premium Almonds",
+                  price: "₹180",
+                  old: "₹210",
+                  img: "https://images.unsplash.com/photo-1508061214226-826a7be7870a?q=80&w=400&auto=format&fit=crop",
+                  cat: "Dry Fruits",
+                  sold: 82,
+                  total: 83,
+                  badge: "15%",
+                  badgeColor: "bg-red-400",
+                  extraBadge: "New",
+                  extraColor: "bg-green-400",
+                },
+                {
+                  name: "Fresh Whole Chicken (1kg)",
+                  price: "₹240",
+                  old: "₹280",
+                  img: "https://images.unsplash.com/photo-1604544215162-44af3e09880c?q=80&w=400&auto=format&fit=crop",
+                  cat: "Meat",
+                  sold: 60,
+                  total: 80,
+                  badge: "10%",
+                  badgeColor: "bg-green-400",
+                },
+                {
+                  name: "Dabur Organic Honey",
+                  price: "₹165",
+                  old: "₹190",
+                  img: "https://images.unsplash.com/photo-14713330bcc21-50394c4422e4?q=80&w=400&auto=format&fit=crop",
+                  cat: "Groceries",
+                  sold: 102,
+                  total: 262,
+                  badge: "12%",
+                  badgeColor: "bg-green-400",
+                  extraBadge: "Hot",
+                  extraColor: "bg-green-400",
+                },
+              ].map((prod, idx) => (
                 <div
                   key={idx}
-                  className="bg-white border hover:shadow-lg transition-shadow rounded-2xl p-4"
+                  className="bg-white border rounded-2xl p-6 relative group hover:shadow-xl transition-all h-full flex flex-col"
                 >
-                  <div className="h-32 flex items-center justify-center text-5xl mb-4">
-                    {prod.img}
-                  </div>
-                  <h4 className="font-bold text-gray-700 text-sm mb-2">
-                    {prod.name}
-                  </h4>
-                  <div className="flex mb-4 text-yellow-400 text-xs">
-                    {[...Array(5)].map((_, i) => (
-                      <FiStar
-                        key={i}
-                        className={
-                          i < Math.floor(prod.rating)
-                            ? "fill-current"
-                            : "text-gray-300"
-                        }
-                      />
-                    ))}
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <span className="text-green-600 font-bold">
-                        {prod.price}
+                  {/* Badges */}
+                  <div className="absolute top-0 left-0 flex flex-col">
+                    <span
+                      className={`${prod.badgeColor} text-white text-[10px] font-bold px-3 py-1.5 rounded-tl-2xl rounded-br-2xl shadow-sm`}
+                    >
+                      {prod.badge}
+                    </span>
+                    {prod.extraBadge && (
+                      <span
+                        className={`${prod.extraColor} text-white text-[10px] font-bold px-3 py-1.5 rounded-tl-2xl rounded-br-2xl mt-1 shadow-sm`}
+                      >
+                        {prod.extraBadge}
                       </span>
-                      <span className="text-gray-400 text-xs line-through ml-2">
-                        {prod.oldPrice}
+                    )}
+                  </div>
+
+                  {/* Image */}
+                  <div className="h-48 flex items-center justify-center text-9xl mb-6 group-hover:scale-105 transition-transform overflow-hidden p-6">
+                    <img
+                      src={prod.img}
+                      alt={prod.name}
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+
+                  {/* Info */}
+                  <div className="flex-grow">
+                    <div className="text-[10px] text-gray-400 mb-2 uppercase font-bold tracking-wider">
+                      {prod.cat}
+                    </div>
+                    <h4 className="font-bold text-gray-800 text-sm mb-3 line-clamp-2 hover:text-green-600 cursor-pointer leading-tight">
+                      {prod.name}
+                    </h4>
+
+                    {/* Rating placeholder */}
+                    <div className="flex gap-0.5 text-yellow-400 text-[10px] mb-4">
+                      <FiStar className="fill-current" />{" "}
+                      <FiStar className="fill-current" />{" "}
+                      <FiStar className="fill-current" />{" "}
+                      <FiStar className="fill-current" />{" "}
+                      <FiStar className="text-gray-200" />
+                      <span className="text-gray-400 ml-1">(4)</span>
+                    </div>
+
+                    <div className="text-[10px] text-gray-400 mb-2">
+                      By{" "}
+                      <span className="text-green-600 font-bold">
+                        {prod.vendor || "Quickzy"}
                       </span>
                     </div>
-                    <button className="bg-green-600 text-white p-2 rounded text-xs font-bold hover:bg-green-700 w-full ml-4">
-                      Add to cart
-                    </button>
+
+                    <div className="flex items-end gap-2 mb-4">
+                      <span className="text-green-600 font-bold text-xl leading-none">
+                        {prod.price}
+                      </span>
+                      <div className="flex flex-col">
+                        <span className="text-gray-300 text-[10px] font-bold line-through">
+                          {prod.old}
+                        </span>
+                        <span className="text-green-600 text-[10px] font-bold">
+                          ({prod.badge})
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="space-y-2 mb-3 text-xs">
+                      <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-green-500 rounded-full"
+                          style={{
+                            width: `${(prod.sold / prod.total) * 100}%`,
+                          }}
+                        ></div>
+                      </div>
+                      <div className="text-gray-700 font-bold">
+                        Sold:{" "}
+                        <span className="text-gray-400">
+                          {prod.sold} / {prod.total}
+                        </span>
+                      </div>
+                    </div>
                   </div>
+
+                  <button className="w-full bg-green-500 hover:bg-green-600 text-white py-2.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-md">
+                    <FiShoppingCart className="text-sm" /> Add to cart
+                  </button>
                 </div>
               ))}
             </div>
@@ -457,12 +785,12 @@ export default function Home() {
               >
                 {/* Background Image / Placeholder */}
                 <div
-                  className="h-64 bg-cover bg-center"
+                  className="h-85 bg-cover bg-center transition-transform group-hover:scale-105 duration-700"
                   style={{
-                    backgroundImage: `url('https://images.unsplash.com/photo-1518843875459-f738682238a6?q=80&w=2542&auto=format&fit=crop')`,
+                    backgroundImage: `url('${deal.bg}')`,
                   }}
                 >
-                  <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors"></div>
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500"></div>
                 </div>
                 {/* Content Overlay/Card */}
                 <div className="absolute bottom-4 left-4 right-4 bg-white rounded-xl p-4 shadow-lg">
@@ -495,23 +823,30 @@ export default function Home() {
                       <span className="text-[10px] text-gray-500">Sec</span>
                     </div>
                   </div>
+                  <div className="flex items-center gap-2 mb-2 text-xs">
+                    By{" "}
+                    <span className="text-green-600 font-bold">
+                      {deal.vendor}
+                    </span>
+                  </div>
                   <div className="flex justify-between items-center bg-white">
-                    <div>
-                      <span className="text-green-600 font-bold">
+                    <div className="flex flex-col">
+                      <span className="text-green-600 font-bold text-lg leading-tight">
                         {deal.price}
                       </span>
-                      <span className="text-gray-400 text-xs line-through ml-2">
-                        {deal.oldPrice}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-400 text-xs line-through">
+                          {deal.oldPrice}
+                        </span>
+                        <span className="text-green-600 text-xs font-bold">
+                          ({deal.discount})
+                        </span>
+                      </div>
                     </div>
                     <button className="bg-green-100 text-green-600 hover:bg-green-600 hover:text-white px-3 py-1.5 rounded-md transition-colors font-bold text-xs flex items-center gap-1">
                       Add <FiShoppingCart />
                     </button>
                   </div>
-                </div>
-                {/* Center Image */}
-                <div className="absolute top-10 left-1/2 -translate-x-1/2 text-6xl drop-shadow-lg">
-                  {deal.img}
                 </div>
               </div>
             ))}
@@ -526,10 +861,14 @@ export default function Home() {
               Top Selling
             </h3>
             <div className="space-y-6">
-              {listProducts.map((prod, i) => (
+              {topSelling.map((prod, i) => (
                 <div key={i} className="flex gap-4 group cursor-pointer">
-                  <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-3xl">
-                    {prod.img}
+                  <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
+                    <img
+                      src={prod.img}
+                      alt={prod.name}
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   <div>
                     <h5 className="font-bold text-gray-700 text-sm mb-1 group-hover:text-green-600 transition-colors line-clamp-2">
@@ -547,13 +886,24 @@ export default function Home() {
                         />
                       ))}
                     </div>
+                    <div className="text-[10px] text-gray-400 mb-1">
+                      By{" "}
+                      <span className="text-green-600 font-bold">
+                        {prod.vendor}
+                      </span>
+                    </div>
                     <div>
                       <span className="text-green-600 font-bold text-sm">
                         {prod.price}
                       </span>
-                      <span className="text-gray-400 text-xs line-through ml-2">
-                        {prod.oldPrice}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-gray-400 text-[10px] line-through">
+                          {prod.oldPrice}
+                        </span>
+                        <span className="text-green-600 text-[10px] font-bold">
+                          ({prod.discount})
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -567,10 +917,14 @@ export default function Home() {
               Trending Products
             </h3>
             <div className="space-y-6">
-              {listProducts.map((prod, i) => (
+              {trending.map((prod, i) => (
                 <div key={i} className="flex gap-4 group cursor-pointer">
-                  <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-3xl">
-                    {prod.img}
+                  <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
+                    <img
+                      src={prod.img}
+                      alt={prod.name}
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   <div>
                     <h5 className="font-bold text-gray-700 text-sm mb-1 group-hover:text-green-600 transition-colors line-clamp-2">
@@ -587,6 +941,12 @@ export default function Home() {
                           }
                         />
                       ))}
+                    </div>
+                    <div className="text-[10px] text-gray-400 mb-1">
+                      By{" "}
+                      <span className="text-green-600 font-bold">
+                        {prod.vendor}
+                      </span>
                     </div>
                     <div>
                       <span className="text-green-600 font-bold text-sm">
@@ -608,10 +968,14 @@ export default function Home() {
               Recently added
             </h3>
             <div className="space-y-6">
-              {listProducts.map((prod, i) => (
+              {recentlyAdded.map((prod, i) => (
                 <div key={i} className="flex gap-4 group cursor-pointer">
-                  <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-3xl">
-                    {prod.img}
+                  <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
+                    <img
+                      src={prod.img}
+                      alt={prod.name}
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   <div>
                     <h5 className="font-bold text-gray-700 text-sm mb-1 group-hover:text-green-600 transition-colors line-clamp-2">
@@ -628,6 +992,12 @@ export default function Home() {
                           }
                         />
                       ))}
+                    </div>
+                    <div className="text-[10px] text-gray-400 mb-1">
+                      By{" "}
+                      <span className="text-green-600 font-bold">
+                        {prod.vendor}
+                      </span>
                     </div>
                     <div>
                       <span className="text-green-600 font-bold text-sm">
@@ -649,10 +1019,14 @@ export default function Home() {
               Top Rated
             </h3>
             <div className="space-y-6">
-              {listProducts.map((prod, i) => (
+              {topRated.map((prod, i) => (
                 <div key={i} className="flex gap-4 group cursor-pointer">
-                  <div className="w-20 h-20 bg-gray-100 rounded-lg flex items-center justify-center text-3xl">
-                    {prod.img}
+                  <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50">
+                    <img
+                      src={prod.img}
+                      alt={prod.name}
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                   <div>
                     <h5 className="font-bold text-gray-700 text-sm mb-1 group-hover:text-green-600 transition-colors line-clamp-2">
@@ -670,6 +1044,12 @@ export default function Home() {
                         />
                       ))}
                     </div>
+                    <div className="text-[10px] text-gray-400 mb-1">
+                      By{" "}
+                      <span className="text-green-600 font-bold">
+                        {prod.vendor}
+                      </span>
+                    </div>
                     <div>
                       <span className="text-green-600 font-bold text-sm">
                         {prod.price}
@@ -686,15 +1066,15 @@ export default function Home() {
         </section>
 
         {/* --- Footer Top --- */}
-        <div className="bg-green-50 rounded-3xl p-10 md:p-14 mt-10 relative overflow-hidden">
+        <div className="bg-green-100 rounded-3xl p-10 md:p-14 mt-10 relative overflow-hidden">
           <div className="flex flex-col md:flex-row justify-between items-center relative z-10 gap-8">
-            <div className="max-w-lg">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 leading-tight">
+            <div className="max-w-4xl">
+              <h2 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4 leading-tight">
                 Stay home & get your daily <br /> needs from our shop
               </h2>
               <p className="text-gray-500 mb-8">
-                Start You'r Daily Shopping with{" "}
-                <span className="text-green-600">Nest Mart</span>
+                Start Your Daily Shopping with{" "}
+                <span className="text-green-600">Quickzy</span>
               </p>
               <div className="bg-white rounded-full p-2 flex max-w-sm">
                 <input
@@ -707,10 +1087,12 @@ export default function Home() {
                 </button>
               </div>
             </div>
+          </div>
+          <div className="w-130 absolute right-10 bottom-0">
             <img
-              src="https://images.unsplash.com/photo-1583623025817-d180a4795b29?q=80&w=2576&auto=format&fit=crop"
+              src="footer_banner.png"
               alt="Delivery"
-              className="w-80 mix-blend-multiply"
+              className="w-full mix-blend-multiply"
             />
           </div>
         </div>
@@ -718,22 +1100,24 @@ export default function Home() {
 
       {/* Footer Features */}
       <footer className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10 pb-8 border-b">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10 pb-8 border-b">
           {[
-            "Best prices & offers",
-            "Free delivery",
-            "Great daily deal",
-            "Wide assortment",
-            "Easy returns",
+            { title: "Best prices & offers", img: "best_price.png" },
+            { title: "Free delivery", img: "free_delivery.png" },
+            { title: "Great daily deal", img: "great_deals.png" },
+            { title: "Wide assortment", img: "wide_asortments.png" },
+            { title: "Easy returns", img: "easy_returns.png" },
           ].map((item, i) => (
             <div
               key={i}
-              className="bg-gray-100 rounded-lg p-4 flex items-center justify-center gap-3 text-sm font-semibold text-gray-600"
+              className="bg-gray-100 rounded-lg p-6 flex items-center gap-4 text-sm font-bold text-gray-700 hover:shadow-md transition shadow-sm"
             >
-              <div className="bg-green-200 p-2 rounded-full text-green-700">
-                ✓
-              </div>
-              {item}
+              <img
+                src={item.img}
+                alt={item.title}
+                className="w-12 h-12 object-contain"
+              />
+              <span>{item.title}</span>
             </div>
           ))}
         </div>
@@ -748,35 +1132,37 @@ export default function Home() {
                   Quickzy
                 </span>
                 <span className="text-[10px] text-gray-400 block">
-                  Mart & Grocery
+                  Quick Commerce & Instant Delivery
                 </span>
               </div>
             </div>
-            <p className="mb-4">Awesome grocery store website template</p>
+            <p className="mb-4">
+              Instant delivery of electronics, groceries & more.
+            </p>
             <ul className="space-y-2">
               <li className="flex gap-2 items-start">
                 <FiMapPin className="text-green-600 mt-1 shrink-0" />{" "}
                 <span>
-                  <strong>Address:</strong> 5171 W Campbell Ave, Utah 53127
-                  United States
+                  <strong>Address:</strong> 124, Phase III, Udyog Vihar, Sector
+                  19, Gurgaon, Haryana 122016
                 </span>
               </li>
               <li className="flex gap-2 items-center">
                 <FiPhoneCall className="text-green-600 shrink-0" />{" "}
                 <span>
-                  <strong>Call Us:</strong> (+91) - 540-025-124553
+                  <strong>Call Us:</strong> +91 1800-QUICKZY
                 </span>
               </li>
-              <li className="flex gap-2 items-center">
+              <li className="fi-mail flex gap-2 items-center">
                 <FiMail className="text-green-600 shrink-0" />{" "}
                 <span>
-                  <strong>Email:</strong> sale@Nest.com
+                  <strong>Email:</strong> support@quickzy.com
                 </span>
               </li>
               <li className="flex gap-2 items-center">
                 <FiClock className="text-green-600 shrink-0" />{" "}
                 <span>
-                  <strong>Hours:</strong> 10:00 - 18:00, Mon - Sat
+                  <strong>Hours:</strong> 24/7 Delivery Available
                 </span>
               </li>
             </ul>
@@ -838,28 +1224,29 @@ export default function Home() {
               Install App
             </h4>
             <p className="mb-4">From App Store or Google Play</p>
-            <div className="flex gap-2 mb-6">
-              <button className="bg-black text-white px-3 py-2 rounded-lg flex items-center gap-2 text-xs hover:bg-gray-800 transition">
-                <FaApple className="text-xl" />{" "}
-                <div>
-                  <div className="text-[8px]">Download on the</div>
-                  <div className="font-bold">App Store</div>
-                </div>
-              </button>
-              <button className="bg-black text-white px-3 py-2 rounded-lg flex items-center gap-2 text-xs hover:bg-gray-800 transition">
-                <FaGooglePlay className="text-xl" />{" "}
-                <div>
-                  <div className="text-[8px]">GET IT ON</div>
-                  <div className="font-bold">Google Play</div>
-                </div>
-              </button>
+            <div className="flex gap-2 mb-6 rounded-lg">
+              <div className="w-30 h-15 ">
+                <img
+                  src="appstore.png"
+                  alt="appstore"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="w-30 h-15 rounded-lg ">
+                <img
+                  src="playstore.png"
+                  alt="playstore"
+                  className="w-full h-full object-contain"
+                />
+              </div>
             </div>
             <p className="mb-4">Secured Payment Gateways</p>
             <div className="flex gap-2 text-3xl text-gray-600">
-              <FaCcVisa className="hover:text-blue-900 transition" />
-              <FaCcMastercard className="hover:text-red-600 transition" />
-              <FaCcAmex className="hover:text-blue-500 transition" />
-              <FaCcDiscover className="hover:text-orange-500 transition" />
+              <img
+                src="visa.png"
+                alt="visa, mastercard, amex, discover"
+                className="hover:text-blue-900 transition"
+              />
             </div>
           </div>
         </div>
@@ -867,15 +1254,15 @@ export default function Home() {
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
           <div>
-            © 2024, <strong className="text-green-600">Nest</strong> - HTML
-            Ecommerce Template <br /> All rights reserved
+            © 2026, <strong className="text-green-600">Quickzy</strong> -
+            Instant Delivery Platform. All rights reserved
           </div>
           <div className="flex gap-8 items-center">
             <div className="flex items-center gap-3">
               <FiPhoneCall className="text-3xl text-gray-500" />
               <div>
                 <div className="text-green-600 text-xl font-bold">
-                  1900 - 6666
+                  1800-419-0000
                 </div>
                 <div className="text-[10px]">Working 8:00 - 22:00</div>
               </div>
@@ -884,7 +1271,7 @@ export default function Home() {
               <FiPhoneCall className="text-3xl text-gray-500" />
               <div>
                 <div className="text-green-600 text-xl font-bold">
-                  1900 - 8888
+                  1800-419-1111
                 </div>
                 <div className="text-[10px]">24/7 Support Center</div>
               </div>
@@ -910,6 +1297,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-      </>
+    </>
   );
 }
