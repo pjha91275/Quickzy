@@ -1,138 +1,195 @@
 "use client";
 import React, { useState } from "react";
-import Navbar from "@/components/Navbar";
-import { FiTrash2, FiPlus, FiMinus, FiArrowRight, FiShoppingBag } from "react-icons/fi";
+import {
+  FiTrash2,
+  FiPlus,
+  FiMinus,
+  FiArrowRight,
+  FiShoppingBag,
+  FiRefreshCw,
+} from "react-icons/fi";
 import Link from "next/link";
 
 const initialCart = [
-  { id: 1, name: "Foster Farms Takeout Crispy Wings", price: 12.00, img: "🍗", category: "Meats", weight: "500g" },
-  { id: 2, name: "Organic Cage-Grade A Large Eggs", price: 4.00, img: "🥚", category: "Dairy", weight: "12 pcs" },
-  { id: 3, name: "Seeds of Change Organic Quinoa", price: 5.00, img: "🌾", category: "Grains", weight: "1kg" },
+  {
+    id: 1,
+    name: "Apple Lightning Cable (1m)",
+    price: 1499.0,
+    img: "https://m.media-amazon.com/images/I/61WyudsN-uL.jpg",
+    category: "Electronics",
+    weight: "1m",
+    stock: "In Stock",
+  },
+  {
+    id: 2,
+    name: "BoAt Bassheads 100",
+    price: 399.0,
+    img: "https://m.media-amazon.com/images/I/61xXgvroQrL.jpg",
+    category: "Electronics",
+    weight: "Black",
+    stock: "In Stock",
+  },
+  {
+    id: 3,
+    name: "Nescafe Gold (50g)",
+    price: 320.0,
+    img: "https://www.bigbasket.com/media/uploads/p/l/212135_10-nescafe-gold-premium-blend-rich-aromatic-instant-coffee.jpg",
+    category: "Beverages",
+    weight: "50g",
+    stock: "In Stock",
+  },
 ];
 
 export default function Cart() {
   const [items, setItems] = useState(initialCart);
 
   const subtotal = items.reduce((acc, item) => acc + item.price, 0);
-  const shipping = 2.00;
-  const total = subtotal + shipping;
 
   return (
-    <>
-      <main className="container mx-auto px-4 py-10">
-        <div className="flex flex-col lg:flex-row gap-8">
-          
-          {/* --- Cart Items --- */}
-          <div className="lg:w-2/3">
-            <h1 className="text-3xl font-bold text-gray-800 mb-8 flex items-center gap-2">
-              <FiShoppingBag className="text-green-600" /> Your Cart
+    <main className="container mx-auto px-4 py-10 min-h-[60vh]">
+      <div className="flex flex-col lg:flex-row gap-10">
+        {/* --- Cart Items --- */}
+        <div className="lg:w-[70%]">
+          <div className="flex items-center justify-between mb-8">
+            <h1 className="text-4xl font-black text-[#253D4E] flex items-center gap-3">
+              Your Cart
             </h1>
+            <p className="text-gray-400 font-bold">
+              There are <span className="text-[#3BB77E]">{items.length}</span>{" "}
+              products in your cart
+            </p>
+          </div>
 
-            <div className="bg-white rounded-2xl shadow-sm overflow-hidden border">
-              <div className="hidden md:grid grid-cols-5 p-4 border-b bg-gray-50 text-gray-500 font-semibold text-sm">
-                <div className="col-span-2">Product</div>
-                <div>Price</div>
-                <div>Quantity</div>
-                <div>Remove</div>
-              </div>
-
-              <div className="divide-y">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left min-w-[700px]">
+              <thead className="bg-[#ececec] text-[#253D4E] font-bold text-sm">
+                <tr>
+                  <th className="py-4 px-6 rounded-l-xl">Product</th>
+                  <th className="py-4 px-6">Unit Price</th>
+                  <th className="py-4 px-6">Quantity</th>
+                  <th className="py-4 px-6">Subtotal</th>
+                  <th className="py-4 px-6 rounded-r-xl">Remove</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
                 {items.map((item) => (
-                  <div key={item.id} className="grid grid-cols-1 md:grid-cols-5 p-4 items-center gap-4">
-                    {/* Product Info */}
-                    <div className="col-span-2 flex items-center gap-4">
-                      <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-3xl">
-                        {item.img}
+                  <tr
+                    key={item.id}
+                    className="group hover:bg-gray-50 transition-colors"
+                  >
+                    <td className="py-6 px-6">
+                      <div className="flex items-center gap-6">
+                        <div className="w-24 h-24 border rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
+                          <img
+                            src={item.img}
+                            alt={item.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                        <div>
+                          <h4 className="font-black text-[#253D4E] text-lg hover:text-[#3BB77E] transition-colors cursor-pointer leading-tight mb-2">
+                            {item.name}
+                          </h4>
+                          <div className="flex gap-2 text-xs font-bold">
+                            <span className="text-gray-400">{item.weight}</span>
+                            <span className="text-[#3BB77E] px-2 bg-[#DEF9EC] rounded-sm">
+                              {item.stock}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-bold text-gray-700 text-sm">{item.name}</h4>
-                        <p className="text-xs text-gray-400">{item.weight} • {item.category}</p>
+                    </td>
+                    <td className="py-6 px-6">
+                      <span className="text-2xl font-black text-[#253D4E]">
+                        ${item.price.toFixed(2)}
+                      </span>
+                    </td>
+                    <td className="py-6 px-6">
+                      <div className="flex items-center gap-4 border-2 border-[#3BB77E] w-fit px-4 py-2 rounded-md bg-white">
+                        <button className="text-[#3BB77E] hover:scale-125 transition-transform">
+                          <FiMinus />
+                        </button>
+                        <span className="font-bold text-lg min-w-[20px] text-center">
+                          1
+                        </span>
+                        <button className="text-[#3BB77E] hover:scale-125 transition-transform">
+                          <FiPlus />
+                        </button>
                       </div>
-                    </div>
-
-                    {/* Price */}
-                    <div className="font-bold text-green-600">
-                      ${item.price.toFixed(2)}
-                    </div>
-
-                    {/* Quantity (Simple UI) */}
-                    <div className="flex items-center gap-3">
-                      <button className="p-1 rounded-full bg-gray-100 hover:bg-green-100 transition">
-                        <FiMinus className="text-xs" />
+                    </td>
+                    <td className="py-6 px-6">
+                      <span className="text-2xl font-black text-[#3BB77E]">
+                        ${item.price.toFixed(2)}
+                      </span>
+                    </td>
+                    <td className="py-6 px-6">
+                      <button className="text-gray-400 hover:text-red-500 transition-colors text-2xl">
+                        <FiTrash2 />
                       </button>
-                      <span className="font-semibold text-sm">1</span>
-                      <button className="p-1 rounded-full bg-gray-100 hover:bg-green-100 transition">
-                        <FiPlus className="text-xs" />
-                      </button>
-                    </div>
-
-                    {/* Trash */}
-                    <div>
-                      <button className="text-gray-300 hover:text-red-500 transition">
-                        <FiTrash2 className="text-xl" />
-                      </button>
-                    </div>
-                  </div>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
-
-            <div className="mt-8">
-              <Link href="/" className="inline-flex items-center gap-2 text-green-600 font-bold hover:gap-3 transition-all">
-                <FiArrowRight className="rotate-180" /> Continue Shopping
-              </Link>
-            </div>
+              </tbody>
+            </table>
           </div>
 
-          {/* --- Order Summary --- */}
-          <div className="lg:w-1/3">
-            <div className="bg-white rounded-2xl shadow-sm p-6 border sticky top-24">
-              <h3 className="text-xl font-bold text-gray-800 mb-6">Order Summary</h3>
-              
-              <div className="space-y-4 mb-6 border-b pb-6">
-                <div className="flex justify-between text-gray-500">
-                  <span>Subtotal</span>
-                  <span className="font-bold text-gray-800">${subtotal.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-gray-500">
-                  <span>Shipping</span>
-                  <span className="font-bold text-gray-800">${shipping.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-gray-500">
-                  <span>Estimated Tax</span>
-                  <span className="font-bold text-gray-800">$0.00</span>
-                </div>
-              </div>
-
-              <div className="flex justify-between text-xl font-bold text-gray-800 mb-8">
-                <span>Total</span>
-                <span className="text-green-600">${total.toFixed(2)}</span>
-              </div>
-
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-green-200 transition-all flex items-center justify-center gap-2">
-                Checkout Now <FiArrowRight />
-              </button>
-
-              <div className="mt-6">
-                <div className="bg-gray-50 rounded-lg p-3 flex gap-2 border border-dashed border-gray-300">
-                  <input 
-                    type="text" 
-                    placeholder="Enter Coupon Code" 
-                    className="bg-transparent text-sm flex-1 outline-none"
-                  />
-                  <button className="text-green-600 font-bold text-sm">Apply</button>
-                </div>
-              </div>
-            </div>
+          <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6 border-t pt-8">
+            <Link
+              href="/"
+              className="bg-[#3BB77E] text-white px-8 py-4 rounded-md font-bold hover:bg-[#29A56C] transition shadow-lg flex items-center gap-2"
+            >
+              <FiArrowRight className="rotate-180" /> Continue Shopping
+            </Link>
+            <button className="bg-[#253D4E] text-white px-8 py-4 rounded-md font-bold hover:bg-black transition shadow-lg flex items-center gap-2">
+              <FiRefreshCw /> Update Cart
+            </button>
           </div>
-
         </div>
-      </main>
 
-      {/* --- Simple Mini Footer (matching theme) --- */}
-      <footer className="container mx-auto px-4 py-10 mt-10 border-t text-center text-gray-400 text-sm">
-        <p>© 2024 Nest Mart. All rights reserved.</p>
-      </footer>
-    </>
+        {/* --- Sidebar Summary --- */}
+        <div className="lg:w-[30%] space-y-8">
+          <div className="bg-white border rounded-2xl p-8 shadow-sm">
+            <div className="space-y-4 mb-8">
+              <div className="flex justify-between items-center">
+                <h3 className="text-xl font-black text-[#253D4E]">Subtotal</h3>
+                <span className="text-[#3BB77E] font-black text-2xl">
+                  ${subtotal.toFixed(2)}
+                </span>
+              </div>
+              <div className="flex justify-between items-center border-t border-b py-4">
+                <span className="font-bold text-gray-500">Shipping</span>
+                <span className="font-black text-[#253D4E]">Free Shipping</span>
+              </div>
+              <div className="flex justify-between items-center bg-[#f7f8f9] p-4 rounded-lg">
+                <span className="font-black text-[#253D4E] text-lg">Total</span>
+                <span className="text-[#3BB77E] font-black text-3xl">
+                  ${subtotal.toFixed(2)}
+                </span>
+              </div>
+            </div>
+            <button className="w-full bg-[#3BB77E] text-white py-5 rounded-md font-black text-lg hover:bg-[#29A56C] transition shadow-xl shadow-[#3BB77E]/20 flex items-center justify-center gap-2">
+              Proceed To CheckOut <FiArrowRight />
+            </button>
+          </div>
+
+          <div className="bg-white border rounded-2xl p-8 shadow-sm space-y-4">
+            <h4 className="font-black text-[#253D4E] text-lg">Apply Coupon</h4>
+            <p className="text-sm text-gray-400 font-medium">
+              Using A Promo Code?
+            </p>
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Enter Coupon Code"
+                className="flex-1 border rounded-md px-4 outline-none focus:border-[#3BB77E]"
+              />
+              <button className="bg-[#253D4E] text-white px-4 py-2 rounded-md font-bold hover:bg-black transition">
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
