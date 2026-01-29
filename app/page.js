@@ -5,31 +5,31 @@ import { FiArrowRight, FiShoppingCart, FiStar } from "react-icons/fi";
 const categories = [
   {
     name: "Milk & Dairy",
-    img: "https://www.bigbasket.com/media/uploads/p/l/1200049_2-amul-butter-pasteurised.jpg",
+    img: "https://www.jiomart.com/images/product/original/494271401/heritage-golden-cow-milk-1-l-pouch-product-images-o494271401-p610079697-0-202410071813.jpg?im=Resize=(420,420)",
     count: 45,
     bg: "bg-blue-50",
   },
   {
     name: "Fruits",
-    img: "https://www.bigbasket.com/media/uploads/p/l/10000071_14-apple-royal-gala.jpg",
+    img: "https://m.media-amazon.com/images/I/51fWm14UXiL._AC_UL640_FMwebp_QL65_.jpg",
     count: 32,
     bg: "bg-orange-50",
   },
   {
     name: "Tea & Coffee",
-    img: "https://m.media-amazon.com/images/I/61tOhkT5TUL.jpg",
+    img: "https://m.media-amazon.com/images/I/41O76L+6oDL._SY300_SX300_QL70_FMwebp_.jpg",
     count: 28,
     bg: "bg-amber-50",
   },
   {
     name: "Snacks",
-    img: "https://m.media-amazon.com/images/I/71zcf36tQlL.jpg",
+    img: "https://m.media-amazon.com/images/I/41VxPV-rWsL._SY300_SX300_QL70_FMwebp_.jpg",
     count: 86,
     bg: "bg-yellow-50",
   },
   {
     name: "Personal Care",
-    img: "https://m.media-amazon.com/images/I/51pW5n90HNL.jpg",
+    img: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQ0W4YGyIeHyvdg7KaIXIzHbTxcVT4nwviIH2JrzF0nDK26Ope46NqSr5c_2GsGAAvWnjp2-e5QrNNWoVVTGix1xBYUZzs991zfyghM9kwJiXCnMB-ojsimEg",
     count: 54,
     bg: "bg-pink-50",
   },
@@ -53,7 +53,7 @@ const categories = [
   },
   {
     name: "Electronics",
-    img: "https://m.media-amazon.com/images/I/61WyudsN-uL.jpg",
+    img: "https://m.media-amazon.com/images/I/61S9aVnRZDL.jpg",
     count: 34,
     bg: "bg-orange-100",
   },
@@ -144,7 +144,7 @@ const products = [
     name: "Lay's Classic Salted",
     price: "₹20",
     oldPrice: "₹22",
-    img: "https://m.media-amazon.com/images/I/71zcf36tQlL.jpg",
+    img: "https://m.media-amazon.com/images/I/41VxPV-rWsL._SY300_SX300_QL70_FMwebp_.jpg",
     rating: 4.7,
     vendor: "Lay's",
     discount: "10%",
@@ -307,7 +307,7 @@ const dealsOfTheDay = [
     name: "Heritage Toned Milk (1L)",
     price: "₹64",
     oldPrice: "₹68",
-    img: "https://www.bigbasket.com/media/uploads/p/l/103110_1-heritage-milk-toned.jpg",
+    img: "https://www.jiomart.com/images/product/original/494271401/heritage-golden-cow-milk-1-l-pouch-product-images-o494271401-p610079697-0-202410071813.jpg?im=Resize=(420,420)",
     bg: "bg-pink-100",
     vendor: "Heritage",
     discount: "6%",
@@ -440,28 +440,31 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8 space-y-12">
         {/* --- Hero Slider --- */}
         <section
-          className="bg-blue-50 rounded-3xl overflow-hidden relative h-[420px] flex items-center px-8 md:px-16 bg-cover bg-center"
+          className="bg-[#DEF9EC] rounded-3xl overflow-hidden relative h-[420px] flex items-center px-8 md:px-16 bg-cover bg-right md:bg-center"
           style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1604719312566-8912e9227c6a?q=80&w=2574&auto=format&fit=crop')",
+            backgroundImage: "url('/custom-banner.png')",
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-50/90 via-blue-50/40 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-[#DEF9EC] via-[#DEF9EC]/60 to-transparent"></div>
           <div className="relative z-10 max-w-xl space-y-6">
-            <h1 className="text-4xl md:text-6xl font-extrabold text-gray-800 leading-tight">
-              Instant Delivery at your doorstep
+            <span className="bg-yellow-400 text-[#253D4E] px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-sm">
+              Quickzy: Essentials in a blink.
+            </span>
+            <h1 className="text-4xl md:text-6xl font-black text-[#253D4E] leading-tight">
+              Fast. Fresh. <br />{" "}
+              <span className="text-[#3BB77E]">Quickzy.</span>
             </h1>
-            <p className="text-gray-500 text-lg md:text-xl tracking-wide max-w-md">
-              Get groceries, electronics, and essentials delivered in 10
-              minutes.
+            <p className="text-gray-600 text-lg md:text-xl font-medium tracking-wide max-w-md">
+              Your daily essentials, groceries, electronics and more, delivered
+              instantly to your doorstep.
             </p>
-            <div className="bg-white rounded-full p-2 flex max-w-md shadow-md border border-gray-100">
+            <div className="bg-white rounded-full p-2 flex max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
               <input
                 type="text"
                 placeholder="Search for essentials..."
-                className="flex-1 px-4 outline-none text-gray-600 bg-transparent"
+                className="flex-1 px-5 outline-none text-gray-700 bg-transparent font-medium"
               />
-              <button className="bg-green-600 text-white rounded-full px-6 md:px-8 py-3 font-bold hover:bg-green-700 transition">
+              <button className="bg-[#3BB77E] text-white rounded-full px-8 md:px-10 py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg hover:shadow-[#3BB77E]/30">
                 Order Now
               </button>
             </div>
@@ -524,7 +527,7 @@ export default function Home() {
             </div>
             <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
               <img
-                src="https://www.bigbasket.com/media/uploads/p/l/10000071_14-apple-royal-gala.jpg"
+                src="https://m.media-amazon.com/images/I/51fWm14UXiL._AC_UL640_FMwebp_QL65_.jpg"
                 alt="fruits"
                 className="w-full h-full object-contain"
               />
@@ -541,7 +544,7 @@ export default function Home() {
             </div>
             <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
               <img
-                src="https://m.media-amazon.com/images/I/61xXgvroQrL.jpg"
+                src="https://m.media-amazon.com/images/I/313U7Xx9b4L._SY300_SX300_QL70_FMwebp_.jpg"
                 alt="earphones"
                 className="w-full h-full object-contain"
               />

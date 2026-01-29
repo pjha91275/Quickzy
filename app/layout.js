@@ -14,8 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Quickzy - Instant Delivery Platform",
-  description: "Get everything delivered in 10 minutes",
+  title: "Quickzy - Essentials in a blink.",
+  description:
+    "Quickzy: Your daily essentials, groceries, electronics and more, delivered instantly.",
 };
 
 export default function RootLayout({ children }) {
