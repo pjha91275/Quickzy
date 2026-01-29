@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Quickzy - Essentials in a blink.",
+  title: "Quickzy - Fast. Fresh. Delivered in a Zap.",
   description:
     "Quickzy: Your daily essentials, groceries, electronics and more, delivered instantly.",
 };

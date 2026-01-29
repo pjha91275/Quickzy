@@ -28,8 +28,8 @@ const Navbar = () => {
               <span className="text-2xl md:text-3xl lg:text-4xl mr-1">🌿</span>
               Quickzy
             </div>
-            <span className="text-[10px] text-gray-400 font-bold ml-8">
-              Essentials in a blink.
+            <span className="text-[10px] text-gray-400 font-bold ml-8 whitespace-nowrap">
+              Fast. Fresh. Delivered in a Zap.
             </span>
           </div>
         </Link>

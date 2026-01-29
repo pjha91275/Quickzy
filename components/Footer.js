@@ -29,7 +29,7 @@ const Footer = () => {
                 Quickzy
               </span>
               <span className="text-[10px] text-gray-400 block font-bold">
-                Essentials in a blink.
+                Fast. Fresh. Delivered in a Zap.
               </span>
             </div>
           </div>

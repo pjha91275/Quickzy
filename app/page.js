@@ -440,24 +440,18 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8 space-y-12">
         {/* --- Hero Slider --- */}
         <section
-          className="bg-[#DEF9EC] rounded-3xl overflow-hidden relative h-[420px] flex items-center px-8 md:px-16 bg-cover bg-right md:bg-center"
+          className="bg-[#DEF9EC] rounded-3xl overflow-hidden relative h-[420px] flex items-center px-8 md:px-16 bg-cover bg-center"
           style={{
-            backgroundImage: "url('/custom-banner.png')",
+            backgroundImage: "url('/hero-refined.png')",
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-[#DEF9EC] via-[#DEF9EC]/60 to-transparent"></div>
-          <div className="relative z-10 max-w-xl space-y-6">
-            <span className="bg-yellow-400 text-[#253D4E] px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-sm">
-              Quickzy: Essentials in a blink.
+          <div className="absolute inset-0 bg-gradient-to-r from-[#DEF9EC]/10 via-[#DEF9EC]/5 to-transparent"></div>
+          <div className="relative z-10 max-w-xl space-y-44">
+            <span className="absolute top-[-10] bg-yellow-400 text-[#253D4E] px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-sm">
+              Quickzy: Fast. Fresh. Delivered in a Zap.
             </span>
-            <h1 className="text-4xl md:text-6xl font-black text-[#253D4E] leading-tight">
-              Fast. Fresh. <br />{" "}
-              <span className="text-[#3BB77E]">Quickzy.</span>
-            </h1>
-            <p className="text-gray-600 text-lg md:text-xl font-medium tracking-wide max-w-md">
-              Your daily essentials, groceries, electronics and more, delivered
-              instantly to your doorstep.
-            </p>
+            <div className="h-10 md:h-20"></div>{" "}
+            {/* Spacer to keep search bar positioning */}
             <div className="bg-white rounded-full p-2 flex max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
               <input
                 type="text"
@@ -1022,26 +1016,30 @@ export default function Home() {
         </section>
 
         {/* --- Footer Top --- */}
-        <div className="bg-green-100 rounded-3xl p-10 md:p-14 mt-10 relative overflow-hidden">
-          <div className="flex flex-col md:flex-row justify-between items-center relative z-10 gap-8">
-            <div className="max-w-4xl">
-              <h2 className="text-4xl md:text-6xl font-bold text-gray-800 mb-4 leading-tight">
-                Stay home & get your daily <br /> needs from our shop
-              </h2>
-              <p className="text-gray-500 mb-8 italic">
-                Start Your Daily Shopping with{" "}
-                <span className="text-green-600 font-bold">Quickzy</span>
-              </p>
-              <div className="bg-white rounded-full p-2 flex max-w-sm shadow-sm border">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="flex-1 px-4 outline-none text-gray-600 bg-transparent"
-                />
-                <button className="bg-green-600 text-white rounded-full px-8 py-3 font-semibold hover:bg-green-700 transition">
-                  Subscribe
-                </button>
-              </div>
+        <div className="bg-[#ECF7F3] rounded-3xl p-10 md:p-14 mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[450px] flex items-center">
+          <div
+            className="absolute inset-0 bg-cover bg-no-repeat bg-right md:bg-right opacity-100"
+            style={{
+              backgroundImage: "url('/footer-green-white.png')",
+            }}
+          ></div>
+          <div className="relative z-10 max-w-xl">
+            <h2 className="text-4xl md:text-5xl font-black text-[#253D4E] mb-6 leading-tight">
+              Get Everything in <br /> Minutes!
+            </h2>
+            <p className="text-gray-600 text-lg mb-10 font-bold">
+              Start your daily shopping with{" "}
+              <span className="text-[#3BB77E]">Quickzy</span>
+            </p>
+            <div className="bg-white rounded-full p-1.5 flex max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="flex-1 px-5 outline-none text-gray-700 bg-transparent font-medium"
+              />
+              <button className="bg-[#3BB77E] text-white rounded-full px-8 py-3.5 font-bold hover:bg-[#29A56C] transition shadow-lg">
+                Subscribe
+              </button>
             </div>
           </div>
         </div>
