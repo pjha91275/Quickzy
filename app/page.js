@@ -664,7 +664,7 @@ export default function Home() {
               className="lg:w-1/4 h-[520px] bg-cover bg-center rounded-2xl p-10 flex flex-col justify-start relative overflow-hidden shadow-md border"
               style={{
                 backgroundImage:
-                  "url('https://www.bigbasket.com/media/uploads/p/l/104332_10-pedigree-dry-dog-food-chicken-vegetables-for-adult-dogs.jpg')",
+                  "url('https://m.media-amazon.com/images/I/413Z3Mfz-hL._SY300_SX300_QL70_FMwebp_.jpg')",
               }}
             >
               <div className="relative z-20">
@@ -675,7 +675,7 @@ export default function Home() {
                   Order Now <FiArrowRight className="text-sm" />
                 </button>
               </div>
-              <div className="absolute inset-0 bg-black/40 z-10"></div>
+              <div className="absolute inset-0 bg-gray-500/40 z-10"></div>
             </div>
 
             {/* Cards Grid */}
