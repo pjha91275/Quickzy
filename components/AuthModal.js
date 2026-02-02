@@ -45,7 +45,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
               <img
                 src="/logo.png"
                 alt="Logo"
-                className="w-12 h-12 brightness-0 invert"
+                className="w-15 h-15"
               />
               Quickzy
             </div>
@@ -57,7 +57,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
             </p>
           </div>
           {/* Subtle decorative logo */}
-          <div className="absolute bottom-[-20px] right-[-20px] w-64 h-64 opacity-10 rotate-12 select-none pointer-events-none filter brightness-0 invert">
+          <div className="absolute bottom-[-20px] right-[-20px] w-64 h-64 opacity-10 rotate-12 select-none pointer-events-none filter">
             <img
               src="/logo.png"
               alt=""
