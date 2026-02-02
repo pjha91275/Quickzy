@@ -1,68 +1,46 @@
-import NextAuth from 'next-auth'
-// import AppleProvider from 'next-auth/providers/apple'
-// import FacebookProvider from 'next-auth/providers/facebook'
-// import GoogleProvider from 'next-auth/providers/google'
-// import EmailProvider from 'next-auth/providers/email'
+import NextAuth from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import mongoose from "mongoose";
-import connectDb from '@/db/connectDb';
-import User from '@/models/User';
-import Payment from '@/models/Payment';
+import connectDb from "@/db/connectDb";
+import User from "@/models/User";
+import Payment from "@/models/Payment";
 
+// --- QUICKZY AUTH TODO ---
+// 1. Switch GitHubProvider to CredentialsProvider (for Phone + OTP logic).
+// 2. In authorize(): find user by phone; if not exists, create new user.
+// 3. In session() callback: populate session.user with phone, address, and name from MongoDB.
 
 export const authoptions = NextAuth({
   providers: [
-    // OAuth authentication providers...
     GitHubProvider({
       clientId: process.env.GITHUB_ID,
-      clientSecret: process.env.GITHUB_SECRET
+      clientSecret: process.env.GITHUB_SECRET,
     }),
-    //   AppleProvider({
-    //     clientId: process.env.APPLE_ID,
-    //     clientSecret: process.env.APPLE_SECRET
-    //   }),
-    //   FacebookProvider({
-    //     clientId: process.env.FACEBOOK_ID,
-    //     clientSecret: process.env.FACEBOOK_SECRET
-    //   }),
-    //   GoogleProvider({
-    //     clientId: process.env.GOOGLE_ID,
-    //     clientSecret: process.env.GOOGLE_SECRET
-    //   }),
-    //   // Passwordless / email sign in
-    //   EmailProvider({
-    //     server: process.env.MAIL_SERVER,
-    //     from: 'NextAuth.js <no-reply@example.com>'
-    //   }),
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
       if (account.provider == "github") {
-        await connectDb()
-        // Check if the user already exists in the database
-        const currentUser = await User.findOne({ email: email })
+        await connectDb();
+        const currentUser = await User.findOne({ email: email });
         if (!currentUser) {
-          // Create a new user
           const newUser = await User.create({
             email: user.email,
             username: user.email.split("@")[0],
             profilepic: user.image,
-          })
+          });
         }
-        return true
+        return true;
       }
     },
-
     async session({ session, user, token }) {
-      const dbUser = await User.findOne({ email: session.user.email })
+      const dbUser = await User.findOne({ email: session.user.email });
       if (dbUser) {
-        // Preserve the original provider name (e.g., GitHub name) before overwriting
-        session.user.OriginalName = dbUser.name || session.user.name
-        session.user.name = dbUser.username
+        session.user.OriginalName = dbUser.name || session.user.name;
+        session.user.name = dbUser.username;
       }
-      return session
+      return session;
     },
-  }
-})
+  },
+});
 
-export { authoptions as GET, authoptions as POST }
+export { authoptions as GET, authoptions as POST };

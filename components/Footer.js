@@ -22,10 +22,14 @@ const Footer = () => {
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 text-sm text-gray-500 pb-8 border-b">
         {/* Logo & Info */}
         <div className="col-span-1 lg:col-span-1">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-3xl">🌿</span>
+          <div className="flex items-center gap-2 mb-4 group cursor-pointer">
+            <img
+              src="/logo.png"
+              alt="Quickzy"
+              className="w-10 h-10 object-contain group-hover:rotate-12 transition-transform"
+            />
             <div>
-              <span className="text-2xl font-bold text-[#3BB77E] leading-none block">
+              <span className="text-2xl font-black text-[#3BB77E] leading-none block">
                 Quickzy
               </span>
               <span className="text-[10px] text-gray-400 block font-bold">

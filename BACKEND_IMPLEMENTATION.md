@@ -18,61 +18,58 @@ This document serves as the master blue-print for transitioning **Quickzy** to a
 
 ---
 
-## 2. Updated Implementation Flow (Priority Order)
-
-### Phase 1: Authentication & User Context
-
-**Goal: Establish the "Who".**
-
-- Implement **NextAuth/Auth.js** (Google/GitHub or Credentials).
-- Update the `User` model to include the `cart` array.
-- _Dependencies_: All subsequent features (saving carts, personalized experience) rely on a valid `userId`.
-
-### Phase 2: Database Seeding & Schema
-
-**Goal: Establish the "What".**
-
-- Finalize the `Product` model: `name`, `price` (Number), `category`, `img`, `stock`, `isDeal`.
-- Create a seeding script to migrate current static data into MongoDB.
-
-### Phase 3: Dynamic Homepage & Products Page
-
-**Goal: Connect the Frontend.**
-
-- **Homepage**: Replace static `const products` with async database fetches.
-- **Products Page**: Build the frontend grid and implement backend category filtering (e.g., `/products?category=beverages`).
-
-### Phase 4: Cart Synchronization
-
-**Goal: Close the Loop.**
-
-- Connect "Add to Cart" buttons to Server Actions that update the `User.cart` array.
-- Update the **Cart Page** to fetch real-time product data (prices/stock) based on the IDs stored in the user's cart.
-
 ---
 
-## 3. Technical Syntax Hints
+## 2. Updated Implementation Flow (Priority Order)
 
-### Filtering Logic
+### Phase 1: Authentication & Single Sign-On (Phone-Only)
 
-Use URL search parameters for filtering:
+**Goal: Minimal friction, Zepto-style entry via AuthModal.**
+
+- **Architectural Flow**:
+  1. **One-Time Identity**: No separate Login/Signup. User enters Phone Number -> `User.findOrCreate()`.
+  2. **OTP Verification**: Triggered via **Firebase Auth** (Phone). Modal stays active and "freezes" background.
+  3. **Success**: Once verified, transition modal to Step 2 (Location selection).
+
+- **Free APIs to Use**:
+  - **Auth/OTP**: [Firebase Phone Auth](https://firebase.google.com/) (10k free verifications/mo).
+
+### Phase 2: Geolocation & Address Confirmation
+
+**Goal: Instant delivery context.**
+
+- **Architectural Flow**:
+  1. **GPS Fetch**: Modal Step 2 prompts for location using `navigator.geolocation`.
+  2. **Search Autocomplete**: Use **Mapbox Search API** for manual address lookup within the modal.
+  3. **Completion**: Once "Confirm" is clicked, modal closes and `isLoggedIn` state updates across the app.
+
+- **Free APIs to Use**:
+  - **Map Search**: [Mapbox Search API](https://www.mapbox.com/search-service) (100k free searches/mo).
+  - **Reverse Geocoding**: [BigDataCloud](https://www.bigdatacloud.com/).
+---
+
+## 3. Database Schema Updates (MongoDB/Supabase)
+
+### User Model
 
 ```javascript
-// Example logic in /products/page.js
-const products = await Product.find(category ? { category: category } : {});
-```
-
-### Cart Update Action
-
-```javascript
-// Example Server Action logic
-await User.findByIdAndUpdate(userId, {
-  $set: { cart: updatedCartItems },
-});
+{
+  name: String,
+  email: String,
+  phone: String,
+  address: {
+    text: String,
+    lat: Number,
+    lng: Number,
+    zone: String
+  },
+  cart: [{ productId: ObjectId, quantity: Number }],
+  orders: [ObjectId]
+}
 ```
 
 ---
 
 ## 4. Implementation Protocol
 
-When the user triggers **"implementing Backend plan"**, the assistant will provide inline suggestions and code reviews based strictly on this strategy, focusing on one Phase at a time.
+When the user triggers **"implementing Backend plan"**, the assistant will focus on **Phase 1 (Auth)** first, ensuring the UI flows match the verified Quickzy theme.

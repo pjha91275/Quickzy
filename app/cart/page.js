@@ -12,30 +12,30 @@ import Link from "next/link";
 
 const initialCart = [
   {
-    id: 1,
-    name: "Apple Lightning Cable (1m)",
-    price: 1499.0,
-    img: "https://m.media-amazon.com/images/I/61WyudsN-uL.jpg",
-    category: "Electronics",
-    weight: "1m",
+    id: 9,
+    name: "Aashirvaad Atta (5kg)",
+    price: 245.0,
+    img: "https://www.bigbasket.com/media/uploads/p/l/126906_8-aashirvaad-atta-whole-wheat.jpg",
+    category: "Grocery",
+    weight: "5kg",
     stock: "In Stock",
   },
   {
-    id: 2,
-    name: "BoAt Bassheads 100",
-    price: 399.0,
-    img: "https://m.media-amazon.com/images/I/61xXgvroQrL.jpg",
+    id: 22,
+    name: "boAt Storm Smartwatch",
+    price: 1999.0,
+    img: "https://m.media-amazon.com/images/I/61S9aVnRZDL.jpg",
     category: "Electronics",
     weight: "Black",
     stock: "In Stock",
   },
   {
-    id: 3,
-    name: "Nescafe Gold (50g)",
-    price: 320.0,
-    img: "https://www.bigbasket.com/media/uploads/p/l/212135_10-nescafe-gold-premium-blend-rich-aromatic-instant-coffee.jpg",
-    category: "Beverages",
-    weight: "50g",
+    id: 40,
+    name: "Amul Fresh Paneer (200g)",
+    price: 85.0,
+    img: "https://m.media-amazon.com/images/I/81hD14MN91L._SX679_.jpg",
+    category: "Dairy",
+    weight: "200g",
     stock: "In Stock",
   },
 ];
@@ -101,7 +101,7 @@ export default function Cart() {
                     </td>
                     <td className="py-6 px-6">
                       <span className="text-2xl font-black text-[#253D4E]">
-                        ${item.price.toFixed(2)}
+                        ₹{item.price.toFixed(2)}
                       </span>
                     </td>
                     <td className="py-6 px-6">
@@ -119,7 +119,7 @@ export default function Cart() {
                     </td>
                     <td className="py-6 px-6">
                       <span className="text-2xl font-black text-[#3BB77E]">
-                        ${item.price.toFixed(2)}
+                        ₹{item.price.toFixed(2)}
                       </span>
                     </td>
                     <td className="py-6 px-6">
@@ -153,7 +153,7 @@ export default function Cart() {
               <div className="flex justify-between items-center">
                 <h3 className="text-xl font-black text-[#253D4E]">Subtotal</h3>
                 <span className="text-[#3BB77E] font-black text-2xl">
-                  ${subtotal.toFixed(2)}
+                  ₹{subtotal.toFixed(2)}
                 </span>
               </div>
               <div className="flex justify-between items-center border-t border-b py-4">
@@ -163,7 +163,7 @@ export default function Cart() {
               <div className="flex justify-between items-center bg-[#f7f8f9] p-4 rounded-lg">
                 <span className="font-black text-[#253D4E] text-lg">Total</span>
                 <span className="text-[#3BB77E] font-black text-3xl">
-                  ${subtotal.toFixed(2)}
+                  ₹{subtotal.toFixed(2)}
                 </span>
               </div>
             </div>
