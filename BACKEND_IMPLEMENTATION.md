@@ -27,9 +27,12 @@ This document serves as the master blue-print for transitioning **Quickzy** to a
 **Goal: Minimal friction, Zepto-style entry via AuthModal.**
 
 - **Architectural Flow**:
-  1. **One-Time Identity**: No separate Login/Signup. User enters Phone Number -> `User.findOrCreate()`.
-  2. **OTP Verification**: Triggered via **Firebase Auth** (Phone). Modal stays active and "freezes" background.
-  3. **Success**: Once verified, transition modal to Step 2 (Location selection).
+  1. **OTP Request**: Frontend triggers OTP via Firebase or Backend.
+  2. **OTP Verification (The Gatekeeper)**:
+     - **Option A (Firebase)**: Firebase verifies on client-side FIRST. Backend then `findOrCreate` the user.
+     - **Option B (Custom)**: Generate OTP -> Save in a temporary `Otps` MongoDB collection -> Verify against this temp collection in `authorize()`.
+  3. **User Sync**: Once OTP is valid, `User.findOrCreate({ phone })` to allow both Login and Signup in one step.
+  4. **Success**: Once verified, transition modal to Step 2 (Location selection).
 
 - **Free APIs to Use**:
   - **Auth/OTP**: [Firebase Phone Auth](https://firebase.google.com/) (10k free verifications/mo).
@@ -46,6 +49,7 @@ This document serves as the master blue-print for transitioning **Quickzy** to a
 - **Free APIs to Use**:
   - **Map Search**: [Mapbox Search API](https://www.mapbox.com/search-service) (100k free searches/mo).
   - **Reverse Geocoding**: [BigDataCloud](https://www.bigdatacloud.com/).
+
 ---
 
 ## 3. Database Schema Updates (MongoDB/Supabase)
