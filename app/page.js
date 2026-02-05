@@ -462,7 +462,7 @@ export default function Home() {
               {Array(10)
                 .fill()
                 .map((_, i) => (
-                  <img key={i} src="/logo.png" className="w-48 h-48" alt="" />
+                  <img key={i} src="/hero-banner.png" className="w-48 h-48" alt="" />
                 ))}
             </div>
           </div>

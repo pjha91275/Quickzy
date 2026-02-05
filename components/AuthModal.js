@@ -9,10 +9,15 @@ import {
   FiHome,
   FiBriefcase,
 } from "react-icons/fi";
+import { signIn } from "next-auth/react";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [step, setStep] = useState(1); // 1: Phone, 2: OTP, 3: Location
   const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [confirmationResult, setConfirmationResult] = useState(null);
 
   // Lock scroll when modal is open
   React.useEffect(() => {
@@ -28,6 +33,79 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
 
   if (!isOpen) return null;
 
+  const handleOtpChange = (element, index) => {
+    if (isNaN(element.value)) return false;
+
+    const newOtp = [...otp];
+    newOtp[index] = element.value;
+    setOtp(newOtp);
+
+    // Auto-focus to next box
+    if (element.value !== "" && element.nextSibling) {
+      element.nextSibling.focus();
+    }
+  };
+
+  const handleOtpPaste = (event) => {
+    event.preventDefault();
+    const pastedData = event.clipboardData.getData("text").slice(0, 4);
+    if (!/^[0-9]+$/.test(pastedData)) return;
+
+    const newOtp = [...otp];
+    pastedData.split("").forEach((char, idx) => {
+      if (idx < 4) newOtp[idx] = char;
+    });
+    setOtp(newOtp);
+
+    // Focus last filled box or verify button
+    const container = event.target.parentElement;
+    const inputs = container.querySelectorAll("input");
+    const lastIndex = Math.min(pastedData.length - 1, 3);
+    if (inputs[lastIndex]) inputs[lastIndex].focus();
+  };
+
+  // 1. Send OTP
+  const onSendOTP = async (phoneNumber) => {
+    try {
+      const verifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible",
+      });
+      const result = await signInWithPhoneNumber(
+        auth,
+        "+91" + phoneNumber,
+        verifier,
+      );
+      setConfirmationResult(result);
+      setStep(2);
+    } catch (error) {
+      console.error("SMS Error:", error);
+      alert("Failed to send SMS. Please try again.");
+    }
+  };
+
+  // 2. Verify & Login to NextAuth
+  const onVerifyOTP = async (otpString) => {
+    try {
+      const userCredential = await confirmationResult.confirm(otpString);
+      const phoneNum = userCredential.user.phoneNumber;
+
+      // This triggers the 'authorize' function in route.js
+      const res = await signIn("credentials", {
+        phone: phoneNum,
+        redirect: false,
+      });
+
+      if (res.ok) {
+        setStep(3);
+      } else {
+        alert("Authentication failed.");
+      }
+    } catch (error) {
+      console.error("OTP Error:", error);
+      alert("Invalid OTP.");
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -42,11 +120,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
         <div className="w-full md:w-1/2 bg-[#3BB77E] p-10 flex flex-col justify-center text-white relative h-48 md:h-auto">
           <div className="relative z-10">
             <div className="text-4xl font-black mb-4 flex items-center gap-3">
-              <img
-                src="/logo.png"
-                alt="Logo"
-                className="w-15 h-15"
-              />
+              <img src="/logo.png" alt="Logo" className="w-15 h-15" />
               Quickzy
             </div>
             <h2 className="text-2xl font-bold mb-2">
@@ -102,10 +176,13 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                 </div>
 
                 <button
-                  onClick={() => setStep(2)}
+                  onClick={() => {
+                    onSendOTP(phone);
+                    setStep(2);
+                  }}
                   className="w-full bg-[#3BB77E] text-white py-5 rounded-2xl font-black shadow-xl shadow-green-100 hover:bg-[#29A56C] transition-all flex items-center justify-center gap-2 group text-lg"
                 >
-                  Continue{" "}
+                  Send OTP{" "}
                   <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
@@ -130,18 +207,25 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
               </div>
 
               <div className="flex justify-between gap-3">
-                {[1, 2, 3, 4].map((i) => (
+                {otp.map((data, index) => (
                   <input
-                    key={i}
+                    key={index}
                     type="text"
                     maxLength="1"
+                    value={data}
+                    onChange={(e) => handleOtpChange(e.target, index)}
+                    onFocus={(e) => e.target.select()} // Select existing text on focus
+                    onPaste={handleOtpPaste}
                     className="w-14 h-16 border-2 border-gray-100 rounded-2xl bg-gray-50 text-center text-2xl font-black text-[#3BB77E] outline-none focus:border-[#3BB77E] transition-all"
                   />
                 ))}
               </div>
 
               <button
-                onClick={() => setStep(3)}
+                onClick={() => {
+                  onVerifyOTP(otp.join(""));
+                  setStep(3);
+                }}
                 className="w-full bg-[#3BB77E] text-white py-5 rounded-2xl font-black shadow-xl shadow-green-100 hover:bg-[#29A56C] transition-all text-lg"
               >
                 Verify & Continue
@@ -234,6 +318,8 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
           )}
         </div>
       </div>
+      {/* Hidden container for Firebase Recaptcha */}
+      <div id="recaptcha-container"></div>
     </div>
   );
 };

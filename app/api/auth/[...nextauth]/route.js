@@ -1,19 +1,7 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import mongoose from "mongoose";
 import connectDb from "@/db/connectDb";
 import User from "@/models/User";
-import Payment from "@/models/Payment";
-
-// --- QUICKZY AUTH TODO ---
-// 1. Switch GitHubProvider to CredentialsProvider (for Phone + OTP logic).
-// 2. In authorize():
-//    a. Verify the OTP FIRST (check a temp 'Otps' collection or trust Firebase client-side verification).
-//    b. If valid, check if user exists in 'Users' DB.
-//    c. If they don't exist, CREATE them (Sign Up); if they do, just LOGIN.
-// 3. In session() callback: populate session.user with phone, address, and name from MongoDB.
-
-// ... imports
 
 export const authoptions = NextAuth({
   providers: [
@@ -25,15 +13,21 @@ export const authoptions = NextAuth({
       async authorize(credentials) {
         await connectDb();
 
-        // This function is called means verification was a success.
+        // With Firebase, verification happened in the AuthModal (Frontend).
+        // This function is only called if the Firebase verification passed.
         const phone = credentials.phone;
 
+        // 1. Find the user
         let user = await User.findOne({ phone });
 
+        // 2. If not found, create a new record (Sign Up)
         if (!user) {
           user = await User.create({
             phone: phone,
-            name: "New Guest",
+            name: "Quickzy User", // Default name
+            address: { text: "", lat: 0, lng: 0, zone: "" }, // Empty structure
+            cart: [],
+            orders: [],
           });
         }
 
@@ -41,18 +35,31 @@ export const authoptions = NextAuth({
       },
     }),
   ],
-callbacks: {
+  callbacks: {
     async session({ session, token }) {
-      const dbUser = await User.findOne({ phone: session.user.phone || session.user.email });
+      // Sync DB data to the session so the UI can access it
+      const dbUser = await User.findOne({
+        phone: session.user.phone || session.user.email,
+      });
       if (dbUser) {
+        session.user.id = dbUser._id;
         session.user.name = dbUser.name;
         session.user.phone = dbUser.phone;
-        session.user.address = dbUser.address; 
+        session.user.address = dbUser.address;
       }
       return session;
     },
+    async jwt({ token, user }) {
+      if (user) {
+        token.phone = user.phone;
+      }
+      return token;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
-})
+  pages: {
+    signIn: "/", // Redirect to home if there's an issue
+  },
+});
 
 export { authoptions as GET, authoptions as POST };
