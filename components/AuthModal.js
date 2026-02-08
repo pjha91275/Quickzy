@@ -18,6 +18,8 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [confirmationResult, setConfirmationResult] = useState(null);
+  const [resendTimer, setResendTimer] = useState(0);
+  const [expiryTimer, setExpiryTimer] = useState(0);
 
   // Lock scroll when modal is open
   React.useEffect(() => {
@@ -30,6 +32,53 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
+
+  // Resend Timer logic
+  React.useEffect(() => {
+    let interval;
+    if (resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [resendTimer]);
+
+  // OTP Expiry Timer logic
+  React.useEffect(() => {
+    let interval;
+    if (expiryTimer > 0) {
+      interval = setInterval(() => {
+        setExpiryTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [expiryTimer]);
+
+  // OTP Expiry Logic
+  React.useEffect(() => {
+    if (resendTimer == 0) {
+      setConfirmationResult(null);
+    }
+  }, [resendTimer]);
+
+  // --- QUICKZY LOCATION UI TODO ---
+  // 1. STATE:
+  //    - searchQuery: String (linked to the search input)
+  //    - suggestions: Array (to store Mapbox API results)
+  //    - selectedLocation: Object (to store {text, lat, lng} before saving)
+
+  // 2. FUNCTIONS:
+  //    - handleGetCurrentLocation:
+  //        a. Use navigator.geolocation.getCurrentPosition().
+  //        b. Fetch from `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${TOKEN}`
+  //        c. Set the result to the address state.
+  //    - handleSearchInput:
+  //        a. Fetch from `https://api.mapbox.com/geocoding/v5/mapbox.places/${query}.json?access_token=${TOKEN}&types=address`
+  //        b. Limit results to 5 and update suggestions state.
+  //    - handleFinalSave:
+  //        a. Call the `updateAddress` server action.
+  //        b. Logic: onClose() and onLoginSuccess().
 
   if (!isOpen) return null;
 
@@ -57,10 +106,10 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     });
     setOtp(newOtp);
 
-    // Focus last filled box or verify button
+    // Focus last filled box
     const container = event.target.parentElement;
     const inputs = container.querySelectorAll("input");
-    const lastIndex = Math.min(pastedData.length - 1, 3);
+    const lastIndex = Math.min(pastedData.length, 3);
     if (inputs[lastIndex]) inputs[lastIndex].focus();
   };
 
@@ -76,10 +125,11 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
         verifier,
       );
       setConfirmationResult(result);
+      setResendTimer(60); // Start 60s countdown
       setStep(2);
     } catch (error) {
-      console.error("SMS Error:", error);
-      alert("Failed to send SMS. Please try again.");
+      console.error("SMS Error:", error); // Correct its message + use toast
+      alert("SMS Error: " + error.message); // Shows specific Firebase error
     }
   };
 
@@ -171,13 +221,19 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                     className="flex-1 bg-transparent outline-none text-[#253D4E] font-black text-lg h-full"
                     value={phone}
                     autoFocus
-                    onChange={(e) => setPhone(e.target.value)}
+                    maxLength={10}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, ""); // Remove non-digits
+                      setPhone(value);
+                    }}
                   />
                 </div>
 
                 <button
                   onClick={() => {
                     onSendOTP(phone);
+                    setResendTimer(60);
+                    setExpiryTimer(300);
                     setStep(2);
                   }}
                   className="w-full bg-[#3BB77E] text-white py-5 rounded-2xl font-black shadow-xl shadow-green-100 hover:bg-[#29A56C] transition-all flex items-center justify-center gap-2 group text-lg"
@@ -234,8 +290,18 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
               <div className="text-center space-y-3">
                 <p className="text-sm font-bold text-gray-400">
                   Didn't receive?{" "}
-                  <button className="text-[#3BB77E] font-black">
-                    Resend Code
+                  <button
+                    disabled={resendTimer > 0}
+                    onClick={() => {
+                      onSendOTP(phone);
+                      setResendTimer(60);
+                      setExpiryTimer(300);
+                    }}
+                    className={`font-black ${resendTimer > 0 ? "text-gray-300" : "text-[#3BB77E]"}`}
+                  >
+                    {resendTimer > 0
+                      ? `Resend in ${resendTimer}s`
+                      : "Resend Code"}
                   </button>
                 </p>
                 <button

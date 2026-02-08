@@ -5,6 +5,11 @@ const UserSchema = new Schema({
   name: { type: String, default: "Quickzy User" },
   email: { type: String }, // Optional for quick-commerce
   phone: { type: String, unique: true, required: true },
+  // --- QUICKZY LOCATION SCHEMA TODO ---
+  // The address object should be a nested Schema to ensure all coordinates are captured.
+  // - text: For the UI display (e.g. "Apartment 4, Street X")
+  // - lat/lng: Numbers for the delivery map
+  // - tag: String enum ["Home", "Work", "Other"]
   address: {
     text: { type: String, default: "" },
     lat: { type: Number, default: 0 },

@@ -11,6 +11,12 @@ import User from "@/models/User";
 // 3. updateProfile: Update name, phone, or address fields.
 // 4. cartActions: (Future) Server actions to push/pull items to user.cart array.
 
+// --- QUICKZY LOCATION ACTION TODO ---
+// updateAddress: Accepts (phone, addressData).
+// addressData should contain { text, lat, lng }.
+// Use User.findOneAndUpdate({ phone }, { address: addressData }).
+// This allows the user to finish Step 3 of the AuthModal.
+
 export const initiate = async (amount, to_username, paymentform) => {
   await connectDb();
   let user = await User.findOne({ username: to_username });
