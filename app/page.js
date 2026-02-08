@@ -1,6 +1,8 @@
 "use client";
 import React from "react";
-import { FiArrowRight, FiShoppingCart, FiStar } from "react-icons/fi";
+import { FiArrowRight, FiShoppingCart } from "react-icons/fi";
+import Link from "next/link";
+import { allProducts as products } from "@/data/products";
 
 const categories = [
   {
@@ -65,378 +67,12 @@ const categories = [
   },
 ];
 
-const products = [
-  {
-    name: "Apple Lightning Cable (1m)",
-    price: "₹1,499",
-    oldPrice: "₹1,900",
-    img: "https://m.media-amazon.com/images/I/21ANdUsXdPL._SX342_SY445_QL70_FMwebp_.jpg",
-    rating: 4.3,
-    tag: "Hot",
-    vendor: "Apple",
-    discount: "21%",
-    category: "Electronics",
-  },
-  {
-    name: "BoAt Bassheads 100",
-    price: "₹399",
-    oldPrice: "₹599",
-    img: "https://m.media-amazon.com/images/I/313U7Xx9b4L._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.1,
-    tag: "Sale",
-    vendor: "BoAt",
-    discount: "33%",
-    category: "Electronics",
-  },
-  {
-    name: "Energizer MAX AA (4pk)",
-    price: "₹299",
-    oldPrice: "₹350",
-    img: "https://m.media-amazon.com/images/I/51WKnE4bvpL._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.7,
-    tag: "Best",
-    vendor: "Energizer",
-    discount: "14%",
-    category: "Gadgets",
-  },
-  {
-    name: "Nivea Men Face Wash",
-    price: "₹185",
-    oldPrice: "₹210",
-    img: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQ0W4YGyIeHyvdg7KaIXIzHbTxcVT4nwviIH2JrzF0nDK26Ope46NqSr5c_2GsGAAvWnjp2-e5QrNNWoVVTGix1xBYUZzs991zfyghM9kwJiXCnMB-ojsimEg",
-    rating: 4.4,
-    vendor: "Nivea",
-    discount: "12%",
-    category: "Personal Care",
-  },
-  {
-    name: "Dove Intense Repair",
-    price: "₹450",
-    oldPrice: "₹520",
-    img: "https://m.media-amazon.com/images/I/31J9B3A8rIL._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.2,
-    vendor: "Dove",
-    discount: "13%",
-    category: "Beauty",
-  },
-  {
-    name: "Maggi Masala (Pack of 12)",
-    price: "₹168",
-    oldPrice: "₹180",
-    img: "https://www.jiomart.com/images/product/original/491410091/maggi-masala-ae-magic-6-g-pack-of-12-product-images-o491410091-p491410091-0-202305181146.jpg?im=Resize=(420,420)",
-    rating: 4.8,
-    tag: "Hot",
-    vendor: "Nestle",
-    discount: "7%",
-    category: "Food",
-  },
-  {
-    name: "Coca Cola (1.25L)",
-    price: "₹65",
-    oldPrice: "₹75",
-    img: "https://www.bigbasket.com/media/uploads/p/l/251023_11-coca-cola-soft-drink.jpg",
-    rating: 4.5,
-    vendor: "Coca Cola",
-    discount: "13%",
-    category: "Beverages",
-  },
-  {
-    name: "Lay's Classic Salted",
-    price: "₹20",
-    oldPrice: "₹22",
-    img: "https://m.media-amazon.com/images/I/41VxPV-rWsL._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.6,
-    vendor: "Lay's",
-    discount: "10%",
-    category: "Snacks",
-  },
-  {
-    name: "Aashirvaad Atta (5kg)",
-    price: "₹245",
-    oldPrice: "₹280",
-    img: "https://www.bigbasket.com/media/uploads/p/l/126906_8-aashirvaad-atta-whole-wheat.jpg",
-    rating: 4.9,
-    vendor: "ITC",
-    discount: "12%",
-    category: "Grocery",
-  },
-  {
-    name: "Amul Butter (500g)",
-    price: "₹275",
-    oldPrice: "₹290",
-    img: "https://www.jiomart.com/images/product/original/490001392/amul-pasteurised-butter-500-g-product-images-o490001392-p490001392-0-202508291839.jpg?im=Resize=(420,420)",
-    rating: 4.4,
-    vendor: "Amul",
-    discount: "5%",
-    category: "Dairy",
-  },
-  {
-    name: "Pilot V5 Blue (Pack of 3)",
-    price: "₹180",
-    oldPrice: "₹210",
-    img: "https://m.media-amazon.com/images/I/312PBvXYmKL._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.2,
-    tag: "Sale",
-    vendor: "Pilot",
-    discount: "14%",
-    category: "Stationery",
-  },
-  {
-    name: "Classmate Notebooks (6pk)",
-    price: "₹320",
-    oldPrice: "₹380",
-    img: "https://www.bigbasket.com/media/uploads/p/l/1212080_1-classmate-notebook-a4-ruled.jpg",
-    rating: 4.5,
-    vendor: "ITC",
-    discount: "16%",
-    category: "Stationery",
-  },
-  {
-    name: "Dettol Liquid Original",
-    price: "₹190",
-    oldPrice: "₹220",
-    img: "https://m.media-amazon.com/images/I/41XWa3YKg+L._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.7,
-    vendor: "Dettol",
-    discount: "13%",
-    category: "Health",
-  },
-  {
-    name: "Surf Excel Matic (1L)",
-    price: "₹240",
-    oldPrice: "₹280",
-    img: "https://m.media-amazon.com/images/I/616ZqasKGuL.jpg",
-    rating: 4.8,
-    tag: "Hot",
-    vendor: "Surf Excel",
-    discount: "14%",
-    category: "Household",
-  },
-  {
-    name: "Pedigree Adult (1.2kg)",
-    price: "₹310",
-    oldPrice: "₹340",
-    img: "https://m.media-amazon.com/images/I/712604bPj2L._AC_UL640_FMwebp_QL65_.jpg",
-    rating: 4.3,
-    vendor: "Pedigree",
-    discount: "9%",
-    category: "Pet Food",
-  },
-  {
-    name: "Gillette Mach 3 (4ct)",
-    price: "₹750",
-    oldPrice: "₹850",
-    img: "https://m.media-amazon.com/images/I/718Vmj9THoL._SX679_.jpg",
-    rating: 4.6,
-    vendor: "Gillette",
-    discount: "12%",
-    category: "Grooming",
-  },
-  {
-    name: "Nescafe Gold (50g)",
-    price: "₹320",
-    oldPrice: "₹380",
-    img: "https://m.media-amazon.com/images/I/41O76L+6oDL._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.9,
-    tag: "Best",
-    vendor: "Nescafe",
-    discount: "15%",
-    category: "Beverages",
-  },
-  {
-    name: "Cadbury Celebrations",
-    price: "₹150",
-    oldPrice: "₹180",
-    img: "https://m.media-amazon.com/images/I/71WIIW0xOaL._AC_UL640_FMwebp_QL65_.jpg",
-    rating: 4.4,
-    vendor: "Cadbury",
-    discount: "16%",
-    category: "Gifts",
-  },
-  {
-    name: "Real Fruit mixed (1L)",
-    price: "₹110",
-    oldPrice: "₹125",
-    img: "https://www.bigbasket.com/media/uploads/p/l/1204481_1-real-fruit-power-juice-mixed.jpg",
-    rating: 4.1,
-    vendor: "Real",
-    discount: "12%",
-    category: "Beverages",
-  },
-  {
-    name: "Wild Stone Deodorant",
-    price: "₹245",
-    oldPrice: "₹299",
-    img: "https://m.media-amazon.com/images/I/611dsNJJjBL._AC_UL640_FMwebp_QL65_.jpg",
-    rating: 4.5,
-    vendor: "Wild Stone",
-    discount: "18%",
-    category: "Grooming",
-  },
-];
-
-const dealsOfTheDay = [
-  {
-    name: "Philips Series 3000 Trimmer",
-    price: "₹1,845",
-    oldPrice: "₹2,295",
-    img: "https://m.media-amazon.com/images/I/41q1HlJ08ZL._SY300_SX300_QL70_FMwebp_.jpg",
-    bg: "bg-blue-100",
-    vendor: "Philips",
-    discount: "20%",
-    rating: 4.2,
-  },
-  {
-    name: "boAt Storm Smartwatch",
-    price: "₹1,999",
-    oldPrice: "₹3,999",
-    img: "https://m.media-amazon.com/images/I/61S9aVnRZDL.jpg",
-    bg: "bg-orange-100",
-    vendor: "BoAt",
-    discount: "50%",
-    rating: 4.6,
-  },
-  {
-    name: "Lindt Excellence Dark",
-    price: "₹245",
-    oldPrice: "₹315",
-    img: "https://m.media-amazon.com/images/I/51aFMIhl6TL._AC_UL640_FMwebp_QL65_.jpg",
-    bg: "bg-green-100",
-    vendor: "Lindt",
-    discount: "22%",
-    rating: 4.8,
-  },
-  {
-    name: "Heritage Toned Milk (1L)",
-    price: "₹64",
-    oldPrice: "₹68",
-    img: "https://www.jiomart.com/images/product/original/494271401/heritage-golden-cow-milk-1-l-pouch-product-images-o494271401-p610079697-0-202410071813.jpg?im=Resize=(420,420)",
-    bg: "bg-pink-100",
-    vendor: "Heritage",
-    discount: "6%",
-    rating: 4.4,
-  },
-];
-
-const topSelling = [
-  {
-    name: "Parle-G Gold (1kg)",
-    price: "₹120",
-    oldPrice: "₹140",
-    img: "https://www.jiomart.com/images/product/original/491335633/parle-g-gold-biscuits-1-kg-product-images-o491335633-p491335633-0-202303221149.jpg?im=Resize=(420,420)",
-    rating: 4.7,
-    vendor: "Parle",
-    discount: "14%",
-  },
-  {
-    name: "Saffola Gold (5L)",
-    price: "₹845",
-    oldPrice: "₹950",
-    img: "https://www.bigbasket.com/media/uploads/p/l/147491_9-saffola-gold-pro-healthy-lifestyle-edible-oil.jpg",
-    rating: 4.5,
-    vendor: "Marico",
-    discount: "11%",
-  },
-  {
-    name: "Britannia Cashew Cookies",
-    price: "₹25",
-    oldPrice: "₹30",
-    img: "https://m.media-amazon.com/images/I/71zTGI0xIML._SX679_.jpg",
-    rating: 4.3,
-    vendor: "Britannia",
-    discount: "16%",
-  },
-];
-
-const trending = [
-  {
-    name: "Logitech B170 Mouse",
-    price: "₹599",
-    oldPrice: "₹899",
-    img: "https://m.media-amazon.com/images/I/51uCYJqDrML._SX679_.jpg",
-    rating: 4.6,
-    vendor: "Logitech",
-    discount: "33%",
-  },
-  {
-    name: "SanDisk 64GB Pendrive",
-    price: "₹499",
-    oldPrice: "₹999",
-    img: "https://m.media-amazon.com/images/I/61DjwgS4cbL._SX679_.jpg",
-    rating: 4.1,
-    vendor: "SanDisk",
-    discount: "50%",
-  },
-  {
-    name: "HP v236w USB 2.0 32GB",
-    price: "₹349",
-    oldPrice: "₹550",
-    img: "https://m.media-amazon.com/images/I/61xNG4wjOuL.jpg",
-    rating: 4.2,
-    vendor: "HP",
-    discount: "36%",
-  },
-];
-
-const recentlyAdded = [
-  {
-    name: "Kitchen Essentials Pan",
-    price: "₹845",
-    oldPrice: "₹950",
-    img: "https://m.media-amazon.com/images/I/61VlNDf-RgL._AC_UL640_FMwebp_QL65_.jpg",
-    rating: 4.8,
-    vendor: "Kitchen Essentials",
-    discount: "11%",
-  },
-  {
-    name: "Milton Bottle (1L)",
-    price: "₹445",
-    oldPrice: "₹550",
-    img: "https://m.media-amazon.com/images/I/31e+tH1FKML._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.4,
-    vendor: "Milton",
-    discount: "19%",
-  },
-  {
-    name: "Cello Maxwriter Pen",
-    price: "₹50",
-    oldPrice: "₹60",
-    img: "https://m.media-amazon.com/images/I/51CVtuYNLrL._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.5,
-    vendor: "Cello",
-    discount: "17%",
-  },
-];
-
-const topRated = [
-  {
-    name: "Happilo Roasted Almonds",
-    price: "₹245",
-    oldPrice: "₹350",
-    img: "https://m.media-amazon.com/images/I/41jmDmSnwkL._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.7,
-    vendor: "Happilo",
-    discount: "30%",
-  },
-  {
-    name: "Hershey's Chocolate Syrup",
-    price: "₹185",
-    oldPrice: "₹210",
-    img: "https://m.media-amazon.com/images/I/4196sepYxPL._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.3,
-    vendor: "Hershey's",
-    discount: "12%",
-  },
-  {
-    name: "Tata Salt Lite",
-    price: "₹45",
-    oldPrice: "₹50",
-    img: "https://m.media-amazon.com/images/I/51UimLq2MXL._SY300_SX300_QL70_FMwebp_.jpg",
-    rating: 4.6,
-    vendor: "Tata Salt",
-    discount: "10%",
-  },
-];
+// Product lists are now derived from the main 'products' import
+const dealsOfTheDay = products.slice(0, 4);
+const topSelling = products.slice(4, 7);
+const trending = products.slice(7, 10);
+const recentlyAdded = products.slice(10, 13);
+const topRated = products.slice(13, 16);
 
 // Utility for randomizing product display
 const shuffleArray = (array) => {
@@ -637,40 +273,34 @@ export default function Home() {
                     {prod.tag}
                   </span>
                 )}
-                <div className="h-40 flex items-center justify-center group-hover:scale-105 transition-transform cursor-pointer overflow-hidden p-4">
-                  <img
-                    src={prod.img}
-                    alt={prod.name}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div className="text-[10px] text-gray-400 mb-2 uppercase font-bold tracking-wider">
-                  {prod.category}
-                </div>
-                <h3 className="font-bold text-gray-700 text-[14px] mb-1 leading-snug cursor-pointer hover:text-green-600 h-10 line-clamp-2">
-                  {prod.name}
-                </h3>
-                <div className="flex mb-2 text-yellow-400 text-[10px]">
-                  {[...Array(5)].map((_, i) => (
-                    <FiStar
-                      key={i}
-                      className={
-                        i < Math.floor(prod.rating)
-                          ? "fill-current"
-                          : "text-gray-300"
-                      }
+                <Link href={`/product/${prod.id}`} className="block">
+                  <div className="h-40 flex items-center justify-center group-hover:scale-105 transition-transform cursor-pointer overflow-hidden p-4">
+                    <img
+                      src={prod.img}
+                      alt={prod.name}
+                      className="w-full h-full object-contain"
                     />
-                  ))}
-                  <span className="text-gray-400 ml-2">({prod.rating})</span>
-                </div>
-                <div className="text-xs text-gray-400 mb-3">
-                  By{" "}
-                  <span className="text-green-600 font-bold">
-                    {prod.vendor}
-                  </span>
-                </div>
+                  </div>
+                  <div className="text-[10px] text-gray-400 mb-2 uppercase font-bold tracking-wider">
+                    {prod.category}
+                  </div>
+                  <h3 className="font-bold text-gray-700 text-[14px] mb-1 leading-snug cursor-pointer hover:text-green-600 h-10 line-clamp-2">
+                    {prod.name}
+                  </h3>
+                  <div className="flex mb-2">
+                    <span className="text-[11px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 py-0.5 rounded-md uppercase">
+                      {prod.unit || "Unit"}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-400 mb-3">
+                    By{" "}
+                    <span className="text-green-600 font-bold">
+                      {prod.vendor}
+                    </span>
+                  </div>
+                </Link>
                 <div className="flex justify-between items-center mt-3">
-                  <div className="flex flex-col">
+                  <Link href={`/product/${prod.id}`} className="flex flex-col">
                     <div className="flex items-center gap-2">
                       <span className="text-green-600 font-bold text-lg">
                         {prod.price}
@@ -684,7 +314,7 @@ export default function Home() {
                         ({prod.discount})
                       </span>
                     </div>
-                  </div>
+                  </Link>
                   <button className="bg-green-100 text-green-600 hover:bg-green-600 hover:text-white px-3 py-2 rounded-lg transition-colors font-bold text-xs flex items-center gap-2">
                     Add <FiShoppingCart />
                   </button>
@@ -729,36 +359,35 @@ export default function Home() {
               {[
                 {
                   name: "Fresh Royal Gala Apple",
-                  price: "₹180",
-                  old: "₹220",
+                  price: "180",
+                  old: "220",
+                  unit: "1kg",
                   img: "https://www.bigbasket.com/media/uploads/p/l/40033819_9-apple-royal-gala-economy.jpg",
                   cat: "Fruits",
                   sold: 145,
                   total: 200,
                   badge: "18%",
                   badgeColor: "bg-green-400",
-                  rating: 4.7,
                 },
                 {
                   name: "Fresh Hybrid Tomato",
-                  price: "₹30",
-                  old: "₹40",
+                  price: "30",
+                  old: "40",
+                  unit: "1kg",
                   img: "https://www.bigbasket.com/media/uploads/p/l/10000201_15-tomato-hybrid.jpg",
                   cat: "Vegetables",
                   sold: 82,
                   total: 100,
                   badge: "25%",
                   badgeColor: "bg-red-400",
-                  extraBadge: "Fresh",
-                  extraColor: "bg-green-400",
-                  rating: 4.2,
                 },
                 {
-                  name: "Sony WH-CH520 Headphones",
-                  price: "₹3,990",
-                  old: "₹5,990",
+                  name: "Sony WH-CH520 Headlines",
+                  price: "3,990",
+                  old: "5,990",
+                  unit: "1 Pcs",
                   img: "https://m.media-amazon.com/images/I/41PA8xgXx4L._AC_UY436_FMwebp_QL65_.jpg",
-                  cat: "Audio",
+                  cat: "Electronics",
                   sold: 60,
                   total: 80,
                   badge: "33%",
@@ -766,16 +395,15 @@ export default function Home() {
                 },
                 {
                   name: "Milton ThermoSteel Flask",
-                  price: "₹845",
-                  old: "₹1,050",
+                  price: "845",
+                  old: "1,050",
+                  unit: "1 Pcs",
                   img: "https://m.media-amazon.com/images/I/41lTfXSregL._SY300_SX300_QL70_FMwebp_.jpg",
                   cat: "Household",
                   sold: 102,
                   total: 262,
                   badge: "19%",
                   badgeColor: "bg-green-400",
-                  extraBadge: "Hot",
-                  extraColor: "bg-green-400",
                 },
               ].map((prod, idx) => (
                 <div
@@ -809,29 +437,19 @@ export default function Home() {
                       {prod.name}
                     </h4>
 
-                    <div className="flex gap-0.5 text-yellow-400 text-[10px] mb-4">
-                      {[...Array(5)].map((_, i) => (
-                        <FiStar
-                          key={i}
-                          className={
-                            i < Math.floor(prod.rating)
-                              ? "fill-current"
-                              : "text-gray-200"
-                          }
-                        />
-                      ))}
-                      <span className="text-gray-400 ml-1">
-                        ({prod.rating})
+                    <div className="flex mb-4">
+                      <span className="text-[10px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 py-0.5 rounded-md uppercase">
+                        {prod.unit || "Unit"}
                       </span>
                     </div>
 
                     <div className="flex items-end gap-2 mb-4">
-                      <span className="text-green-600 font-bold text-xl leading-none">
-                        {prod.price}
+                      <span className="text-[#3BB77E] font-black text-xl leading-none">
+                        ₹{prod.price}
                       </span>
                       <div className="flex flex-col">
                         <span className="text-gray-300 text-[10px] font-bold line-through">
-                          {prod.old}
+                          ₹{prod.old}
                         </span>
                       </div>
                     </div>
