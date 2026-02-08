@@ -444,12 +444,24 @@ const shuffleArray = (array) => {
 };
 
 export default function Home() {
-  const shuffledProducts = shuffleArray(products);
-  const shuffledDeals = shuffleArray(dealsOfTheDay);
-  const shuffledTopSelling = shuffleArray(topSelling);
-  const shuffledTrending = shuffleArray(trending);
-  const shuffledRecentlyAdded = shuffleArray(recentlyAdded);
-  const shuffledTopRated = shuffleArray(topRated);
+  const [shuffledProducts, setShuffledProducts] = React.useState(products);
+  const [shuffledDeals, setShuffledDeals] = React.useState(dealsOfTheDay);
+  const [shuffledTopSelling, setShuffledTopSelling] =
+    React.useState(topSelling);
+  const [shuffledTrending, setShuffledTrending] = React.useState(trending);
+  const [shuffledRecentlyAdded, setShuffledRecentlyAdded] =
+    React.useState(recentlyAdded);
+  const [shuffledTopRated, setShuffledTopRated] = React.useState(topRated);
+
+  React.useEffect(() => {
+    // Only shuffle on the client after mounting
+    setShuffledProducts(shuffleArray(products));
+    setShuffledDeals(shuffleArray(dealsOfTheDay));
+    setShuffledTopSelling(shuffleArray(topSelling));
+    setShuffledTrending(shuffleArray(trending));
+    setShuffledRecentlyAdded(shuffleArray(recentlyAdded));
+    setShuffledTopRated(shuffleArray(topRated));
+  }, []);
 
   return (
     <>
@@ -462,7 +474,12 @@ export default function Home() {
               {Array(10)
                 .fill()
                 .map((_, i) => (
-                  <img key={i} src="/hero-banner.png" className="w-48 h-48" alt="" />
+                  <img
+                    key={i}
+                    src="/hero-banner.png"
+                    className="w-48 h-48"
+                    alt=""
+                  />
                 ))}
             </div>
           </div>
