@@ -3,8 +3,10 @@ const { Schema, model } = mongoose;
 
 const UserSchema = new Schema({
   name: { type: String, default: "Quickzy User" },
-  email: { type: String }, // Optional for quick-commerce
-  phone: { type: String, unique: true, required: true },
+  email: { type: String, unique: true },
+  emailVerified: { type: Date, default: null },
+  image: { type: String },
+  phone: { type: String }, // Made optional to avoid initial dummy number clashes
   // --- QUICKZY LOCATION SCHEMA TODO ---
   // The address object should be a nested Schema to ensure all coordinates are captured.
   // - text: For the UI display (e.g. "Apartment 4, Street X")

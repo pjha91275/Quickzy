@@ -1,65 +1,73 @@
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import connectDb from "@/db/connectDb";
-import User from "@/models/User";
+import GoogleProvider from "next-auth/providers/google";
+import EmailProvider from "next-auth/providers/email";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import clientPromise from "@/db/mongodbClient";
 
-export const authoptions = NextAuth({
+export const authOptions = {
+  adapter: MongoDBAdapter(clientPromise),
   providers: [
-    CredentialsProvider({
-      name: "credentials",
-      credentials: {
-        phone: { label: "Phone", type: "text" },
-      },
-      async authorize(credentials) {
-        await connectDb();
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID,
+      clientSecret: process.env.GOOGLE_SECRET,
+      allowDangerousEmailAccountLinking: true, // Merges Google and Email accounts automatically
+    }),
+    EmailProvider({
+      async sendVerificationRequest({ identifier: email, url, provider }) {
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          },
+          body: JSON.stringify({
+            from: process.env.EMAIL_FROM || "onboarding@resend.dev",
+            to: email,
+            subject: "Sign in to Quickzy",
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e1e1e1; rounded: 15px;">
+                <h1 style="color: #3BB77E; text-align: center;">Welcome to Quickzy</h1>
+                <p style="font-size: 16px; color: #253D4E;">Click the button below to sign in to your accounts. Fast, fresh, and delivered in a zap!</p>
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${url}" style="background-color: #3BB77E; color: white; padding: 15px 25px; text-decoration: none; border-radius: 10px; font-weight: bold; font-size: 18px;">Sign in to Quickzy</a>
+                </div>
+                <p style="font-size: 12px; color: #999; text-align: center;">If you did not request this email, you can safely ignore it.</p>
+              </div>
+            `,
+          }),
+        });
 
-        // With Firebase, verification happened in the AuthModal (Frontend).
-        // This function is only called if the Firebase verification passed.
-        const phone = credentials.phone;
-
-        // 1. Find the user
-        let user = await User.findOne({ phone });
-
-        // 2. If not found, create a new record (Sign Up)
-        if (!user) {
-          user = await User.create({
-            phone: phone,
-            name: "Quickzy User", // Default name
-            address: { text: "", lat: 0, lng: 0, zone: "" }, // Empty structure
-            cart: [],
-            orders: [],
-          });
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(JSON.stringify(error));
         }
-
-        return user;
       },
     }),
   ],
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
     async session({ session, token }) {
-      // Sync DB data to the session so the UI can access it
-      const dbUser = await User.findOne({
-        phone: session.user.phone || session.user.email,
-      });
-      if (dbUser) {
-        session.user.id = dbUser._id;
-        session.user.name = dbUser.name;
-        session.user.phone = dbUser.phone;
-        session.user.address = dbUser.address;
+      if (token) {
+        session.user.id = token.sub;
       }
       return session;
     },
     async jwt({ token, user }) {
       if (user) {
-        token.phone = user.phone;
+        token.sub = user.id;
       }
       return token;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
   pages: {
-    signIn: "/", // Redirect to home if there's an issue
+    signIn: "/", // We use our modal on the home page
+    error: "/", // Redirect back to home on error
   },
-});
+  secret: process.env.NEXTAUTH_SECRET,
+};
 
-export { authoptions as GET, authoptions as POST };
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };

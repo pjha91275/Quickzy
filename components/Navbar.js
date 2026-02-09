@@ -13,25 +13,29 @@ import {
   FiX,
 } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
+import { useSession, signOut } from "next-auth/react";
 
 import AuthModal from "./AuthModal";
 
 const Navbar = () => {
+  const { data: session } = useSession();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const isLoggedIn = !!session;
+  const userInitials = session?.user?.name
+    ? session.user.name.charAt(0)
+    : session?.user?.email?.charAt(0) || "U";
 
   return (
     <>
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onLoginSuccess={() => setIsLoggedIn(true)}
+        onLoginSuccess={() => setIsAuthModalOpen(false)}
       />
       <header className="w-full bg-white border-b relative font-sans z-50">
-        {/* Main Header */}
         <div className="container mx-auto p-4 flex justify-between items-center gap-4 lg:gap-8">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0 group">
             <div className="flex flex-col">
               <div className="flex items-center leading-none">
@@ -50,7 +54,6 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Search - Hidden on small mobile, simplified on small tablet */}
           <div className="hidden sm:flex flex-1 max-w-2xl border-2 border-[#BCE3C9] rounded-md items-center h-11 relative">
             <div className="px-4 border-r hidden lg:block text-sm font-bold text-gray-700 whitespace-nowrap">
               All Categories <IoIosArrowDown className="inline ml-1" />
@@ -65,7 +68,6 @@ const Navbar = () => {
             </button>
           </div>
 
-          {/* Actions */}
           <div className="flex gap-3 md:gap-5 lg:gap-6 items-center text-[#253D4E] shrink-0">
             <div className="hidden lg:flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group">
               <div className="relative">
@@ -104,7 +106,6 @@ const Navbar = () => {
               </span>
             </Link>
 
-            {/* User Account / Login */}
             <div className="relative group/account">
               {!isLoggedIn ? (
                 <button
@@ -118,11 +119,20 @@ const Navbar = () => {
                 </button>
               ) : (
                 <div className="flex items-center gap-1 cursor-pointer group">
-                  <div className="w-8 h-8 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-bold text-xs uppercase">
-                    JD
+                  <div className="w-8 h-8 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-xs uppercase overflow-hidden border border-[#3BB77E]/20">
+                    {session.user.image ? (
+                      <img
+                        src={session.user.image}
+                        alt="User"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      userInitials
+                    )}
                   </div>
-                  <span className="hidden sm:block text-sm font-black text-[#253D4E] group-hover:text-[#3BB77E]">
-                    My Account <IoIosArrowDown className="inline text-[10px]" />
+                  <span className="hidden sm:block text-sm font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[100px]">
+                    {session.user.name || "My Account"}{" "}
+                    <IoIosArrowDown className="inline text-[10px]" />
                   </span>
                 </div>
               )}
@@ -135,19 +145,19 @@ const Navbar = () => {
                         href="/profile"
                         className="text-sm font-bold text-gray-600 hover:text-[#3BB77E] flex items-center gap-2 border-b pb-2"
                       >
-                        <FiUser className="text-lg" /> My Profile
+                        <FiUser className="text-lg" /> Profile Settings
                       </Link>
                       <Link
                         href="/orders"
                         className="text-sm font-bold text-gray-600 hover:text-[#3BB77E] flex items-center gap-2 border-b pb-2"
                       >
-                        <FiHeart className="text-lg" /> Orders
+                        <FiHeart className="text-lg" /> Order History
                       </Link>
                       <button
-                        onClick={() => setIsLoggedIn(false)}
-                        className="text-sm font-bold text-red-500 hover:text-red-600 flex items-center gap-2 pt-1 transition-colors"
+                        onClick={() => signOut()}
+                        className="text-sm font-bold text-red-500 hover:text-red-600 flex items-center gap-2 pt-1 transition-colors text-left"
                       >
-                        <FiX className="text-lg" /> Logout
+                        <FiX className="text-lg" /> Sign Out
                       </button>
                     </>
                   ) : (
@@ -155,14 +165,13 @@ const Navbar = () => {
                       onClick={() => setIsAuthModalOpen(true)}
                       className="text-xs font-bold text-[#3BB77E] hover:underline"
                     >
-                      Login / Register
+                      Sign In / Join Now
                     </button>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Hamburger (Mobile/Tablet) */}
             <button
               className="lg:hidden p-2 text-2xl text-[#253D4E]"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -172,7 +181,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Bottom Nav (Desktop) */}
+        {/* Bottom Nav Section */}
         <div className="border-t hidden lg:block bg-white">
           <div className="container mx-auto px-4 flex justify-between items-center h-16">
             <div className="flex gap-10 items-center h-full">
@@ -180,7 +189,6 @@ const Navbar = () => {
                 <FiGrid className="text-lg" /> Browse All Categories{" "}
                 <IoIosArrowDown />
               </button>
-
               <nav className="flex gap-8 font-bold text-[#253D4E] text-sm">
                 <Link
                   href="/"
@@ -226,7 +234,6 @@ const Navbar = () => {
                 </Link>
               </nav>
             </div>
-
             <div className="flex items-center gap-3">
               <FiHeadphones className="text-4xl text-[#253D4E]" />
               <div className="text-right">
@@ -241,21 +248,23 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Menu Backdrop */}
+        {/* Mobile Logic */}
         {isMenuOpen && (
           <div
             className="lg:hidden fixed inset-0 bg-black/50 z-40 transition-opacity"
             onClick={() => setIsMenuOpen(false)}
           ></div>
         )}
-
-        {/* Mobile Drawer */}
         <div
           className={`lg:hidden fixed top-0 left-0 h-full w-[280px] bg-white z-50 transform transition-transform duration-300 shadow-2xl ${isMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
         >
           <div className="p-6 h-full flex flex-col">
             <div className="flex justify-between items-center mb-10 pb-4 border-b">
-              <Link href="/" className="flex items-center gap-2">
+              <Link
+                href="/"
+                className="flex items-center gap-2"
+                onClick={() => setIsMenuOpen(false)}
+              >
                 <img
                   src="/logo.png"
                   alt="Logo"
@@ -272,18 +281,6 @@ const Navbar = () => {
                 <FiX />
               </button>
             </div>
-
-            <div className="mb-8">
-              <div className="flex border rounded-md p-2 bg-gray-50 focus-within:border-[#3BB77E] transition-colors">
-                <input
-                  type="text"
-                  placeholder="Search for items..."
-                  className="bg-transparent flex-1 outline-none text-sm px-2"
-                />
-                <FiSearch className="text-gray-400" />
-              </div>
-            </div>
-
             <nav className="flex flex-col gap-5 font-bold text-[#253D4E] overflow-y-auto flex-1 pb-10">
               <Link
                 href="/"
@@ -295,9 +292,9 @@ const Navbar = () => {
               <Link
                 href="/shop"
                 onClick={() => setIsMenuOpen(false)}
-                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors flex justify-between items-center"
+                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
               >
-                Shop <IoIosArrowDown className="text-xs" />
+                Shop
               </Link>
               <Link
                 href="/vendors"
@@ -320,11 +317,10 @@ const Navbar = () => {
               >
                 Contact
               </Link>
-
               <div className="mt-auto space-y-6 pt-10">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full border flex items-center justify-center text-[#3BB77E]">
-                    <FiHeadphones className="text-xl" />
+                    <FiHeadphones />
                   </div>
                   <div>
                     <p className="font-black text-[#3BB77E] leading-none">
@@ -334,17 +330,6 @@ const Navbar = () => {
                       24/7 Delivery Support
                     </p>
                   </div>
-                </div>
-                <div className="flex gap-4 text-[#253D4E] text-xl">
-                  <Link href="#" className="hover:text-[#3BB77E]">
-                    <FiUser />
-                  </Link>
-                  <Link href="#" className="hover:text-[#3BB77E]">
-                    <FiHeart />
-                  </Link>
-                  <Link href="/cart" className="hover:text-[#3BB77E]">
-                    <FiShoppingCart />
-                  </Link>
                 </div>
               </div>
             </nav>
