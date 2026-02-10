@@ -137,25 +137,33 @@ const Navbar = () => {
                 </div>
               )}
 
-              <div className="hidden absolute top-full right-0 mt-4 w-48 bg-white border rounded-xl shadow-xl p-4 z-50 group-hover/account:block animate-in fade-in slide-in-from-top-2">
-                <div className="flex flex-col gap-3">
+              <div className="hidden absolute top-full right-0 w-52 pt-4 z-50 group-hover/account:block animate-in fade-in slide-in-from-top-1">
+                <div className="bg-white border border-gray-100 rounded-2xl shadow-2xl p-5 flex flex-col gap-3">
                   {isLoggedIn ? (
                     <>
+                      <div className="pb-3 border-b mb-1">
+                        <p className="text-[10px] text-[#3BB77E] font-black uppercase tracking-widest mb-1">
+                          Welcome
+                        </p>
+                        <p className="text-sm font-black text-[#253D4E] truncate">
+                          {session.user.name || session.user.email}
+                        </p>
+                      </div>
                       <Link
                         href="/profile"
-                        className="text-sm font-bold text-gray-600 hover:text-[#3BB77E] flex items-center gap-2 border-b pb-2"
+                        className="text-sm font-bold text-gray-600 hover:text-[#3BB77E] flex items-center gap-2 transition-colors"
                       >
                         <FiUser className="text-lg" /> Profile Settings
                       </Link>
                       <Link
                         href="/orders"
-                        className="text-sm font-bold text-gray-600 hover:text-[#3BB77E] flex items-center gap-2 border-b pb-2"
+                        className="text-sm font-bold text-gray-600 hover:text-[#3BB77E] flex items-center gap-2 transition-colors"
                       >
                         <FiHeart className="text-lg" /> Order History
                       </Link>
                       <button
                         onClick={() => signOut()}
-                        className="text-sm font-bold text-red-500 hover:text-red-600 flex items-center gap-2 pt-1 transition-colors text-left"
+                        className="text-sm font-bold text-red-500 hover:text-red-700 flex items-center gap-2 pt-2 border-t mt-1 transition-colors text-left"
                       >
                         <FiX className="text-lg" /> Sign Out
                       </button>

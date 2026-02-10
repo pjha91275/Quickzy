@@ -7,11 +7,10 @@ const UserSchema = new Schema({
   emailVerified: { type: Date, default: null },
   image: { type: String },
   phone: { type: String }, // Made optional to avoid initial dummy number clashes
-  // --- QUICKZY LOCATION SCHEMA TODO ---
-  // The address object should be a nested Schema to ensure all coordinates are captured.
-  // - text: For the UI display (e.g. "Apartment 4, Street X")
-  // - lat/lng: Numbers for the delivery map
-  // - tag: String enum ["Home", "Work", "Other"]
+  // --- QUICKZY LOCATION SCHEMA INSTRUCTIONS ---
+  // text: Stores the human-readable address from LocationIQ (e.g. "Mumbai Central, Sector 2")
+  // lat/lng: Float values for precise delivery partner mapping
+  // zone: Optional field to group delivery areas (e.g. "Downtown", "Suburbs")
   address: {
     text: { type: String, default: "" },
     lat: { type: Number, default: 0 },

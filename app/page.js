@@ -2,77 +2,11 @@
 import React from "react";
 import { FiArrowRight, FiShoppingCart } from "react-icons/fi";
 import Link from "next/link";
-import { allProducts as products } from "@/data/products";
-
-const categories = [
-  {
-    name: "Milk & Dairy",
-    img: "https://www.jiomart.com/images/product/original/494271401/heritage-golden-cow-milk-1-l-pouch-product-images-o494271401-p610079697-0-202410071813.jpg?im=Resize=(420,420)",
-    count: 5,
-    bg: "bg-blue-50",
-  },
-  {
-    name: "Fruits",
-    img: "https://m.media-amazon.com/images/I/51fWm14UXiL._AC_UL640_FMwebp_QL65_.jpg",
-    count: 5,
-    bg: "bg-orange-50",
-  },
-  {
-    name: "Tea & Coffee",
-    img: "https://m.media-amazon.com/images/I/41O76L+6oDL._SY300_SX300_QL70_FMwebp_.jpg",
-    count: 3,
-    bg: "bg-amber-50",
-  },
-  {
-    name: "Snacks",
-    img: "https://m.media-amazon.com/images/I/41VxPV-rWsL._SY300_SX300_QL70_FMwebp_.jpg",
-    count: 6,
-    bg: "bg-yellow-50",
-  },
-  {
-    name: "Personal Care",
-    img: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcQ0W4YGyIeHyvdg7KaIXIzHbTxcVT4nwviIH2JrzF0nDK26Ope46NqSr5c_2GsGAAvWnjp2-e5QrNNWoVVTGix1xBYUZzs991zfyghM9kwJiXCnMB-ojsimEg",
-    count: 3,
-    bg: "bg-pink-50",
-  },
-  {
-    name: "Cleaning Essentials",
-    img: "https://m.media-amazon.com/images/I/616ZqasKGuL.jpg",
-    count: 5,
-    bg: "bg-purple-50",
-  },
-  {
-    name: "Beverages",
-    img: "https://www.bigbasket.com/media/uploads/p/l/251023_11-coca-cola-soft-drink.jpg",
-    count: 4,
-    bg: "bg-teal-50",
-  },
-  {
-    name: "Vegetables",
-    img: "https://www.bigbasket.com/media/uploads/p/l/10000069_20-capsicum-green.jpg",
-    count: 5,
-    bg: "bg-green-50",
-  },
-  {
-    name: "Electronics",
-    img: "https://m.media-amazon.com/images/I/61S9aVnRZDL.jpg",
-    count: 6,
-    bg: "bg-orange-100",
-  },
-  {
-    name: "Stationery",
-    img: "https://www.bigbasket.com/media/uploads/p/l/1212080_1-classmate-notebook-a4-ruled.jpg",
-    count: 3,
-    bg: "bg-red-50",
-  },
-];
-
-// Product lists are now derived from the main 'products' import
-const dealsOfTheDay = products.slice(0, 4);
-const topSelling = products.slice(4, 7);
-const trending = products.slice(7, 10);
-const recentlyAdded = products.slice(10, 13);
-const topRated = products.slice(13, 16);
+import {
+  allProducts as products,
+  categoriesWithCount as categories,
+  promotions,
+} from "./shop/page";
 
 // Utility for randomizing product display
 const shuffleArray = (array) => {
@@ -80,59 +14,204 @@ const shuffleArray = (array) => {
 };
 
 export default function Home() {
-  const [shuffledProducts, setShuffledProducts] = React.useState(products);
-  const [shuffledDeals, setShuffledDeals] = React.useState(dealsOfTheDay);
-  const [shuffledTopSelling, setShuffledTopSelling] =
-    React.useState(topSelling);
-  const [shuffledTrending, setShuffledTrending] = React.useState(trending);
-  const [shuffledRecentlyAdded, setShuffledRecentlyAdded] =
-    React.useState(recentlyAdded);
-  const [shuffledTopRated, setShuffledTopRated] = React.useState(topRated);
+  // Derived state for various sections
+  const [shuffledProducts, setShuffledProducts] = React.useState([]);
+  const [allPopular, setAllPopular] = React.useState([]); // Store all 15 popular items
+  const [activePopularFilter, setActivePopularFilter] = React.useState("All");
+
+  const [shuffledDeals, setShuffledDeals] = React.useState([]);
+  const [shuffledTopSelling, setShuffledTopSelling] = React.useState([]);
+  const [shuffledTrending, setShuffledTrending] = React.useState([]);
+  const [shuffledRecentlyAdded, setShuffledRecentlyAdded] = React.useState([]);
+  const [shuffledTopRated, setShuffledTopRated] = React.useState([]);
+  const [shuffledDailyBest, setShuffledDailyBest] = React.useState([]);
+
+  const [currentSlide, setCurrentSlide] = React.useState(0);
+
+  const banners = [
+    {
+      title: (
+        <>
+          Fresh Grocery <br />
+          <span className="text-[#3BB77E]">Delivered in 10 Mins</span>
+        </>
+      ),
+      subtitle: "Save up to 50% on your first order",
+      image: "/hero-banner-1.png",
+      tag: "Quickzy: Fresh. Fast. Delivered.",
+      bgColor: "bg-[#DEF9EC]",
+      btnText: "Order Now",
+    },
+    {
+      title: (
+        <>
+          Pure Dairy <br />
+          <span className="text-[#3BB77E]">Morning Freshness</span>
+        </>
+      ),
+      subtitle: "Get fresh milk and dairy delivered daily",
+      image: "/hero-banner-2.png",
+      tag: "Quickzy: Fresh Dairy",
+      bgColor: "bg-blue-50",
+      btnText: "Shop Dairy",
+    },
+    {
+      title: (
+        <>
+          Tropical Fruits <br />
+          <span className="text-[#3BB77E]">Juicy & Healthy</span>
+        </>
+      ),
+      subtitle: "Handpicked premium quality fruits for you",
+      image: "/hero-banner-3.png",
+      tag: "Quickzy: Fresh Fruits",
+      bgColor: "bg-orange-50",
+      btnText: "Browse Fruits",
+    },
+    {
+      title: (
+        <>
+          Latest Gadgets <br />
+          <span className="text-[#3BB77E]">& Wearables</span>
+        </>
+      ),
+      subtitle: "Experience technology at your doorstep",
+      image: "/hero-banner-4.png",
+      tag: "Quickzy: Electronics",
+      bgColor: "bg-pink-50",
+      btnText: "View Gadgets",
+    },
+    {
+      title: (
+        <>
+          Home Cleaning <br />
+          <span className="text-[#3BB77E]">Essentials</span>
+        </>
+      ),
+      subtitle: "Everything you need for a sparkling home",
+      image: "/hero-banner-5.png",
+      tag: "Quickzy: Household",
+      bgColor: "bg-purple-50",
+      btnText: "Clean Now",
+    },
+  ];
 
   React.useEffect(() => {
-    // Only shuffle on the client after mounting
-    setShuffledProducts(shuffleArray(products));
-    setShuffledDeals(shuffleArray(dealsOfTheDay));
-    setShuffledTopSelling(shuffleArray(topSelling));
-    setShuffledTrending(shuffleArray(trending));
-    setShuffledRecentlyAdded(shuffleArray(recentlyAdded));
-    setShuffledTopRated(shuffleArray(topRated));
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % banners.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  React.useEffect(() => {
+    // 1. Pick at least one from each category for Popular Products
+    const itemPerCategory = categories
+      .map((cat) => {
+        let catProducts = [];
+        if (cat.name === "Milk & Dairy") {
+          catProducts = products.filter((p) => p.category === "Dairy");
+        } else if (cat.name === "Cleaning Essentials") {
+          catProducts = products.filter((p) => p.category === "Household");
+        } else if (cat.name === "Tea & Coffee") {
+          catProducts = products.filter(
+            (p) =>
+              p.name.toLowerCase().includes("coffee") ||
+              p.name.toLowerCase().includes("tea") ||
+              p.name.toLowerCase().includes("nescafe"),
+          );
+        } else if (cat.name === "Personal Care") {
+          catProducts = products.filter((p) =>
+            ["Personal Care", "Beauty", "Grooming"].includes(p.category),
+          );
+        } else if (cat.name === "Electronics") {
+          catProducts = products.filter((p) =>
+            ["Electronics", "Gadgets"].includes(p.category),
+          );
+        } else {
+          catProducts = products.filter((p) => p.category === cat.name);
+        }
+        return shuffleArray(catProducts)[0];
+      })
+      .filter(Boolean);
+
+    // Filter out items already picked, then shuffle the rest
+    const remainingProducts = shuffleArray(
+      products.filter(
+        (p) => !itemPerCategory.find((picked) => picked.id === p.id),
+      ),
+    );
+
+    // Fill until 15 items for Popular Products
+    const fullPopular = [...itemPerCategory, ...remainingProducts].slice(0, 15);
+    const finalPopular = shuffleArray(fullPopular);
+    setAllPopular(finalPopular);
+    setShuffledProducts(finalPopular);
+
+    // 2. Derive other sections from remaining pool to minimize repetition
+    const pool = shuffleArray(
+      products.filter((p) => !fullPopular.find((pop) => pop.id === p.id)),
+    );
+
+    // Daily Best Sells: 4 items
+    const dailyBestBase = pool.slice(0, 4).map((p) => ({
+      ...p,
+      sold: Math.floor(Math.random() * 100) + 50,
+      total: 200,
+      badge: p.discount || "Hot",
+      badgeColor: "bg-green-400",
+    }));
+    setShuffledDailyBest(dailyBestBase);
+
+    // Deals of the Day: 4 items
+    setShuffledDeals(
+      pool.slice(4, 8).map((p) => ({
+        ...p,
+        bg: "bg-gray-50",
+      })),
+    );
+
+    // Column lists: 3 items each
+    setShuffledTopSelling(pool.slice(8, 11));
+    setShuffledTrending(pool.slice(11, 14));
+    setShuffledRecentlyAdded(pool.slice(14, 17));
+    setShuffledTopRated(pool.slice(17, 20)); // Used for Customer Favorites
   }, []);
 
   return (
     <>
       <main className="container mx-auto px-4 py-8 space-y-12">
         {/* --- Hero Slider --- */}
-        <section className="bg-[#DEF9EC] rounded-3xl overflow-hidden relative h-[420px] flex items-center px-8 md:px-16">
+        <section
+          className={`${banners[currentSlide].bgColor} rounded-3xl overflow-hidden relative h-[450px] flex items-center px-8 md:px-16 transition-colors duration-700`}
+        >
           {/* Custom refined background with subtle logo pattern */}
-          <div className="absolute inset-0 bg-[#DEF9EC]">
+          <div className="absolute inset-0 transition-opacity duration-700 opacity-100">
             <div className="absolute inset-0 opacity-5 rotate-12 flex flex-wrap gap-20 p-10 pointer-events-none select-none grayscale contrast-200">
               {Array(10)
                 .fill()
                 .map((_, i) => (
                   <img
                     key={i}
-                    src="/hero-banner.png"
+                    src="/hero-banner-1.png"
                     className="w-48 h-48"
                     alt=""
                   />
                 ))}
             </div>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-[#DEF9EC] via-[#DEF9EC]/40 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"></div>
 
-          <div className="relative z-10 max-w-xl space-y-4">
+          <div className="relative z-10 max-w-xl space-y-4 animate-fadeIn">
             <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-sm mb-4">
               <img src="/logo.png" className="w-4 h-4" alt="" />
-              Quickzy: Fresh. Fast. Delivered.
+              {banners[currentSlide].tag}
             </div>
 
             <h1 className="text-4xl md:text-6xl font-black text-[#253D4E] leading-[1.1]">
-              Fresh Grocery <br />
-              <span className="text-[#3BB77E]">Delivered in 10 Mins</span>
+              {banners[currentSlide].title}
             </h1>
             <p className="text-gray-500 font-bold text-lg md:text-xl">
-              Save up to 50% on your first order
+              {banners[currentSlide].subtitle}
             </p>
             <div className="bg-white rounded-full p-2 flex max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
               <input
@@ -141,37 +220,58 @@ export default function Home() {
                 className="flex-1 px-5 outline-none text-gray-700 bg-transparent font-medium"
               />
               <button className="bg-[#3BB77E] text-white rounded-full px-8 md:px-10 py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg hover:shadow-[#3BB77E]/30">
-                Order Now
+                {banners[currentSlide].btnText}
               </button>
             </div>
+          </div>
+
+          {/* Floating Product Image for Carousel */}
+          <div className="absolute right-0 bottom-0 top-0 w-1/2 hidden md:flex items-center justify-center p-12">
+            <div className="relative w-full h-full flex items-center justify-center">
+              <img
+                key={currentSlide}
+                src={banners[currentSlide].image}
+                alt="banner-product"
+                className="max-h-full max-w-full object-contain animate-slideInRight"
+              />
+            </div>
+          </div>
+
+          {/* Dots Navigation */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+            {banners.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentSlide(i)}
+                className={`h-2.5 rounded-full transition-all duration-300 ${currentSlide === i ? "w-8 bg-[#3BB77E]" : "w-2.5 bg-gray-300 hover:bg-gray-400"}`}
+              />
+            ))}
           </div>
         </section>
 
         {/* --- Featured Categories --- */}
         <section>
-          <div className="flex items-center gap-10 mb-6">
+          <div className="flex justify-between items-center gap-10 mb-6">
             <h2 className="text-2xl font-bold text-gray-800">
               Featured Categories
             </h2>
-            <div className="flex gap-4 text-sm font-semibold text-gray-600">
-              <span className="cursor-pointer hover:text-green-600">
-                Electronics
-              </span>
-              <span className="cursor-pointer hover:text-green-600">
-                Dairies
-              </span>
-              <span className="cursor-pointer hover:text-green-600">
-                Bakery
-              </span>
-              <span className="cursor-pointer hover:text-green-600">
-                Snacks
-              </span>
+            <div className="flex gap-4 text-sm font-semibold text-gray-600 overflow-x-auto no-scrollbar pb-2">
+              {categories.map((cat, i) => (
+                <Link
+                  key={i}
+                  href={`/shop?category=${encodeURIComponent(cat.name)}`}
+                  className="cursor-pointer hover:text-green-600 whitespace-nowrap"
+                >
+                  {cat.name}
+                </Link>
+              ))}
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-10 gap-4">
             {categories.map((cat, idx) => (
-              <div
+              <Link
                 key={idx}
+                href={`/shop?category=${encodeURIComponent(cat.name)}`}
                 className={`${cat.bg} hover:shadow-lg transition-shadow border rounded-lg p-5 flex flex-col items-center justify-center text-center cursor-pointer group`}
               >
                 <div className="w-16 h-16 mb-4 flex items-center justify-center overflow-hidden">
@@ -185,7 +285,7 @@ export default function Home() {
                   {cat.name}
                 </h6>
                 <p className="text-[12px] text-gray-400">{cat.count} items</p>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
@@ -197,13 +297,16 @@ export default function Home() {
               <h4 className="font-bold text-xl mb-4 text-gray-800 leading-tight">
                 Premium Fresh Quality Products
               </h4>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors">
+              <Link
+                href="/shop?category=Fruits"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition-colors"
+              >
                 Shop Now <FiArrowRight />
-              </button>
+              </Link>
             </div>
-            <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
+            <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform text-right">
               <img
-                src="https://m.media-amazon.com/images/I/51fWm14UXiL._AC_UL640_FMwebp_QL65_.jpg"
+                src={categories.find((c) => c.name === "Fruits")?.img}
                 alt="fruits"
                 className="w-full h-full object-contain"
               />
@@ -214,13 +317,16 @@ export default function Home() {
               <h4 className="font-bold text-xl mb-4 text-gray-800 leading-tight">
                 Latest Gadgets & Hearables
               </h4>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors">
+              <Link
+                href="/shop?category=Electronics"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition-colors"
+              >
                 Shop Now <FiArrowRight />
-              </button>
+              </Link>
             </div>
             <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
               <img
-                src="https://m.media-amazon.com/images/I/313U7Xx9b4L._SY300_SX300_QL70_FMwebp_.jpg"
+                src={categories.find((c) => c.name === "Electronics")?.img}
                 alt="earphones"
                 className="w-full h-full object-contain"
               />
@@ -231,13 +337,18 @@ export default function Home() {
               <h4 className="font-bold text-xl mb-4 text-gray-800 leading-tight">
                 Daily Household Essentials
               </h4>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold flex items-center gap-1 transition-colors">
+              <Link
+                href="/shop?category=Cleaning%20Essentials"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition-colors"
+              >
                 Shop Now <FiArrowRight />
-              </button>
+              </Link>
             </div>
             <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
               <img
-                src="https://m.media-amazon.com/images/I/616ZqasKGuL.jpg"
+                src={
+                  categories.find((c) => c.name === "Cleaning Essentials")?.img
+                }
                 alt="cleaning"
                 className="w-full h-full object-contain"
               />
@@ -252,12 +363,55 @@ export default function Home() {
               Popular Products
             </h2>
             <div className="flex gap-4 text-sm font-semibold text-gray-600 hidden md:flex">
-              <span className="text-green-600 underline">All</span>
-              <span>Electronics</span>
-              <span>Dairies</span>
-              <span>Personal Care</span>
-              <span>Snacks</span>
-              <span>Stationery</span>
+              {[
+                "All",
+                "Electronics",
+                "Milk & Dairy",
+                "Personal Care",
+                "Snacks",
+                "Vegetables",
+              ].map((cat) => (
+                <span
+                  key={cat}
+                  onClick={() => {
+                    setActivePopularFilter(cat);
+                    if (cat === "All") {
+                      setShuffledProducts(allPopular);
+                    } else {
+                      const filtered = products.filter((p) => {
+                        if (cat === "Milk & Dairy")
+                          return p.category === "Dairy";
+                        if (cat === "Electronics")
+                          return ["Electronics", "Gadgets"].includes(
+                            p.category,
+                          );
+                        if (cat === "Personal Care")
+                          return [
+                            "Personal Care",
+                            "Beauty",
+                            "Grooming",
+                          ].includes(p.category);
+                        if (cat === "Cleaning Essentials")
+                          return (
+                            p.category === "Household" ||
+                            p.category === "Cleaning Essentials"
+                          );
+                        if (cat === "Tea & Coffee")
+                          return (
+                            p.name.toLowerCase().includes("coffee") ||
+                            p.name.toLowerCase().includes("tea") ||
+                            p.name.toLowerCase().includes("nescafe")
+                          );
+                        return p.category === cat;
+                      });
+                      setShuffledProducts(shuffleArray(filtered));
+                    }
+                  }}
+                  className={`cursor-pointer transition-all ${activePopularFilter === cat ? "text-green-600 underline underline-offset-4" : "hover:text-green-600"}`}
+                >
+                  {cat}
+                </span>
+              ))}
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
@@ -303,12 +457,12 @@ export default function Home() {
                   <Link href={`/product/${prod.id}`} className="flex flex-col">
                     <div className="flex items-center gap-2">
                       <span className="text-green-600 font-bold text-lg">
-                        {prod.price}
+                        ₹{prod.price}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-gray-400 text-xs line-through">
-                        {prod.oldPrice}
+                        ₹{prod.oldPrice}
                       </span>
                       <span className="text-green-600 text-xs font-bold">
                         ({prod.discount})
@@ -339,8 +493,7 @@ export default function Home() {
             <div
               className="lg:w-1/4 h-[520px] bg-cover bg-center rounded-2xl p-10 flex flex-col justify-start relative overflow-hidden shadow-md border"
               style={{
-                backgroundImage:
-                  "url('https://m.media-amazon.com/images/I/413Z3Mfz-hL._SY300_SX300_QL70_FMwebp_.jpg')",
+                backgroundImage: `url('${promotions.petFoodBanner}')`,
               }}
             >
               <div className="relative z-20">
@@ -356,56 +509,7 @@ export default function Home() {
 
             {/* Cards Grid */}
             <div className="lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                {
-                  name: "Fresh Royal Gala Apple",
-                  price: "180",
-                  old: "220",
-                  unit: "1kg",
-                  img: "https://www.bigbasket.com/media/uploads/p/l/40033819_9-apple-royal-gala-economy.jpg",
-                  cat: "Fruits",
-                  sold: 145,
-                  total: 200,
-                  badge: "18%",
-                  badgeColor: "bg-green-400",
-                },
-                {
-                  name: "Fresh Hybrid Tomato",
-                  price: "30",
-                  old: "40",
-                  unit: "1kg",
-                  img: "https://www.bigbasket.com/media/uploads/p/l/10000201_15-tomato-hybrid.jpg",
-                  cat: "Vegetables",
-                  sold: 82,
-                  total: 100,
-                  badge: "25%",
-                  badgeColor: "bg-red-400",
-                },
-                {
-                  name: "Sony WH-CH520 Headlines",
-                  price: "3,990",
-                  old: "5,990",
-                  unit: "1 Pcs",
-                  img: "https://m.media-amazon.com/images/I/41PA8xgXx4L._AC_UY436_FMwebp_QL65_.jpg",
-                  cat: "Electronics",
-                  sold: 60,
-                  total: 80,
-                  badge: "33%",
-                  badgeColor: "bg-green-400",
-                },
-                {
-                  name: "Milton ThermoSteel Flask",
-                  price: "845",
-                  old: "1,050",
-                  unit: "1 Pcs",
-                  img: "https://m.media-amazon.com/images/I/41lTfXSregL._SY300_SX300_QL70_FMwebp_.jpg",
-                  cat: "Household",
-                  sold: 102,
-                  total: 262,
-                  badge: "19%",
-                  badgeColor: "bg-green-400",
-                },
-              ].map((prod, idx) => (
+              {shuffledDailyBest.map((prod, idx) => (
                 <div
                   key={idx}
                   className="bg-white border rounded-2xl p-6 relative group hover:shadow-xl transition-all h-full flex flex-col"
@@ -420,22 +524,27 @@ export default function Home() {
                   </div>
 
                   {/* Image */}
-                  <div className="h-48 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform overflow-hidden p-6">
+                  <Link
+                    href={`/product/${prod.id}`}
+                    className="h-48 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform overflow-hidden p-6 cursor-pointer"
+                  >
                     <img
                       src={prod.img}
                       alt={prod.name}
                       className="w-full h-full object-contain"
                     />
-                  </div>
+                  </Link>
 
                   {/* Info */}
                   <div className="flex-grow">
                     <div className="text-[10px] text-gray-400 mb-2 uppercase font-bold tracking-wider">
-                      {prod.cat}
+                      {prod.category}
                     </div>
-                    <h4 className="font-bold text-gray-800 text-sm mb-3 line-clamp-2 hover:text-green-600 cursor-pointer leading-tight">
-                      {prod.name}
-                    </h4>
+                    <Link href={`/product/${prod.id}`}>
+                      <h4 className="font-bold text-gray-800 text-sm mb-3 line-clamp-2 hover:text-green-600 cursor-pointer leading-tight">
+                        {prod.name}
+                      </h4>
+                    </Link>
 
                     <div className="flex mb-4">
                       <span className="text-[10px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 py-0.5 rounded-md uppercase">
@@ -449,7 +558,7 @@ export default function Home() {
                       </span>
                       <div className="flex flex-col">
                         <span className="text-gray-300 text-[10px] font-bold line-through">
-                          ₹{prod.old}
+                          ₹{prod.oldPrice}
                         </span>
                       </div>
                     </div>
@@ -537,10 +646,10 @@ export default function Home() {
                   <div className="flex justify-between items-center">
                     <div className="flex flex-col">
                       <span className="text-green-600 font-bold text-lg leading-tight">
-                        {deal.price}
+                        ₹{deal.price}
                       </span>
                       <span className="text-gray-400 text-xs line-through">
-                        {deal.oldPrice}
+                        ₹{deal.oldPrice}
                       </span>
                     </div>
                     <button className="bg-green-100 text-green-600 hover:bg-green-600 hover:text-white px-3 py-1.5 rounded-md transition-colors font-bold text-xs flex items-center gap-1">
@@ -610,9 +719,9 @@ export default function Home() {
                       {prod.name}
                     </h5>
                     <div className="text-green-600 font-bold text-sm">
-                      {prod.price}{" "}
+                      ₹{prod.price}{" "}
                       <span className="text-gray-300 text-[10px] line-through ml-1">
-                        {prod.oldPrice}
+                        ₹{prod.oldPrice}
                       </span>
                     </div>
                   </div>
@@ -643,9 +752,9 @@ export default function Home() {
                       {prod.name}
                     </h5>
                     <div className="text-green-600 font-bold text-sm">
-                      {prod.price}{" "}
+                      ₹{prod.price}{" "}
                       <span className="text-gray-300 text-[10px] line-through ml-1">
-                        {prod.oldPrice}
+                        ₹{prod.oldPrice}
                       </span>
                     </div>
                   </div>
@@ -656,7 +765,7 @@ export default function Home() {
 
           <div>
             <h3 className="text-xl font-bold text-gray-800 mb-6 border-b pb-2 relative after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-16 after:h-0.5 after:bg-green-400 font-sans uppercase text-[15px] tracking-wide">
-              Top Rated
+              Customer Favorites
             </h3>
             <div className="space-y-6">
               {shuffledTopRated.map((prod, i) => (
@@ -676,9 +785,9 @@ export default function Home() {
                       {prod.name}
                     </h5>
                     <div className="text-green-600 font-bold text-sm">
-                      {prod.price}{" "}
+                      ₹{prod.price}{" "}
                       <span className="text-gray-300 text-[10px] line-through ml-1">
-                        {prod.oldPrice}
+                        ₹{prod.oldPrice}
                       </span>
                     </div>
                   </div>
@@ -693,7 +802,7 @@ export default function Home() {
           <div
             className="absolute inset-0 bg-cover bg-no-repeat bg-right md:bg-right opacity-100"
             style={{
-              backgroundImage: "url('/footer-green-white.png')",
+              backgroundImage: "url('/footer_banner.png')",
             }}
           ></div>
           <div className="relative z-10 max-w-xl">

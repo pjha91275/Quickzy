@@ -194,27 +194,48 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
               </div>
             )}
 
-            {/* Step 3 (Location) - Placeholder for USER to implement */}
+            {/* Step 3 (Location) - IMPLEMENTATION INSTRUCTIONS:
+              1. STATE: Create state for 'selectedAddress' (String) and 'coords' (Object: {lat, lng}).
+              2. GPS: Create 'handleUseCurrentLocation' function:
+                 - Use navigator.geolocation.getCurrentPosition.
+                 - On success: Call LocationIQ Reverse Geocoding API with lat/lng.
+                 - Map the 'display_name' from API to 'selectedAddress'.
+              3. MAP: Create 'handleOpenMapModal' function:
+                 - Open a secondary modal/overlay with 'react-leaflet'.
+                 - Use a Draggable Marker.
+                 - On marker DragEnd: Repeat the Reverse Geocoding call.
+              4. PERSISTENCE: Create 'confirmAndSaveLocation' function:
+                 - POST the data to '/api/user/update-location'.
+                 - On success: Update local state, call onLoginSuccess(), and redirect.
+            */}
             {step === 3 && (
-              <div className="space-y-8">
+              <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
                 <div>
-                  <h3 className="text-2xl font-black text-[#253D4E] mb-2">
-                    Select Location
+                  <h3 className="text-2xl font-black text-[#253D4E] mb-2 tracking-tight">
+                    Delivery Location
                   </h3>
-                  <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
-                    Where should we deliver?
+                  <p className="text-gray-400 text-xs font-bold uppercase tracking-widest leading-none">
+                    Where should we deliver your order?
                   </p>
                 </div>
-                <div className="p-10 border-2 border-dashed border-gray-100 rounded-3xl text-center">
-                  <p className="text-gray-400 font-bold italic">
-                    Location Step - To be implemented by User
-                  </p>
-                  <button
-                    onClick={onClose}
-                    className="mt-4 text-[#3BB77E] font-black"
-                  >
-                    Skip for now
-                  </button>
+
+                <div className="space-y-4">
+                  {/* TODO: Add 'Use Current Location' Button with FiNavigation icon */}
+                  {/* TODO: Add 'Select on Map' Button with FiMapPin icon */}
+
+                  {/* UI Tip: Only show the "Confirm" button after 'selectedAddress' is populated */}
+                  <div className="p-10 border-2 border-dashed border-gray-100 rounded-3xl text-center">
+                    <p className="text-gray-400 font-bold italic">
+                      [Location UI Placeholder] - Waiting for your
+                      Implementation
+                    </p>
+                    <button
+                      onClick={onClose}
+                      className="mt-4 text-[#3BB77E] font-black"
+                    >
+                      Skip for now
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
