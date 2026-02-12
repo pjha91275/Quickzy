@@ -687,31 +687,29 @@ export const allProducts = [
   },
 ];
 
-// GUIDE: PRISMA SCHEMA DEFINITION
-// Copy this into your prisma/schema.prisma file:
+// GUIDE: MONGOOSE MODEL DEFINITION
+// Since you are already using Mongoose, create 'models/Product.js' and 'models/Category.js':
 /*
-model Product {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  id_custom   Int      @unique
-  name        String
-  price       Float
-  oldPrice    Float
-  unit        String
-  description String
-  vendor      String
-  category    String
-  discount    String
-  rating      Float
-  image       String
-}
+const ProductSchema = new mongoose.Schema({
+  id_custom:   { type: Number, unique: true },
+  name:        String,
+  price:       Number,
+  oldPrice:    Number,
+  unit:        String,
+  description: String,
+  vendor:      String,
+  category:    String,
+  discount:    String,
+  rating:      Number,
+  image:       String, // This will store your Cloudinary URL
+});
 
-model Category {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  name  String @unique
-  count Int
-  image String
-  bg    String
-}
+const CategorySchema = new mongoose.Schema({
+  name:  { type: String, unique: true },
+  count: Number,
+  image: String,
+  bg:    String,
+});
 */
 
 export const categoriesWithCount = [
@@ -782,10 +780,16 @@ export const promotions = {
     "https://m.media-amazon.com/images/I/413Z3Mfz-hL._SY300_SX300_QL70_FMwebp_.jpg",
 };
 
-// GUIDE: HOW TO ACCESS DATA FROM MONGODB
-// 1. Convert this component or the parent page to an async server component
-// 2. Fetch data: const products = await prisma.product.findMany()
-// 3. Pass that data into your state or components.
+// GUIDE: HOW TO ACCESS MONGODB VIA MONGOOSE
+// 1. Import your DB connection utility and Models:
+//    import dbConnect from "@/lib/mongodb";
+//    import Product from "@/models/Product";
+//
+// 2. Wrap your component logic in an async function:
+//    await dbConnect();
+//    const allProductsFromDB = await Product.find({});
+//
+// 3. Replace 'allProducts' with 'allProductsFromDB' in your state.
 
 function ShopContent() {
   const searchParams = useSearchParams();
