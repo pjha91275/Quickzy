@@ -1,4 +1,19 @@
-function ShopContent() {
+import React, { useState } from "react";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
+import {
+  FiShoppingCart,
+  FiSearch,
+  FiGrid,
+  FiList,
+  FiFilter,
+  FiChevronRight,
+  FiX,
+  FiStar,
+} from "react-icons/fi";
+
+export default function ShopContent({ products, categories }) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const categoryQuery = searchParams.get("category");
@@ -26,8 +41,8 @@ function ShopContent() {
     // The .filter() method now checks if the price is less than or equal to our maxPrice state.
     const categoryFiltered =
       selectedCategory === "All"
-        ? allProductsFromDB
-        : allProductsFromDB.filter((p) => {
+        ? products
+        : products.filter((p) => {
             if (selectedCategory === "Milk & Dairy")
               return p.category === "Dairy";
             if (selectedCategory === "Cleaning Essentials")
@@ -112,10 +127,10 @@ function ShopContent() {
                   </span>
                 </div>
                 <span className="bg-[#DEF9EC] text-[#3BB77E] text-[10px] font-black w-6 h-6 rounded-full flex items-center justify-center">
-                  {allProductsFromDB.length}
+                  {products.length}
                 </span>
               </li>
-              {allCategoriesFromDB.map((cat, i) => (
+              {categories.map((cat, i) => (
                 <li
                   key={i}
                   onClick={() => handleCategoryClick(cat.name)}
@@ -177,7 +192,7 @@ function ShopContent() {
               New products
             </h3>
             <div className="space-y-6">
-              {allProductsFromDB.slice(0, 3).map((item, idx) => (
+              {products.slice(0, 3).map((item, idx) => (
                 <Link
                   key={idx}
                   href={`/product/${item.id}`}
