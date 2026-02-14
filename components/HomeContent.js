@@ -9,10 +9,26 @@ const shuffleArray = (array) => {
 };
 
 export default function HomeContent({ products, categories }) {
+  const router = React.useMemo(() => {
+    // We can't use useRouter directly in some environments, but Next.js usually likes it.
+    // For now, let's stick to standard navigation or provide it via a custom hook if needed.
+    // However, since this is a Client Component, we'll use window.location for simplicity
+    // or import useRouter if we want the SPA experience.
+    return typeof window !== "undefined" ? window.next?.router : null;
+  }, []);
+
   // Derived state for various sections
   const [shuffledProducts, setShuffledProducts] = React.useState([]);
-  const [allPopular, setAllPopular] = React.useState([]); // Store all 15 popular items
+  const [allPopular, setAllPopular] = React.useState([]);
   const [activePopularFilter, setActivePopularFilter] = React.useState("All");
+
+  const [bannerSearchTerms, setBannerSearchTerms] = React.useState({
+    0: "",
+    1: "",
+    2: "",
+    3: "",
+    4: "",
+  });
 
   const [shuffledDeals, setShuffledDeals] = React.useState([]);
   const [shuffledTopSelling, setShuffledTopSelling] = React.useState([]);
@@ -36,6 +52,8 @@ export default function HomeContent({ products, categories }) {
       tag: "Quickzy: Fresh. Fast. Delivered.",
       bgColor: "bg-[#DEF9EC]",
       btnText: "Order Now",
+      dbCategory: null, // No specific category for the first banner
+      shopLink: "/shop",
     },
     {
       title: (
@@ -49,6 +67,8 @@ export default function HomeContent({ products, categories }) {
       tag: "Quickzy: Fresh Dairy",
       bgColor: "bg-blue-50",
       btnText: "Shop Dairy",
+      dbCategory: "Milk & Dairy",
+      shopLink: `/shop?category=${encodeURIComponent("Milk & Dairy")}`,
     },
     {
       title: (
@@ -62,6 +82,8 @@ export default function HomeContent({ products, categories }) {
       tag: "Quickzy: Fresh Fruits",
       bgColor: "bg-orange-50",
       btnText: "Browse Fruits",
+      dbCategory: "Fruits",
+      shopLink: "/shop?category=Fruits",
     },
     {
       title: (
@@ -75,6 +97,8 @@ export default function HomeContent({ products, categories }) {
       tag: "Quickzy: Electronics",
       bgColor: "bg-pink-50",
       btnText: "View Gadgets",
+      dbCategory: "Electronics",
+      shopLink: "/shop?category=Electronics",
     },
     {
       title: (
@@ -88,6 +112,8 @@ export default function HomeContent({ products, categories }) {
       tag: "Quickzy: Household",
       bgColor: "bg-purple-50",
       btnText: "Clean Now",
+      dbCategory: "Household Essentials",
+      shopLink: `/shop?category=${encodeURIComponent("Household Essentials")}`,
     },
   ];
 
@@ -110,8 +136,15 @@ export default function HomeContent({ products, categories }) {
         let catProducts = [];
         if (cat.name === "Milk & Dairy") {
           catProducts = products.filter((p) => p.category === "Dairy");
-        } else if (cat.name === "Cleaning Essentials") {
-          catProducts = products.filter((p) => p.category === "Household");
+        } else if (
+          cat.name === "Household Essentials" ||
+          cat.name === "Cleaning Essentials"
+        ) {
+          catProducts = products.filter(
+            (p) =>
+              p.category === "Household" ||
+              p.category === "Household Essentials",
+          );
         } else if (cat.name === "Tea & Coffee") {
           catProducts = products.filter(
             (p) =>
@@ -137,19 +170,37 @@ export default function HomeContent({ products, categories }) {
     // Filter out items already picked, then shuffle the rest
     const remainingProducts = shuffleArray(
       products.filter(
-        (p) => !itemPerCategory.find((picked) => picked.id === p.id),
+        (p) =>
+          !itemPerCategory.find(
+            (picked) => (picked._id || picked.id) === (p._id || p.id),
+          ),
       ),
     );
 
     // Fill until 15 items for Popular Products
-    const fullPopular = [...itemPerCategory, ...remainingProducts].slice(0, 15);
-    const finalPopular = shuffleArray(fullPopular);
+    const fullPopular = [...itemPerCategory, ...remainingProducts];
+
+    // Ensure uniqueness across all filters
+    const getUniqueProducts = (arr) => {
+      const seen = new Set();
+      return arr.filter((p) => {
+        const id = p._id || p.id;
+        if (seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      });
+    };
+
+    const finalPopular = getUniqueProducts(fullPopular).slice(0, 15);
     setAllPopular(finalPopular);
     setShuffledProducts(finalPopular);
 
     // 2. Derive other sections from remaining pool to minimize repetition
     const pool = shuffleArray(
-      products.filter((p) => !fullPopular.find((pop) => pop.id === p.id)),
+      products.filter(
+        (p) =>
+          !fullPopular.find((pop) => (pop._id || pop.id) === (p._id || p.id)),
+      ),
     );
 
     // Daily Best Sells: 4 items
@@ -177,12 +228,53 @@ export default function HomeContent({ products, categories }) {
     setShuffledTopRated(pool.slice(17, 20)); // Used for Customer Favorites
   }, [products, categories]);
 
+  const handleBannerSearch = () => {
+    const currentBanner = banners[currentSlide];
+    const searchTerm = bannerSearchTerms[currentSlide].trim().toLowerCase();
+
+    // 1. If search is empty -> Go to Category Shop Page
+    if (!searchTerm) {
+      window.location.href = currentBanner.shopLink;
+      return;
+    }
+
+    // 2. Search for a product
+    const foundProduct = products.find((p) => {
+      // Logic for Category Matching (handles mapping Dairy -> Milk & Dairy etc)
+      let matchesCategory = false;
+      if (!currentBanner.dbCategory) {
+        matchesCategory = true; // General search
+      } else if (currentBanner.dbCategory === "Milk & Dairy") {
+        matchesCategory = p.category === "Dairy";
+      } else if (currentBanner.dbCategory === "Household Essentials") {
+        matchesCategory =
+          p.category === "Household" || p.category === "Household Essentials";
+      } else {
+        matchesCategory = p.category === currentBanner.dbCategory;
+      }
+
+      const matchesName = p.name.toLowerCase().includes(searchTerm);
+      return matchesCategory && matchesName;
+    });
+
+    if (foundProduct) {
+      // 3. Match found in category -> Go to Product Page
+      window.location.href = `/product/${foundProduct.id_custom || foundProduct._id}`;
+    } else {
+      // 4. Mismatch or No match -> Go to Category Shop Page (ignore product name as requested)
+      window.location.href = currentBanner.shopLink;
+    }
+  };
+
   return (
     <>
       <main className="container mx-auto px-4 py-8 space-y-12">
         {/* --- Hero Slider --- */}
         <section
-          className={`${banners[currentSlide].bgColor} rounded-3xl overflow-hidden relative h-[450px] flex items-center px-8 md:px-16 transition-colors duration-700`}
+          onClick={() =>
+            (window.location.href = banners[currentSlide].shopLink)
+          }
+          className={`${banners[currentSlide].bgColor} rounded-3xl overflow-hidden relative h-[450px] flex items-center px-8 md:px-16 transition-colors duration-700 cursor-pointer shadow-sm hover:shadow-md`}
         >
           {/* Custom refined background with subtle logo pattern */}
           <div className="absolute inset-0 transition-opacity duration-700 opacity-100">
@@ -213,13 +305,27 @@ export default function HomeContent({ products, categories }) {
             <p className="text-gray-500 font-bold text-lg md:text-xl">
               {banners[currentSlide].subtitle}
             </p>
-            <div className="bg-white rounded-full p-2 flex max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-full p-2 flex max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all"
+            >
               <input
                 type="text"
                 placeholder="Search for essentials..."
                 className="flex-1 px-5 outline-none text-gray-700 bg-transparent font-medium"
+                value={bannerSearchTerms[currentSlide]}
+                onChange={(e) =>
+                  setBannerSearchTerms((prev) => ({
+                    ...prev,
+                    [currentSlide]: e.target.value,
+                  }))
+                }
+                onKeyDown={(e) => e.key === "Enter" && handleBannerSearch()}
               />
-              <button className="bg-[#3BB77E] text-white rounded-full px-8 md:px-10 py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg hover:shadow-[#3BB77E]/30">
+              <button
+                onClick={handleBannerSearch}
+                className="bg-[#3BB77E] text-white rounded-full px-8 md:px-10 py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg hover:shadow-[#3BB77E]/30"
+              >
                 {banners[currentSlide].btnText}
               </button>
             </div>
@@ -238,11 +344,17 @@ export default function HomeContent({ products, categories }) {
           </div>
 
           {/* Dots Navigation */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20"
+          >
             {banners.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setCurrentSlide(i)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCurrentSlide(i);
+                }}
                 className={`h-2.5 rounded-full transition-all duration-300 ${currentSlide === i ? "w-8 bg-[#3BB77E]" : "w-2.5 bg-gray-300 hover:bg-gray-400"}`}
               />
             ))}
@@ -276,7 +388,7 @@ export default function HomeContent({ products, categories }) {
               >
                 <div className="w-16 h-16 mb-4 flex items-center justify-center overflow-hidden">
                   <img
-                    src={cat.img}
+                    src={cat.image || cat.img}
                     alt={cat.name}
                     className="w-full h-full object-contain group-hover:scale-110 transition-transform"
                   />
@@ -306,7 +418,10 @@ export default function HomeContent({ products, categories }) {
             </div>
             <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform text-right">
               <img
-                src={categories.find((c) => c.name === "Fruits")?.img}
+                src={
+                  categories.find((c) => c.name === "Fruits")?.image ||
+                  categories.find((c) => c.name === "Fruits")?.img
+                }
                 alt="fruits"
                 className="w-full h-full object-contain"
               />
@@ -326,7 +441,10 @@ export default function HomeContent({ products, categories }) {
             </div>
             <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
               <img
-                src={categories.find((c) => c.name === "Electronics")?.img}
+                src={
+                  categories.find((c) => c.name === "Electronics")?.image ||
+                  categories.find((c) => c.name === "Electronics")?.img
+                }
                 alt="earphones"
                 className="w-full h-full object-contain"
               />
@@ -347,6 +465,8 @@ export default function HomeContent({ products, categories }) {
             <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
               <img
                 src={
+                  categories.find((c) => c.name === "Cleaning Essentials")
+                    ?.image ||
                   categories.find((c) => c.name === "Cleaning Essentials")?.img
                 }
                 alt="cleaning"
@@ -415,9 +535,9 @@ export default function HomeContent({ products, categories }) {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-            {shuffledProducts.map((prod, idx) => (
+            {shuffledProducts.map((prod) => (
               <div
-                key={idx}
+                key={prod._id || prod.id}
                 className="bg-white border hover:shadow-xl hover:border-green-300 transition-all rounded-2xl p-4 relative group"
               >
                 {prod.tag && (
@@ -427,7 +547,10 @@ export default function HomeContent({ products, categories }) {
                     {prod.tag}
                   </span>
                 )}
-                <Link href={`/product/${prod.id}`} className="block">
+                <Link
+                  href={`/product/${prod.id_custom || prod.id}`}
+                  className="block"
+                >
                   <div className="h-40 flex items-center justify-center group-hover:scale-105 transition-transform cursor-pointer overflow-hidden p-4">
                     <img
                       src={prod.image || prod.img}
@@ -509,9 +632,9 @@ export default function HomeContent({ products, categories }) {
 
             {/* Cards Grid */}
             <div className="lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-              {shuffledDailyBest.map((prod, idx) => (
+              {shuffledDailyBest.map((prod) => (
                 <div
-                  key={idx}
+                  key={prod._id || prod.id}
                   className="bg-white border rounded-2xl p-6 relative group hover:shadow-xl transition-all h-full flex flex-col"
                 >
                   {/* Badges */}
@@ -525,7 +648,7 @@ export default function HomeContent({ products, categories }) {
 
                   {/* Image */}
                   <Link
-                    href={`/product/${prod.id}`}
+                    href={`/product/${prod.id_custom || prod.id}`}
                     className="h-48 flex items-center justify-center mb-6 group-hover:scale-105 transition-transform overflow-hidden p-6 cursor-pointer"
                   >
                     <img
@@ -540,7 +663,7 @@ export default function HomeContent({ products, categories }) {
                     <div className="text-[10px] text-gray-400 mb-2 uppercase font-bold tracking-wider">
                       {prod.category}
                     </div>
-                    <Link href={`/product/${prod.id}`}>
+                    <Link href={`/product/${prod.id_custom || prod.id}`}>
                       <h4 className="font-bold text-gray-800 text-sm mb-3 line-clamp-2 hover:text-green-600 cursor-pointer leading-tight">
                         {prod.name}
                       </h4>
@@ -599,9 +722,9 @@ export default function HomeContent({ products, categories }) {
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {shuffledDeals.map((deal, idx) => (
+            {shuffledDeals.map((deal) => (
               <div
-                key={idx}
+                key={deal._id || deal.id}
                 className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group border"
               >
                 <div
@@ -669,9 +792,9 @@ export default function HomeContent({ products, categories }) {
               Top Selling
             </h3>
             <div className="space-y-6">
-              {shuffledTopSelling.map((prod, i) => (
+              {shuffledTopSelling.map((prod) => (
                 <div
-                  key={i}
+                  key={prod._id || prod.id}
                   className="flex gap-4 group cursor-pointer items-center"
                 >
                   <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0">
@@ -702,9 +825,9 @@ export default function HomeContent({ products, categories }) {
               Trending
             </h3>
             <div className="space-y-6">
-              {shuffledTrending.map((prod, i) => (
+              {shuffledTrending.map((prod) => (
                 <div
-                  key={i}
+                  key={prod._id || prod.id}
                   className="flex gap-4 group cursor-pointer items-center"
                 >
                   <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0">
@@ -735,9 +858,9 @@ export default function HomeContent({ products, categories }) {
               Recently added
             </h3>
             <div className="space-y-6">
-              {shuffledRecentlyAdded.map((prod, i) => (
+              {shuffledRecentlyAdded.map((prod) => (
                 <div
-                  key={i}
+                  key={prod._id || prod.id}
                   className="flex gap-4 group cursor-pointer items-center"
                 >
                   <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0">
@@ -768,9 +891,9 @@ export default function HomeContent({ products, categories }) {
               Customer Favorites
             </h3>
             <div className="space-y-6">
-              {shuffledTopRated.map((prod, i) => (
+              {shuffledTopRated.map((prod) => (
                 <div
-                  key={i}
+                  key={prod._id || prod.id}
                   className="flex gap-4 group cursor-pointer items-center"
                 >
                   <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0">

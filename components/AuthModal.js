@@ -17,6 +17,9 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
   const [step, setStep] = useState(1); // 1: Email, 2: Magic Link Sent, 3: Location
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedAddress, setSelectedAddress] = useState("");
+  const [coords, setCoords] = useState({ lat: null, lng: null });
+  const [showMapModal, setShowMapModal] = useState(false);
 
   // Lock scroll when modal is open
   React.useEffect(() => {
@@ -69,6 +72,38 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
     } catch (error) {
       toast.error("Google login failed.");
     }
+  };
+  const handleUseCurrentLocation = () => {
+    setIsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        setCoords({ lat: latitude, lng: longitude });
+
+        // Reverse Geocode using LocationIQ
+        try {
+          const res = await fetch(
+            `https://us1.locationiq.com/v1/reverse.php?key=${process.env.NEXT_PUBLIC_LOCATIONIQ_KEY}&lat=${latitude}&lon=${longitude}&format=json`,
+          );
+          const data = await res.json();
+          setSelectedAddress(data.display_name);
+          toast.success("Location detected!");
+        } catch (error) {
+          toast.error("Failed to get address. Please try manual selection.");
+        }
+        setIsLoading(false);
+      },
+      (error) => {
+        toast.error("Location access denied. Please select on map.");
+        setIsLoading(false);
+      },
+    );
+  };
+  const confirmAndSaveLocation = async () => {
+    // Logic to save 'selectedAddress' and 'coords' to MongoDB User model
+    // and then redirect to Shop
+    onLoginSuccess?.();
+    onClose();
   };
 
   return (
@@ -209,33 +244,67 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                  - On success: Update local state, call onLoginSuccess(), and redirect.
             */}
             {step === 3 && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
                 <div>
                   <h3 className="text-2xl font-black text-[#253D4E] mb-2 tracking-tight">
                     Delivery Location
                   </h3>
                   <p className="text-gray-400 text-xs font-bold uppercase tracking-widest leading-none">
-                    Where should we deliver your order?
+                    Select where to deliver your orders
                   </p>
                 </div>
-
                 <div className="space-y-4">
-                  {/* TODO: Add 'Use Current Location' Button with FiNavigation icon */}
-                  {/* TODO: Add 'Select on Map' Button with FiMapPin icon */}
-
-                  {/* UI Tip: Only show the "Confirm" button after 'selectedAddress' is populated */}
-                  <div className="p-10 border-2 border-dashed border-gray-100 rounded-3xl text-center">
-                    <p className="text-gray-400 font-bold italic">
-                      [Location UI Placeholder] - Waiting for your
-                      Implementation
-                    </p>
-                    <button
-                      onClick={onClose}
-                      className="mt-4 text-[#3BB77E] font-black"
-                    >
-                      Skip for now
-                    </button>
+                  {/* Option 1: Direct GPS */}
+                  <button
+                    onClick={handleUseCurrentLocation}
+                    className="w-full bg-[#f0fdf4] text-[#3BB77E] py-5 rounded-2xl font-black border-2 border-[#DEF9EC] hover:bg-[#DEF9EC] transition-all flex items-center justify-center gap-3 group"
+                  >
+                    <FiNavigation
+                      size={22}
+                      className="group-hover:rotate-45 transition-transform"
+                    />
+                    Use Current Location
+                  </button>
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-gray-100"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-white px-4 text-gray-400 font-bold">
+                        Or
+                      </span>
+                    </div>
                   </div>
+                  {/* Option 2: Select on Map */}
+                  <button
+                    onClick={() => setShowMapModal(true)}
+                    className="w-full bg-white border-2 border-gray-100 text-[#253D4E] py-5 rounded-2xl font-black hover:bg-gray-50 transition-all flex items-center justify-center gap-3 group"
+                  >
+                    <FiMapPin size={22} className="text-red-500" />
+                    Select on Map
+                  </button>
+                  {/* Manual Address Display (Shown after location is fetched) */}
+                  {selectedAddress && (
+                    <div className="p-4 bg-gray-50 rounded-2xl border-2 border-gray-100 animate-in zoom-in-95">
+                      <div className="flex items-start gap-3">
+                        <FiHome className="text-[#3BB77E] mt-1 shrink-0" />
+                        <div>
+                          <p className="text-[10px] text-[#3BB77E] font-black uppercase tracking-widest mb-1">
+                            Confirm Address
+                          </p>
+                          <p className="text-sm font-bold text-[#253D4E] leading-snug">
+                            {selectedAddress}
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={confirmAndSaveLocation}
+                        className="w-full mt-4 bg-[#3BB77E] text-white py-3 rounded-xl font-bold hover:bg-[#29A56C] transition-all"
+                      >
+                        Confirm & Continue
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

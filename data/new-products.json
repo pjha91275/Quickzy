@@ -1,0 +1,14 @@
+[
+  {
+    "id_custom": 101,
+    "name": "Example New Product",
+    "price": 299,
+    "oldPrice": 350,
+    "unit": "1 Unit",
+    "description": "This is a new product added via the adder tool!",
+    "vendor": "Quickzy Partner",
+    "category": "Snacks",
+    "discount": "15%",
+    "img": "PASTE_EXTERNAL_AMAZON_LINK_HERE"
+  }
+]

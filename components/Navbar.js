@@ -14,13 +14,99 @@ import {
 } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 import { useSession, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { fetchProdAndCat } from "@/actions/dbactions";
 
 import AuthModal from "./AuthModal";
 
 const Navbar = () => {
   const { data: session } = useSession();
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  // Search States
+  const [searchTerm, setSearchTerm] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [data, setData] = useState({ products: [], categories: [] });
+
+  // 1. DATA FETCHING: Get categories and products for search filter
+  React.useEffect(() => {
+    const loadSearchData = async () => {
+      const result = await fetchProdAndCat();
+      setData(result);
+    };
+    loadSearchData();
+  }, []);
+
+  // 2. FILTER LOGIC: Updates suggestions as user types
+  React.useEffect(() => {
+    if (searchTerm.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+
+    // Check Categories
+    const matchedCategories = data.categories
+      .filter((c) => c.name.toLowerCase().includes(term))
+      .map((c) => ({ ...c, type: "category" }));
+
+    // Check Products
+    const matchedProducts = data.products
+      .filter(
+        (p) =>
+          p.name.toLowerCase().includes(term) ||
+          p.category.toLowerCase().includes(term),
+      )
+      .map((p) => ({ ...p, type: "product" }));
+
+    setSuggestions([...matchedCategories, ...matchedProducts].slice(0, 10));
+  }, [searchTerm, data]);
+
+  // 3. SELECTION LOGIC (Part A): When a suggestion is clicked
+  const handleSuggestionClick = (item) => {
+    setSearchTerm(item.name);
+    setSuggestions([]); // Close dropdown
+
+    if (item.type === "category") {
+      router.push(`/shop?category=${encodeURIComponent(item.name)}`);
+    } else {
+      router.push(`/product/${item.id_custom || item._id}`);
+    }
+  };
+
+  // 4. EXECUTION LOGIC (Part C): When Search button clicked or Enter pressed
+  const handleSearchExecution = () => {
+    if (!searchTerm.trim()) return;
+
+    const term = searchTerm.toLowerCase();
+
+    // Check if it's a category first
+    const categoryMatch = data.categories.find(
+      (c) => c.name.toLowerCase() === term,
+    );
+    if (categoryMatch) {
+      router.push(`/shop?category=${encodeURIComponent(categoryMatch.name)}`);
+      setSuggestions([]);
+      return;
+    }
+
+    // Check if it's a specific product
+    const productMatch = data.products.find(
+      (p) => p.name.toLowerCase() === term,
+    );
+    if (productMatch) {
+      router.push(`/product/${productMatch.id_custom || productMatch._id}`);
+      setSuggestions([]);
+      return;
+    }
+
+    // Fallback: General search query
+    router.push(`/shop?search=${encodeURIComponent(searchTerm)}`);
+    setSuggestions([]);
+  };
 
   const isLoggedIn = !!session;
   const userInitials = session?.user?.name
@@ -58,12 +144,54 @@ const Navbar = () => {
             <div className="px-4 border-r hidden lg:block text-sm font-bold text-gray-700 whitespace-nowrap">
               All Categories <IoIosArrowDown className="inline ml-1" />
             </div>
+
+            {/* UI PART: Bind value={searchTerm} and add an onChange to update the term. */}
             <input
               type="text"
-              placeholder="Search for items..."
-              className="flex-1 px-4 outline-none text-sm text-gray-600 h-full w-full bg-transparent"
+              placeholder="Search for items, categories..."
+              className="flex-1 px-4 outline-none text-sm text-gray-600 h-full w-full bg-transparent font-medium"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearchExecution()}
             />
-            <button className="h-full px-5 bg-[#3BB77E] text-white flex items-center justify-center rounded-r-sm hover:bg-[#29A56C] transition-colors">
+
+            {/* Part B: SUGGESTION DROPDOWN */}
+            {suggestions.length > 0 && (
+              <div className="absolute top-[110%] left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                {suggestions.map((item) => (
+                  <div
+                    key={item._id || item.name}
+                    onClick={() => handleSuggestionClick(item)}
+                    className="px-5 py-3 hover:bg-[#DEF9EC] cursor-pointer flex justify-between items-center group transition-colors"
+                  >
+                    <div className="flex flex-col">
+                      <span className="font-black text-[#253D4E] group-hover:text-[#3BB77E] decoration-none transition-colors">
+                        {item.name}
+                      </span>
+                      {item.type === "product" && (
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
+                          In {item.category}
+                        </span>
+                      )}
+                    </div>
+                    <span
+                      className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest ${
+                        item.type === "category"
+                          ? "bg-[#3BB77E] text-white"
+                          : "bg-gray-100 text-gray-500"
+                      }`}
+                    >
+                      {item.type}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button
+              className="h-full px-5 bg-[#3BB77E] text-white flex items-center justify-center rounded-r-sm hover:bg-[#29A56C] transition-colors"
+              onClick={handleSearchExecution}
+            >
               <FiSearch className="text-xl" />
             </button>
           </div>

@@ -1,3 +1,4 @@
+"use client";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -45,10 +46,14 @@ export default function ShopContent({ products, categories }) {
         : products.filter((p) => {
             if (selectedCategory === "Milk & Dairy")
               return p.category === "Dairy";
-            if (selectedCategory === "Cleaning Essentials")
+            if (
+              selectedCategory === "Household Essentials" ||
+              selectedCategory === "Cleaning Essentials"
+            )
               return (
                 p.category === "Household" ||
-                p.category === "Cleaning Essentials"
+                p.category === "Cleaning Essentials" ||
+                p.category === "Household Essentials"
               );
             if (selectedCategory === "Tea & Coffee")
               return (
@@ -69,10 +74,11 @@ export default function ShopContent({ products, categories }) {
     return categoryFiltered.filter((p) => p.price <= maxPrice);
   }, [selectedCategory, maxPrice]);
 
-  const sortedProducts = React.useMemo(
-    () => [...filteredProducts].sort(() => Math.random() - 0.5),
-    [filteredProducts],
-  );
+  const [sortedProducts, setSortedProducts] = useState([]);
+
+  React.useEffect(() => {
+    setSortedProducts([...filteredProducts].sort(() => Math.random() - 0.5));
+  }, [filteredProducts]);
 
   const handleCategoryClick = (name) => {
     router.push(`/shop?category=${encodeURIComponent(name)}`);
@@ -132,13 +138,13 @@ export default function ShopContent({ products, categories }) {
               </li>
               {categories.map((cat, i) => (
                 <li
-                  key={i}
+                  key={cat._id || i}
                   onClick={() => handleCategoryClick(cat.name)}
                   className="flex items-center justify-between group cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <img
-                      src={cat.img}
+                      src={cat.image || cat.img}
                       alt={cat.name}
                       className="w-8 h-8 object-contain"
                     />
@@ -192,15 +198,15 @@ export default function ShopContent({ products, categories }) {
               New products
             </h3>
             <div className="space-y-6">
-              {products.slice(0, 3).map((item, idx) => (
+              {products.slice(0, 3).map((item) => (
                 <Link
-                  key={idx}
-                  href={`/product/${item.id}`}
+                  key={item._id}
+                  href={`/product/${item.id_custom || item.id}`}
                   className="flex gap-4 group cursor-pointer"
                 >
                   <div className="w-20 h-20 rounded-xl flex items-center justify-center overflow-hidden bg-gray-50 border border-gray-100 group-hover:border-[#3BB77E] transition-colors shrink-0">
                     <img
-                      src={item.img}
+                      src={item.image || item.img}
                       alt={item.name}
                       className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform"
                     />
@@ -254,7 +260,7 @@ export default function ShopContent({ products, categories }) {
           >
             {sortedProducts.map((prod) => (
               <div
-                key={prod.id}
+                key={prod._id}
                 className="bg-white border hover:shadow-2xl hover:border-[#BCE3C9] transition-all rounded-2xl p-4 relative group flex flex-col h-full"
               >
                 {prod.tag && (
@@ -264,10 +270,13 @@ export default function ShopContent({ products, categories }) {
                     {prod.tag}
                   </span>
                 )}
-                <Link href={`/product/${prod.id}`} className="block flex-grow">
+                <Link
+                  href={`/product/${prod.id_custom || prod.id}`}
+                  className="block flex-grow"
+                >
                   <div className="h-44 flex items-center justify-center p-4 mb-4 group-hover:scale-110 transition-transform cursor-pointer">
                     <img
-                      src={prod.img}
+                      src={prod.image || prod.img}
                       alt={prod.name}
                       className="w-full h-full object-contain"
                     />
@@ -290,7 +299,7 @@ export default function ShopContent({ products, categories }) {
                   </div>
                 </Link>
                 <div className="flex justify-between items-center pt-2 border-t border-gray-50 mt-auto">
-                  <Link href={`/product/${prod.id}`}>
+                  <Link href={`/product/${prod.id_custom || prod.id}`}>
                     <div>
                       <span className="text-lg font-black text-[#3BB77E]">
                         ₹{prod.price}
