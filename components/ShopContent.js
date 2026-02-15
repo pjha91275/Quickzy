@@ -14,15 +14,17 @@ import {
   FiStar,
 } from "react-icons/fi";
 
+import { useCart } from "@/context/CartContext";
+
 export default function ShopContent({ products, categories }) {
+  const { addToCart } = useCart();
   const searchParams = useSearchParams();
   const router = useRouter();
   const categoryQuery = searchParams.get("category");
+  const searchQuery = searchParams.get("search");
 
   const [view, setView] = useState("grid");
-  const [selectedCategory, setSelectedCategory] = useState(
-    categoryQuery || "All",
-  );
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   // GUIDE: Step 1 - Create a state to hold the maximum price selected by the user.
   // We initialize it to 5000 so all products are visible by default.
@@ -32,47 +34,49 @@ export default function ShopContent({ products, categories }) {
   React.useEffect(() => {
     if (categoryQuery) {
       setSelectedCategory(categoryQuery);
+    } else if (searchQuery) {
+      // If there is a search query, we ensure category is "All" so it doesn't conflict
+      setSelectedCategory("All");
     } else {
       setSelectedCategory("All");
     }
-  }, [categoryQuery]);
+  }, [categoryQuery, searchQuery]);
 
   const filteredProducts = React.useMemo(() => {
-    // GUIDE: Step 2 - We filter the products by BOTH category and price.
-    // The .filter() method now checks if the price is less than or equal to our maxPrice state.
-    const categoryFiltered =
-      selectedCategory === "All"
-        ? products
-        : products.filter((p) => {
-            if (selectedCategory === "Milk & Dairy")
-              return p.category === "Dairy";
-            if (
-              selectedCategory === "Household Essentials" ||
-              selectedCategory === "Cleaning Essentials"
-            )
-              return (
-                p.category === "Household" ||
-                p.category === "Cleaning Essentials" ||
-                p.category === "Household Essentials"
-              );
-            if (selectedCategory === "Tea & Coffee")
-              return (
-                p.name.toLowerCase().includes("coffee") ||
-                p.name.toLowerCase().includes("tea") ||
-                p.name.toLowerCase().includes("nescafe")
-              );
-            if (selectedCategory === "Electronics")
-              return p.category === "Electronics" || p.category === "Gadgets";
-            if (selectedCategory === "Personal Care")
-              return ["Personal Care", "Beauty", "Grooming"].includes(
-                p.category,
-              );
-            return p.category === selectedCategory;
-          });
+    // 1. First, apply Category Filter (if any)
+    let pool = products;
+    if (selectedCategory !== "All") {
+      pool = products.filter((p) => {
+        if (selectedCategory === "Milk & Dairy") return p.category === "Dairy";
+        if (selectedCategory === "Household Essentials")
+          return p.category === "Household Essentials";
+        if (selectedCategory === "Tea & Coffee")
+          return (
+            p.name.toLowerCase().includes("coffee") ||
+            p.name.toLowerCase().includes("tea") ||
+            p.name.toLowerCase().includes("nescafe")
+          );
+        if (selectedCategory === "Electronics")
+          return p.category === "Electronics" || p.category === "Gadgets";
+        if (selectedCategory === "Personal Care")
+          return ["Personal Care", "Beauty", "Grooming"].includes(p.category);
+        return p.category === selectedCategory;
+      });
+    }
 
-    // We apply the price filter on top of the category filter
-    return categoryFiltered.filter((p) => p.price <= maxPrice);
-  }, [selectedCategory, maxPrice]);
+    // 2. Second, apply Text Search Filter (if any from URL)
+    if (searchQuery) {
+      const term = searchQuery.toLowerCase();
+      pool = pool.filter(
+        (p) =>
+          p.name.toLowerCase().includes(term) ||
+          p.category.toLowerCase().includes(term),
+      );
+    }
+
+    // 3. Third, apply Price Filter
+    return pool.filter((p) => p.price <= maxPrice);
+  }, [selectedCategory, maxPrice, searchQuery, products]);
 
   const [sortedProducts, setSortedProducts] = useState([]);
 
@@ -314,7 +318,10 @@ export default function ShopContent({ products, categories }) {
                       </div>
                     </div>
                   </Link>
-                  <button className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white p-2.5 rounded-lg transition-all shadow-sm">
+                  <button
+                    onClick={() => addToCart(prod)}
+                    className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white p-2.5 rounded-lg transition-all shadow-sm"
+                  >
                     <FiShoppingCart />
                   </button>
                 </div>

@@ -8,22 +8,21 @@ export const fetchProdAndCat = async () => {
   const products = await Product.find({}).lean();
   const categories = await Category.find({}).lean();
 
-  // Convert to plain objects to fix "Only plain objects can be passed to Client Components" error
-  return JSON.parse(
-    JSON.stringify({
-      products,
-      categories,
-    }),
-  );
+  return JSON.parse(JSON.stringify({ products, categories }));
 };
+
 export const fetchProductById = async (id) => {
   await connectDb();
-  // We check both id_custom and the _id string to be safe
-  const product =
-    (await Product.findOne({ id_custom: parseInt(id) }).lean()) ||
-    (await Product.findById(id).lean());
 
-  return JSON.parse(JSON.stringify(product));
+  // Try custom numeric ID first
+  let product = await Product.findOne({ id_custom: id }).lean();
+
+  // If not found, try MongoDB ObjectID (simple 24-char check to avoid crash)
+  if (!product && id?.length === 24) {
+    product = await Product.findById(id).lean();
+  }
+
+  return product ? JSON.parse(JSON.stringify(product)) : null;
 };
 
 export const fetchSimilarProducts = async (category, currentId) => {

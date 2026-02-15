@@ -1,7 +1,16 @@
 "use client";
 import React from "react";
-import { FiArrowRight, FiShoppingCart } from "react-icons/fi";
+import {
+  FiArrowRight,
+  FiShoppingCart,
+  FiClock,
+  FiStar,
+  FiChevronLeft,
+  FiChevronRight,
+  FiSearch,
+} from "react-icons/fi";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
 
 // Utility for randomizing product display
 const shuffleArray = (array) => {
@@ -9,6 +18,7 @@ const shuffleArray = (array) => {
 };
 
 export default function HomeContent({ products, categories }) {
+  const { addToCart } = useCart();
   const router = React.useMemo(() => {
     // We can't use useRouter directly in some environments, but Next.js usually likes it.
     // For now, let's stick to standard navigation or provide it via a custom hook if needed.
@@ -130,20 +140,15 @@ export default function HomeContent({ products, categories }) {
   }, []);
 
   React.useEffect(() => {
-    // 1. Pick at least one from each category for Popular Products
+    // 1. Pick at least one from each category for diversity in Popular Products
     const itemPerCategory = categories
       .map((cat) => {
         let catProducts = [];
         if (cat.name === "Milk & Dairy") {
           catProducts = products.filter((p) => p.category === "Dairy");
-        } else if (
-          cat.name === "Household Essentials" ||
-          cat.name === "Cleaning Essentials"
-        ) {
+        } else if (cat.name === "Household Essentials") {
           catProducts = products.filter(
-            (p) =>
-              p.category === "Household" ||
-              p.category === "Household Essentials",
+            (p) => p.category === "Household Essentials",
           );
         } else if (cat.name === "Tea & Coffee") {
           catProducts = products.filter(
@@ -167,20 +172,7 @@ export default function HomeContent({ products, categories }) {
       })
       .filter(Boolean);
 
-    // Filter out items already picked, then shuffle the rest
-    const remainingProducts = shuffleArray(
-      products.filter(
-        (p) =>
-          !itemPerCategory.find(
-            (picked) => (picked._id || picked.id) === (p._id || p.id),
-          ),
-      ),
-    );
-
-    // Fill until 15 items for Popular Products
-    const fullPopular = [...itemPerCategory, ...remainingProducts];
-
-    // Ensure uniqueness across all filters
+    // Fill Popular Products with more items up to 15, ensuring they are unique
     const getUniqueProducts = (arr) => {
       const seen = new Set();
       return arr.filter((p) => {
@@ -191,15 +183,19 @@ export default function HomeContent({ products, categories }) {
       });
     };
 
-    const finalPopular = getUniqueProducts(fullPopular).slice(0, 15);
+    const finalPopular = getUniqueProducts([
+      ...itemPerCategory,
+      ...shuffleArray(products),
+    ]).slice(0, 15);
+
     setAllPopular(finalPopular);
     setShuffledProducts(finalPopular);
 
-    // 2. Derive other sections from remaining pool to minimize repetition
+    // 2. Derive other sections from products NOT used in Popular section
     const pool = shuffleArray(
       products.filter(
         (p) =>
-          !fullPopular.find((pop) => (pop._id || pop.id) === (p._id || p.id)),
+          !finalPopular.find((pop) => (pop._id || pop.id) === (p._id || p.id)),
       ),
     );
 
@@ -247,8 +243,7 @@ export default function HomeContent({ products, categories }) {
       } else if (currentBanner.dbCategory === "Milk & Dairy") {
         matchesCategory = p.category === "Dairy";
       } else if (currentBanner.dbCategory === "Household Essentials") {
-        matchesCategory =
-          p.category === "Household" || p.category === "Household Essentials";
+        matchesCategory = p.category === "Household Essentials";
       } else {
         matchesCategory = p.category === currentBanner.dbCategory;
       }
@@ -456,7 +451,7 @@ export default function HomeContent({ products, categories }) {
                 Daily Household Essentials
               </h4>
               <Link
-                href="/shop?category=Cleaning%20Essentials"
+                href="/shop?category=Household%20Essentials"
                 className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition-colors"
               >
                 Shop Now <FiArrowRight />
@@ -511,11 +506,8 @@ export default function HomeContent({ products, categories }) {
                             "Beauty",
                             "Grooming",
                           ].includes(p.category);
-                        if (cat === "Cleaning Essentials")
-                          return (
-                            p.category === "Household" ||
-                            p.category === "Cleaning Essentials"
-                          );
+                        if (cat === "Household Essentials")
+                          return p.category === "Household Essentials";
                         if (cat === "Tea & Coffee")
                           return (
                             p.name.toLowerCase().includes("coffee") ||
@@ -592,7 +584,10 @@ export default function HomeContent({ products, categories }) {
                       </span>
                     </div>
                   </Link>
-                  <button className="bg-green-100 text-green-600 hover:bg-green-600 hover:text-white px-3 py-2 rounded-lg transition-colors font-bold text-xs flex items-center gap-2">
+                  <button
+                    onClick={() => addToCart(prod)}
+                    className="bg-green-100 text-green-600 hover:bg-green-600 hover:text-white px-3 py-2 rounded-lg transition-colors font-bold text-xs flex items-center gap-2"
+                  >
                     Add <FiShoppingCart />
                   </button>
                 </div>

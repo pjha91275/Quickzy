@@ -12,14 +12,33 @@ import {
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { signIn } from "next-auth/react";
+import dynamic from "next/dynamic";
 
-const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
-  const [step, setStep] = useState(1); // 1: Email, 2: Magic Link Sent, 3: Location
+const MapContent = dynamic(() => import("./MapContent"), {
+  ssr: false,
+  loading: () => (
+    <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-white p-8 rounded-2xl shadow-xl font-black text-[#3BB77E] animate-bounce">
+        Loading Map...
+      </div>
+    </div>
+  ),
+});
+
+const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
+  const [step, setStep] = useState(initialStep); // 1: Email, 2: Magic Link Sent, 3: Location
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState("");
   const [coords, setCoords] = useState({ lat: null, lng: null });
   const [showMapModal, setShowMapModal] = useState(false);
+
+  // Sync step with initialStep when modal opens
+  React.useEffect(() => {
+    if (isOpen) {
+      setStep(initialStep);
+    }
+  }, [isOpen, initialStep]);
 
   // Lock scroll when modal is open
   React.useEffect(() => {
@@ -73,6 +92,8 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
       toast.error("Google login failed.");
     }
   };
+
+  // 3. Location
   const handleUseCurrentLocation = () => {
     setIsLoading(true);
     navigator.geolocation.getCurrentPosition(
@@ -83,12 +104,33 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
         // Reverse Geocode using LocationIQ
         try {
           const res = await fetch(
-            `https://us1.locationiq.com/v1/reverse.php?key=${process.env.NEXT_PUBLIC_LOCATIONIQ_KEY}&lat=${latitude}&lon=${longitude}&format=json`,
+            `https://us1.locationiq.com/v1/reverse.php?key=${process.env.NEXT_PUBLIC_LOCATIONIQ_KEY}&lat=${latitude}&lon=${longitude}&format=json&accept-language=en`,
           );
           const data = await res.json();
-          setSelectedAddress(data.display_name);
+
+          if (data.error) {
+            throw new Error(data.error);
+          }
+
+          // Use display_name or build a fallback string
+          const formattedAddress =
+            data.display_name ||
+            [
+              data.address?.road,
+              data.address?.neighbourhood,
+              data.address?.city,
+              data.address?.state,
+            ]
+              .filter(Boolean)
+              .join(", ");
+
+          setSelectedAddress(
+            formattedAddress ||
+              `Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
+          );
           toast.success("Location detected!");
         } catch (error) {
+          console.error("Geocoding error:", error);
           toast.error("Failed to get address. Please try manual selection.");
         }
         setIsLoading(false);
@@ -99,11 +141,46 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
       },
     );
   };
+
+  const handleOpenMapModal = () => {
+    setShowMapModal(true);
+  };
+
+  const handleMapConfirm = ({ address, lat, lng }) => {
+    setSelectedAddress(address);
+    setCoords({ lat, lng });
+    setShowMapModal(false);
+    toast.success("Location updated from map!");
+  };
+
   const confirmAndSaveLocation = async () => {
-    // Logic to save 'selectedAddress' and 'coords' to MongoDB User model
-    // and then redirect to Shop
-    onLoginSuccess?.();
-    onClose();
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/user/update-location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          address: selectedAddress,
+          lat: coords.lat,
+          lng: coords.lng,
+        }),
+      });
+
+      if (response.ok) {
+        toast.success("Delivery address saved!");
+        // We force a reload to ensure the session is updated with the new address
+        // throughout the app (Navbar, Checkout, etc.)
+        setTimeout(() => {
+          window.location.reload();
+        }, 1000);
+      } else {
+        toast.error("Failed to save location. Please try again.");
+      }
+    } catch (error) {
+      toast.error("Error saving location.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -292,9 +369,12 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
                           <p className="text-[10px] text-[#3BB77E] font-black uppercase tracking-widest mb-1">
                             Confirm Address
                           </p>
-                          <p className="text-sm font-bold text-[#253D4E] leading-snug">
-                            {selectedAddress}
-                          </p>
+                          <textarea
+                            className="text-sm font-bold text-[#253D4E] leading-snug w-full bg-transparent border-none outline-none resize-none focus:ring-0 p-0"
+                            rows={3}
+                            value={selectedAddress}
+                            onChange={(e) => setSelectedAddress(e.target.value)}
+                          />
                         </div>
                       </div>
                       <button
@@ -311,6 +391,13 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess }) => {
           </div>
         </div>
       </div>
+      {showMapModal && (
+        <MapContent
+          onConfirm={handleMapConfirm}
+          onClose={() => setShowMapModal(false)}
+          initialCoords={coords}
+        />
+      )}
     </>
   );
 };

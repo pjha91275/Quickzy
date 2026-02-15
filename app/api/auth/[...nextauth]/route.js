@@ -3,6 +3,8 @@ import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/db/mongodbClient";
+import connectDb from "@/db/connectDb";
+import User from "@/models/User";
 
 export const authOptions = {
   adapter: MongoDBAdapter(clientPromise),
@@ -89,16 +91,14 @@ export const authOptions = {
   },
   callbacks: {
     async session({ session, token }) {
-      if (token) {
+      if (token && session.user) {
         session.user.id = token.sub;
-        // INSTRUCTION: Once you start saving 'address' to MongoDB,
-        // add logic here to fetch the user by token.sub and
-        // attach the 'address' object to the session so it's
-        // globally available in your Navbar and Checkout pages.
-        // --- QUICKZY LOCATION SCHEMA INSTRUCTIONS ---
-        // text: Stores the human-readable address from LocationIQ (e.g. "Mumbai Central, Sector 2")
-        // lat/lng: Float values for precise delivery partner mapping
-        // zone: Optional field to group delivery areas (e.g. "Downtown", "Suburbs")
+
+        await connectDb();
+        const dbUser = await User.findById(token.sub).lean();
+        if (dbUser) {
+          session.user.address = dbUser.address;
+        }
       }
       return session;
     },
