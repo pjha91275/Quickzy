@@ -9,41 +9,10 @@ import {
   FiRefreshCw,
 } from "react-icons/fi";
 import Link from "next/link";
-
-const initialCart = [
-  {
-    id: 9,
-    name: "Aashirvaad Atta (5kg)",
-    price: 245.0,
-    img: "https://www.bigbasket.com/media/uploads/p/l/126906_8-aashirvaad-atta-whole-wheat.jpg",
-    category: "Grocery",
-    weight: "5kg",
-    stock: "In Stock",
-  },
-  {
-    id: 22,
-    name: "boAt Storm Smartwatch",
-    price: 1999.0,
-    img: "https://m.media-amazon.com/images/I/61S9aVnRZDL.jpg",
-    category: "Electronics",
-    weight: "Black",
-    stock: "In Stock",
-  },
-  {
-    id: 40,
-    name: "Amul Fresh Paneer (200g)",
-    price: 85.0,
-    img: "https://m.media-amazon.com/images/I/81hD14MN91L._SX679_.jpg",
-    category: "Dairy",
-    weight: "200g",
-    stock: "In Stock",
-  },
-];
+import { useCart } from "@/context/CartContext";
 
 export default function Cart() {
-  const [items, setItems] = useState(initialCart);
-
-  const subtotal = items.reduce((acc, item) => acc + item.price, 0);
+  const { cartItems, updateQuantity, removeFromCart, subtotal } = useCart();
 
   return (
     <main className="container mx-auto px-4 py-10 min-h-[60vh]">
@@ -55,94 +24,125 @@ export default function Cart() {
               Your Cart
             </h1>
             <p className="text-gray-400 font-bold">
-              There are <span className="text-[#3BB77E]">{items.length}</span>{" "}
+              There are{" "}
+              <span className="text-[#3BB77E]">{cartItems.length}</span>{" "}
               products in your cart
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left min-w-[700px]">
-              <thead className="bg-[#ececec] text-[#253D4E] font-bold text-sm">
-                <tr>
-                  <th className="py-4 px-6 rounded-l-xl">Product</th>
-                  <th className="py-4 px-6">Unit Price</th>
-                  <th className="py-4 px-6">Quantity</th>
-                  <th className="py-4 px-6">Subtotal</th>
-                  <th className="py-4 px-6 rounded-r-xl">Remove</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {items.map((item) => (
-                  <tr
-                    key={item.id}
-                    className="group hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="py-6 px-6">
-                      <div className="flex items-center gap-6">
-                        <div className="w-24 h-24 border rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
-                          <img
-                            src={item.img}
-                            alt={item.name}
-                            className="w-full h-full object-contain"
-                          />
-                        </div>
-                        <div>
-                          <h4 className="font-black text-[#253D4E] text-lg hover:text-[#3BB77E] transition-colors cursor-pointer leading-tight mb-2">
-                            {item.name}
-                          </h4>
-                          <div className="flex gap-2 text-xs font-bold">
-                            <span className="text-gray-400">{item.weight}</span>
-                            <span className="text-[#3BB77E] px-2 bg-[#DEF9EC] rounded-sm">
-                              {item.stock}
-                            </span>
+            {cartItems.length === 0 ? (
+              <div className="text-center py-20 bg-white rounded-2xl border">
+                <FiShoppingBag
+                  className="mx-auto text-gray-200 mb-4"
+                  size={64}
+                />
+                <h3 className="text-xl font-black text-gray-400">
+                  Cart is empty!
+                </h3>
+                <Link
+                  href="/"
+                  className="text-[#3BB77E] font-bold mt-2 inline-block hover:underline"
+                >
+                  Go Shopping
+                </Link>
+              </div>
+            ) : (
+              <table className="w-full text-left min-w-[700px]">
+                <thead className="bg-[#ececec] text-[#253D4E] font-bold text-sm">
+                  <tr>
+                    <th className="py-4 px-6 rounded-l-xl">Product</th>
+                    <th className="py-4 px-6">Unit Price</th>
+                    <th className="py-4 px-6">Quantity</th>
+                    <th className="py-4 px-6">Subtotal</th>
+                    <th className="py-4 px-6 rounded-r-xl">Remove</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {cartItems.map((item) => (
+                    <tr
+                      key={item._id || item.id}
+                      className="group hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="py-6 px-6">
+                        <div className="flex items-center gap-6">
+                          <div className="w-24 h-24 border rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
+                            <img
+                              src={item.image || item.img}
+                              alt={item.name}
+                              className="w-full h-full object-contain p-2"
+                            />
+                          </div>
+                          <div>
+                            <h4 className="font-black text-[#253D4E] text-lg hover:text-[#3BB77E] transition-colors cursor-pointer leading-tight mb-2">
+                              {item.name}
+                            </h4>
+                            <div className="flex gap-2 text-xs font-bold">
+                              <span className="text-gray-400">
+                                {item.unit || item.weight}
+                              </span>
+                              <span className="text-[#3BB77E] px-2 bg-[#DEF9EC] rounded-sm">
+                                In Stock
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </td>
-                    <td className="py-6 px-6">
-                      <span className="text-2xl font-black text-[#253D4E]">
-                        ₹{item.price.toFixed(2)}
-                      </span>
-                    </td>
-                    <td className="py-6 px-6">
-                      <div className="flex items-center gap-4 border-2 border-[#3BB77E] w-fit px-4 py-2 rounded-md bg-white">
-                        <button className="text-[#3BB77E] hover:scale-125 transition-transform">
-                          <FiMinus />
-                        </button>
-                        <span className="font-bold text-lg min-w-[20px] text-center">
-                          1
+                      </td>
+                      <td className="py-6 px-6">
+                        <span className="text-2xl font-black text-[#253D4E]">
+                          ₹{item.price}
                         </span>
-                        <button className="text-[#3BB77E] hover:scale-125 transition-transform">
-                          <FiPlus />
+                      </td>
+                      <td className="py-6 px-6">
+                        <div className="flex items-center gap-4 border-2 border-[#3BB77E] w-fit px-4 py-2 rounded-md bg-white shadow-sm">
+                          <button
+                            onClick={() =>
+                              updateQuantity(item._id || item.id, -1)
+                            }
+                            className="text-[#3BB77E] hover:scale-125 transition-transform"
+                          >
+                            <FiMinus />
+                          </button>
+                          <span className="font-bold text-lg min-w-[20px] text-center">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() =>
+                              updateQuantity(item._id || item.id, 1)
+                            }
+                            className="text-[#3BB77E] hover:scale-125 transition-transform"
+                          >
+                            <FiPlus />
+                          </button>
+                        </div>
+                      </td>
+                      <td className="py-6 px-6">
+                        <span className="text-2xl font-black text-[#3BB77E]">
+                          ₹{item.price * item.quantity}
+                        </span>
+                      </td>
+                      <td className="py-6 px-6">
+                        <button
+                          onClick={() => removeFromCart(item._id || item.id)}
+                          className="text-gray-400 hover:text-red-500 transition-colors text-2xl"
+                        >
+                          <FiTrash2 />
                         </button>
-                      </div>
-                    </td>
-                    <td className="py-6 px-6">
-                      <span className="text-2xl font-black text-[#3BB77E]">
-                        ₹{item.price.toFixed(2)}
-                      </span>
-                    </td>
-                    <td className="py-6 px-6">
-                      <button className="text-gray-400 hover:text-red-500 transition-colors text-2xl">
-                        <FiTrash2 />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
 
           <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6 border-t pt-8">
             <Link
               href="/"
-              className="bg-[#3BB77E] text-white px-8 py-4 rounded-md font-bold hover:bg-[#29A56C] transition shadow-lg flex items-center gap-2"
+              className="bg-[#3BB77E] text-white px-8 py-4 rounded-xl font-black hover:bg-[#29A56C] transition shadow-lg flex items-center gap-2"
             >
               <FiArrowRight className="rotate-180" /> Continue Shopping
             </Link>
-            <button className="bg-[#253D4E] text-white px-8 py-4 rounded-md font-bold hover:bg-black transition shadow-lg flex items-center gap-2">
-              <FiRefreshCw /> Update Cart
-            </button>
           </div>
         </div>
 
@@ -167,9 +167,12 @@ export default function Cart() {
                 </span>
               </div>
             </div>
-            <button className="w-full bg-[#3BB77E] text-white py-5 rounded-md font-black text-lg hover:bg-[#29A56C] transition shadow-xl shadow-[#3BB77E]/20 flex items-center justify-center gap-2">
+            <Link
+              href="/checkout"
+              className="w-full bg-[#3BB77E] text-white py-5 rounded-md font-black text-lg hover:bg-[#29A56C] transition shadow-xl shadow-[#3BB77E]/20 flex items-center justify-center gap-2"
+            >
               Proceed To CheckOut <FiArrowRight />
-            </button>
+            </Link>
           </div>
 
           <div className="bg-white border rounded-2xl p-8 shadow-sm space-y-4">

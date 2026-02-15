@@ -18,12 +18,26 @@ import { useRouter } from "next/navigation";
 import { fetchProdAndCat } from "@/actions/dbactions";
 
 import AuthModal from "./AuthModal";
+import { useCart } from "@/context/CartContext";
 
 const Navbar = () => {
+  const { cartItems } = useCart();
   const { data: session } = useSession();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalStep, setAuthModalStep] = useState(1);
+
+  // Auto-open location step if logged in but no address
+  React.useEffect(() => {
+    if (session && !session.user?.address?.text) {
+      setAuthModalStep(3);
+      setIsAuthModalOpen(true);
+    } else {
+      // If we're not logged in, reset back to step 1 for the next time it opens
+      setAuthModalStep(1);
+    }
+  }, [session]);
 
   // Search States
   const [searchTerm, setSearchTerm] = useState("");
@@ -74,6 +88,8 @@ const Navbar = () => {
       router.push(`/shop?category=${encodeURIComponent(item.name)}`);
     } else {
       router.push(`/product/${item.id_custom || item._id}`);
+      // Force close suggestions for products specifically
+      setTimeout(() => setSuggestions([]), 100);
     }
   };
 
@@ -83,27 +99,31 @@ const Navbar = () => {
 
     const term = searchTerm.toLowerCase();
 
-    // Check if it's a category first
-    const categoryMatch = data.categories.find(
-      (c) => c.name.toLowerCase() === term,
-    );
+    // Fuzzy Category Matching (matches 'snack' to 'Snacks', 'milk' to 'Milk & Dairy', etc)
+    const categoryMatch = data.categories.find((c) => {
+      const catName = c.name.toLowerCase();
+      return (
+        catName === term || catName.includes(term) || term.includes(catName)
+      );
+    });
+
     if (categoryMatch) {
       router.push(`/shop?category=${encodeURIComponent(categoryMatch.name)}`);
       setSuggestions([]);
       return;
     }
 
-    // Check if it's a specific product
-    const productMatch = data.products.find(
+    // Check if it's a specific product name (exact match)
+    const exactProduct = data.products.find(
       (p) => p.name.toLowerCase() === term,
     );
-    if (productMatch) {
-      router.push(`/product/${productMatch.id_custom || productMatch._id}`);
+    if (exactProduct) {
+      router.push(`/product/${exactProduct.id_custom || exactProduct._id}`);
       setSuggestions([]);
       return;
     }
 
-    // Fallback: General search query
+    // Fallback: Show search results in Shop page (filtered by name)
     router.push(`/shop?search=${encodeURIComponent(searchTerm)}`);
     setSuggestions([]);
   };
@@ -117,6 +137,7 @@ const Navbar = () => {
     <>
       <AuthModal
         isOpen={isAuthModalOpen}
+        initialStep={authModalStep}
         onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={() => setIsAuthModalOpen(false)}
       />
@@ -199,17 +220,6 @@ const Navbar = () => {
           <div className="flex gap-3 md:gap-5 lg:gap-6 items-center text-[#253D4E] shrink-0">
             <div className="hidden lg:flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group">
               <div className="relative">
-                <FiRefreshCw className="text-2xl" />
-                <span className="absolute -top-1 -right-2 bg-[#3BB77E] text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold">
-                  1
-                </span>
-              </div>
-              <span className="text-sm font-medium text-gray-500 group-hover:text-[#3BB77E]">
-                Compare
-              </span>
-            </div>
-            <div className="hidden lg:flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group">
-              <div className="relative">
                 <FiHeart className="text-2xl" />
                 <span className="absolute -top-1 -right-2 bg-[#3BB77E] text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold">
                   2
@@ -226,7 +236,7 @@ const Navbar = () => {
               <div className="relative">
                 <FiShoppingCart className="text-2xl" />
                 <span className="absolute -top-1 -right-2 bg-[#3BB77E] text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold">
-                  3
+                  {cartItems.length}
                 </span>
               </div>
               <span className="hidden sm:block text-sm font-medium text-gray-500 group-hover:text-[#3BB77E]">
@@ -328,12 +338,6 @@ const Navbar = () => {
               <nav className="flex gap-8 font-bold text-[#253D4E] text-sm">
                 <Link
                   href="/"
-                  className="flex items-center gap-1 text-[#3BB77E] hover:text-[#29A56C] transition-colors"
-                >
-                  Hot Deals
-                </Link>
-                <Link
-                  href="/"
                   className="hover:text-[#3BB77E] transition-colors"
                 >
                   Home
@@ -349,12 +353,6 @@ const Navbar = () => {
                   className="hover:text-[#3BB77E] transition-colors flex items-center gap-1"
                 >
                   Shop <IoIosArrowDown className="text-xs" />
-                </Link>
-                <Link
-                  href="/vendors"
-                  className="hover:text-[#3BB77E] transition-colors flex items-center gap-1"
-                >
-                  Vendors <IoIosArrowDown className="text-xs" />
                 </Link>
                 <Link
                   href="/blog"
@@ -445,6 +443,20 @@ const Navbar = () => {
                 className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
               >
                 Blog
+              </Link>
+              <Link
+                href="/profile"
+                onClick={() => setIsMenuOpen(false)}
+                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
+              >
+                My Profile
+              </Link>
+              <Link
+                href="/orders"
+                onClick={() => setIsMenuOpen(false)}
+                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
+              >
+                My Orders
               </Link>
               <Link
                 href="/contact"

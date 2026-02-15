@@ -2,6 +2,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SessionWrapper from "@/components/SessionWrapper";
+import { CartProvider } from "@/context/CartContext";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -27,9 +30,12 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 min-h-screen font-sans`}
       >
         <SessionWrapper>
-          <Navbar />
-          {children}
-          <Footer />
+          <CartProvider>
+            <Navbar />
+            {children}
+            <ToastContainer position="bottom-right" autoClose={3000} />
+            <Footer />
+          </CartProvider>
         </SessionWrapper>
       </body>
     </html>
