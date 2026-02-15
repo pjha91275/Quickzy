@@ -17,12 +17,7 @@ const UserSchema = new Schema({
     lng: { type: Number, default: 0 },
     zone: { type: String, default: "" },
   },
-  cart: [
-    {
-      productId: { type: Schema.Types.ObjectId, ref: "Product" },
-      quantity: { type: Number, default: 1 },
-    },
-  ],
+  cart: { type: Array, default: [] },
   orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

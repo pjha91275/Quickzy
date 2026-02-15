@@ -1,124 +1,173 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { FiUser, FiMail, FiPhone, FiMapPin, FiSave } from "react-icons/fi";
+import {
+  FiUser,
+  FiMail,
+  FiPhone,
+  FiMapPin,
+  FiSave,
+  FiCamera,
+} from "react-icons/fi";
+import { updateProfile } from "@/actions/useractions";
+import { toast } from "react-toastify";
 
 export default function ProfileContent() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
+  const [loading, setLoading] = useState(false);
 
-  // Local state for form fields
-  const [name, setName] = useState(session?.user?.name || "");
+  // Form State
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState(session?.user?.address?.text || "");
+  const [address, setAddress] = useState("");
+  const [avatar, setAvatar] = useState("");
 
-  const handleSave = () => {
-    alert("Profile settings saved! (Frontend only)");
+  // Load data when session is ready
+  useEffect(() => {
+    if (session?.user) {
+      setName(session.user.name || "");
+      setPhone(session.user.phone || "");
+      setAddress(session.user.address?.text || "");
+      setAvatar(session.user.image || "");
+    }
+  }, [session]);
+
+  const handleSave = async () => {
+    if (!name || !phone) {
+      return toast.error("Name and Phone are required!");
+    }
+
+    setLoading(true);
+    const res = await updateProfile(session.user.email, {
+      name,
+      phone,
+      "address.text": address,
+      image: avatar, // In a real app, you'd upload the file first, but we'll save the URL for now
+    });
+
+    if (res.success) {
+      toast.success("Profile updated successfully!");
+      await update(); // This refreshes the session data on the client side
+    } else {
+      toast.error("Failed to update profile.");
+    }
+    setLoading(false);
+  };
+
+  // Simple mock image change
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // For now, we just show a toast as real upload requires an API route/Cloudinary
+      toast.info(
+        "Image selected! (In a real app, we'd upload this to Cloudinary now)",
+      );
+      // Mock: create a local preview URL
+      setAvatar(URL.createObjectURL(file));
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F6FA] py-10">
+    <div className="min-h-screen bg-[#F4F6FA] py-10 font-sans">
       <div className="container mx-auto px-4 max-w-2xl">
-        <h1 className="text-3xl font-black text-[#253D4E] mb-8">
-          Your Profile
-        </h1>
+        <h1 className="text-3xl font-black text-[#253D4E] mb-8">My Profile</h1>
 
-        <div className="bg-white rounded-2xl shadow-sm border p-8 space-y-6">
+        <div className="bg-white rounded-3xl shadow-sm border p-8 space-y-8">
           {/* Avatar Section */}
-          <div className="flex items-center gap-6 pb-6 border-b">
+          <div className="flex items-center gap-6 pb-8 border-b">
             <div className="relative group">
-              <div className="w-20 h-20 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] overflow-hidden border">
-                {session?.user?.image ? (
+              <div className="w-24 h-24 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] overflow-hidden border-4 border-white shadow-md">
+                {avatar ? (
                   <img
-                    src={session.user.image}
+                    src={avatar}
                     className="w-full h-full object-cover"
                     alt="Profile"
                   />
                 ) : (
-                  <FiUser size={32} />
+                  <FiUser size={40} />
                 )}
               </div>
-              <label className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
-                <FiSave className="text-white text-xl" />{" "}
-                {/* Reusing save icon as a placeholder for upload */}
+              <label className="absolute bottom-0 right-0 bg-[#3BB77E] p-2 rounded-full text-white cursor-pointer hover:scale-110 transition-all border-2 border-white shadow-lg">
+                <FiCamera size={16} />
                 <input
                   type="file"
                   className="hidden"
                   accept="image/*"
-                  onChange={(e) => console.log(e.target.files[0])}
+                  onChange={handleImageChange}
                 />
               </label>
             </div>
             <div>
-              <p className="text-sm font-bold text-[#3BB77E]">
-                Account Settings
+              <p className="text-xs font-black text-[#3BB77E] uppercase tracking-widest mb-1">
+                Welcome Back,
               </p>
-              <h2 className="text-xl font-black text-[#253D4E]">
-                {session?.user?.name || "User"}
+              <h2 className="text-2xl font-black text-[#253D4E]">
+                {name || "Quickzy User"}
               </h2>
             </div>
           </div>
 
-          {/* Form Fields */}
-          <div className="grid gap-5">
-            <div>
-              <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
+          {/* Form Section */}
+          <div className="grid gap-6">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-1">
                 Full Name
               </label>
               <div className="relative">
-                <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
                 <input
                   type="text"
-                  className="w-full bg-[#F4F6FA] border-none rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/20"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
+                  className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/20"
+                  placeholder="Your Name"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
-                Email Address (Locked)
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-1">
+                Email (Read Only)
               </label>
               <div className="relative">
-                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
+                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-200" />
                 <input
-                  type="email"
-                  disabled
-                  className="w-full bg-gray-50 border border-gray-100 rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold text-gray-400 cursor-not-allowed"
+                  type="text"
                   value={session?.user?.email || ""}
+                  disabled
+                  className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-gray-300 cursor-not-allowed"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-1">
                 Phone Number
               </label>
               <div className="relative">
-                <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+                <FiPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />
                 <input
                   type="tel"
-                  className="w-full bg-[#F4F6FA] border-none rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/20"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder="Enter 10-digit mobile number"
+                  className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/20"
+                  placeholder="Enter Mobile Number"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-1">
                 Delivery Address
               </label>
-              <div className="relative flex items-start">
-                <FiMapPin className="absolute left-4 top-4 text-gray-400" />
+              <div className="relative">
+                <FiMapPin className="absolute left-4 top-5 text-gray-300" />
                 <textarea
-                  rows={3}
-                  className="w-full bg-[#F4F6FA] border-none rounded-xl py-3.5 pl-12 pr-4 text-sm font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/20 resize-none"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Your saved location"
+                  rows={3}
+                  className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/20 resize-none"
+                  placeholder="Flat No, Building, Area..."
                 />
               </div>
             </div>
@@ -126,9 +175,16 @@ export default function ProfileContent() {
 
           <button
             onClick={handleSave}
-            className="w-full bg-[#3BB77E] text-white py-4 rounded-xl font-black flex items-center justify-center gap-2 hover:bg-[#29A56C] transition-all shadow-lg shadow-green-100"
+            disabled={loading}
+            className="w-full bg-[#3BB77E] text-white py-5 rounded-2xl font-black text-lg hover:bg-[#29A56C] transition-all shadow-xl shadow-green-100 flex items-center justify-center gap-2 disabled:opacity-50"
           >
-            <FiSave /> Save Changes
+            {loading ? (
+              "Saving..."
+            ) : (
+              <>
+                <FiSave /> Save Profile Changes
+              </>
+            )}
           </button>
         </div>
       </div>
