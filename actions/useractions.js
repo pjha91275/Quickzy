@@ -8,7 +8,13 @@ export const fetchCart = async (email) => {
   await connectDb();
   // We use lowercase to be safe
   const user = await User.findOne({ email: email.toLowerCase() }).lean();
-  return user?.cart || [];
+
+  // CRITICAL FIX: Convert MongoDB complex objects (liike _id) to plain strings
+  // This solves the "Only plain objects can be passed to Client Components" error.
+  if (user?.cart) {
+    return JSON.parse(JSON.stringify(user.cart));
+  }
+  return [];
 };
 
 // 2. Sync Cart

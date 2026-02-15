@@ -28,18 +28,32 @@ export const CartProvider = ({ children }) => {
 
       // Step B: If logged in, fetch the "Cloud Cart"
       if (status === "authenticated" && session?.user?.email) {
-        const dbCart = await fetchCart(session.user.email);
-        // If DB has items, they are the most important
-        if (dbCart && dbCart.length > 0) {
-          startingItems = dbCart;
+        try {
+          const dbCart = await fetchCart(session.user.email);
+          // If DB has items, they are the most important
+          if (dbCart && dbCart.length > 0) {
+            startingItems = dbCart;
+          }
+        } catch (error) {
+          console.error("Cart loading failed:", error);
         }
       }
 
+      // Final sanitization to remove any "corrupted" items before state update
+      const cleanItems = startingItems.filter(
+        (item) =>
+          item &&
+          item.name &&
+          !isNaN(parseFloat(item.price)) &&
+          (item.image || item.img),
+      );
+
       // Step C: Update UI and flip the "Ready" flag
-      setCartItems(startingItems);
+      setCartItems(cleanItems);
+      // Give a tiny moment for state to settle before allowing sync
       setTimeout(() => {
         hasLoaded.current = true;
-      }, 100); // Small gap to avoid immediate sync
+      }, 150);
     };
 
     if (status !== "loading") {
@@ -49,7 +63,8 @@ export const CartProvider = ({ children }) => {
 
   // 2. Permanent Sync (runs whenever cart changes)
   useEffect(() => {
-    if (!hasLoaded.current) return; // STOP: Don't save if we haven't finished loading yet
+    // PROTECTIVE GUARD: NEVER sync an empty cart to DB if we haven't finished loading yet
+    if (!hasLoaded.current) return;
 
     // Save to browser
     localStorage.setItem("quickzy-cart", JSON.stringify(cartItems));
@@ -58,21 +73,30 @@ export const CartProvider = ({ children }) => {
     if (status === "authenticated" && session?.user?.email) {
       syncCart(session.user.email, cartItems);
     }
-  }, [cartItems]);
+  }, [cartItems, status, session?.user?.email]);
 
   const addToCart = (product) => {
+    // Sanitize product data locally before adding
+    const sanitizedProduct = {
+      _id: (product._id || product.id)?.toString(),
+      name: product.name,
+      price: parseFloat(product.price),
+      image: product.image || product.img,
+      unit: product.unit || product.weight,
+    };
+
     setCartItems((prev) => {
       const existing = prev.find(
-        (item) => (item._id || item.id) === (product._id || product.id),
+        (item) => (item._id || item.id) === sanitizedProduct._id,
       );
       if (existing) {
         return prev.map((item) =>
-          (item._id || item.id) === (product._id || product.id)
+          (item._id || item.id) === sanitizedProduct._id
             ? { ...item, quantity: (item.quantity || 1) + 1 }
             : item,
         );
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, { ...sanitizedProduct, quantity: 1 }];
     });
     toast.success("Added to cart!");
   };
