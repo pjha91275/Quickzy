@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import SessionWrapper from "@/components/SessionWrapper";
 import { CartProvider } from "@/context/CartContext";
 import { ToastContainer } from "react-toastify";
+import Script from "next/script";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
@@ -33,10 +34,18 @@ export default function RootLayout({ children }) {
           <CartProvider>
             <Navbar />
             {children}
-            <ToastContainer position="bottom-right" autoClose={3000} />
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+            />
             <Footer />
           </CartProvider>
         </SessionWrapper>
+        <Script
+          src="https://checkout.razorpay.com/v1/checkout.js"
+          strategy="lazyOnload"
+        />
       </body>
     </html>
   );

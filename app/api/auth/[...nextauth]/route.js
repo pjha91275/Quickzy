@@ -97,6 +97,8 @@ export const authOptions = {
         await connectDb();
         const dbUser = await User.findById(token.sub).lean();
         if (dbUser) {
+          session.user.name = dbUser.name;
+          session.user.phone = dbUser.phone;
           session.user.address = dbUser.address;
         }
       }
@@ -112,6 +114,13 @@ export const authOptions = {
   pages: {
     signIn: "/", // We use our modal on the home page
     error: "/", // Redirect back to home on error
+  },
+  events: {
+    // When a user is created via Google, mark their email as verified immediately
+    async createUser({ user }) {
+      await connectDb();
+      await User.findByIdAndUpdate(user.id, { emailVerified: new Date() });
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

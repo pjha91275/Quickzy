@@ -1,56 +1,138 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import {
   FiShoppingBag,
   FiMapPin,
   FiPhone,
-  FiClock,
   FiCreditCard,
   FiShield,
-  FiCheck,
+  FiUser,
+  FiSave,
 } from "react-icons/fi";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
-import { createOrder } from "@/actions/orderactions";
+import { createOrder, initiateRazorpayOrder } from "@/actions/orderactions";
+import { saveCheckoutDetails } from "@/actions/useractions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 export default function CheckoutContent() {
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const { cartItems, subtotal, clearCart } = useCart();
-  const [paymentMethod, setPaymentMethod] = useState("cash");
+  const [paymentMethod, setPaymentMethod] = useState(""); // empty initially to force selection
   const [isPlacing, setIsPlacing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const router = useRouter();
 
-  const deliveryFee = 25;
-  const total = subtotal + deliveryFee;
+  // Local form state
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+
+  // Update local state when session loads
+  useEffect(() => {
+    if (session?.user) {
+      setName(session.user.name || "");
+      setPhone(session.user.phone || "");
+      setAddress(session.user.address?.text || "");
+    }
+  }, [session]);
+
+  const total = subtotal + 25;
+
+  const handleSaveDetails = async () => {
+    if (!name || !phone || !address) {
+      return toast.error("Please fill all contact and address fields!");
+    }
+    setIsSaving(true);
+    const res = await saveCheckoutDetails(session.user.email, {
+      name,
+      phone,
+      address,
+    });
+    if (res.success) {
+      toast.success("Details saved successfully!");
+      await update(); // refresh session data
+    }
+    setIsSaving(false);
+  };
 
   const handlePlaceOrder = async () => {
-    if (cartItems.length === 0) return;
+    // 1. Validations
+    if (cartItems.length === 0) return toast.error("Your cart is empty!");
+    if (!name) return toast.error("Please enter your name!");
+    if (!phone) return toast.error("Please enter your phone number!");
+    if (!address) return toast.error("Please enter your delivery address!");
+    if (!paymentMethod) return toast.error("Please select a payment method!");
 
     setIsPlacing(true);
-    const orderData = {
-      userEmail: session?.user?.email,
-      items: cartItems.map((item) => ({
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity,
-        image: item.image || item.img,
-      })),
+
+    const baseData = {
+      userEmail: session.user.email,
+      items: cartItems,
       totalAmount: total,
-      paymentMethod: paymentMethod === "cash" ? "COD" : "Online",
-      address: session?.user?.address?.text || "Default Address",
-      phoneNumber: session?.user?.phone || "Not Provided",
+      address: address,
+      phoneNumber: phone,
     };
 
-    const res = await createOrder(orderData);
+    // Online Payment Flow
+    if (paymentMethod === "online") {
+      try {
+        const orderId = await initiateRazorpayOrder(total);
+
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+          amount: total * 100,
+          currency: "INR",
+          name: "Quickzy",
+          description: "Order Payment",
+          order_id: orderId,
+          handler: async (response) => {
+            // Only create order IF payment handler is triggered (payment completed)
+            const res = await createOrder({
+              ...baseData,
+              paymentMethod: "Online",
+              paymentStatus: "Paid",
+              razorpay_payment_id: response.razorpay_payment_id,
+            });
+            if (res.success) {
+              toast.success("Payment Received & Order Placed!");
+              clearCart();
+              router.push("/orders");
+            }
+          },
+          prefill: { name: name, email: session.user.email, contact: phone },
+          theme: { color: "#3BB77E" },
+          modal: {
+            ondismiss: () => {
+              setIsPlacing(false);
+              toast.info("Payment cancelled");
+            },
+          },
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.open();
+      } catch (err) {
+        toast.error("Failed to start payment. Check your keys!");
+        setIsPlacing(false);
+      }
+      return;
+    }
+
+    // COD Flow
+    const res = await createOrder({
+      ...baseData,
+      paymentMethod: "COD",
+      paymentStatus: "Pending",
+    });
     if (res.success) {
       toast.success("Order placed successfully!");
       clearCart();
       router.push("/orders");
     } else {
-      toast.error("Failed to place order. Try again.");
+      toast.error("Something went wrong. Try again.");
     }
     setIsPlacing(false);
   };
@@ -63,156 +145,150 @@ export default function CheckoutContent() {
         </h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Checkout Form */}
           <div className="lg:col-span-2 space-y-6">
-            {/* 1. Contact Info */}
+            {/* Contact & Address Section */}
             <div className="bg-white rounded-2xl p-6 border shadow-sm">
-              <div className="flex items-center gap-3 mb-4 text-[#253D4E]">
-                <FiPhone className="text-[#3BB77E]" />
-                <h3 className="font-black">Contact Details</h3>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-black text-[#253D4E] flex items-center gap-2">
+                  <FiUser className="text-[#3BB77E]" /> Your Details
+                </h3>
+                <button
+                  onClick={handleSaveDetails}
+                  disabled={isSaving}
+                  className="text-xs font-black bg-[#DEF9EC] text-[#3BB77E] px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-[#3BB77E] hover:text-white transition-all disabled:opacity-50"
+                >
+                  <FiSave /> {isSaving ? "Saving..." : "Save for next time"}
+                </button>
               </div>
-              <div className="grid sm:grid-cols-2 gap-4 text-sm font-bold text-[#253D4E]">
-                <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                  <p className="text-[10px] text-gray-400 uppercase mb-1 font-black">
+
+              <div className="grid sm:grid-cols-2 gap-4 mb-4">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-gray-400 uppercase ml-1">
                     Full Name
-                  </p>
-                  {session?.user?.name || "Quickzy User"}
+                  </label>
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-gray-50 border p-3 rounded-xl font-bold text-sm outline-none focus:border-[#3BB77E]"
+                    placeholder="Enter your name"
+                  />
                 </div>
-                <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
-                  <p className="text-[10px] text-gray-400 uppercase mb-1 font-black">
-                    Mobile Number
-                  </p>
-                  {session?.user?.phone || "Missing - Update in Profile"}
+                <div className="space-y-1">
+                  <label className="text-[10px] font-black text-gray-400 uppercase ml-1">
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full bg-gray-50 border p-3 rounded-xl font-bold text-sm outline-none focus:border-[#3BB77E]"
+                    placeholder="Enter phone number"
+                  />
                 </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-gray-400 uppercase ml-1">
+                  Delivery Address
+                </label>
+                <textarea
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  rows={2}
+                  className="w-full bg-gray-50 border p-3 rounded-xl font-bold text-sm outline-none focus:border-[#3BB77E] resize-none"
+                  placeholder="Enter your flat, building, street name..."
+                />
               </div>
             </div>
 
-            {/* 2. Delivery Address */}
+            {/* Payment Selection */}
             <div className="bg-white rounded-2xl p-6 border shadow-sm">
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex items-center gap-3 text-[#253D4E]">
-                  <FiMapPin className="text-[#3BB77E]" />
-                  <h3 className="font-black">Delivery Address</h3>
-                </div>
-                <Link
-                  href="/profile"
-                  className="text-xs font-black text-[#3BB77E] hover:underline"
-                >
-                  Change
-                </Link>
-              </div>
-              <div className="p-4 bg-[#DEF9EC]/30 rounded-xl border border-[#3BB77E]/20 text-sm font-bold text-[#253D4E]">
-                {session?.user?.address?.text ||
-                  "No address found. Please add in profile."}
-              </div>
-              <div className="mt-4 flex items-center gap-2 text-[#3BB77E] text-xs font-black bg-[#DEF9EC] w-fit px-3 py-1.5 rounded-full">
-                <FiClock /> Delivery in 12-15 Minutes
-              </div>
-            </div>
-
-            {/* 3. Payment Method */}
-            <div className="bg-white rounded-2xl p-6 border shadow-sm">
-              <div className="flex items-center gap-3 mb-6 text-[#253D4E]">
-                <FiCreditCard className="text-[#3BB77E]" />
-                <h3 className="font-black">Payment Method</h3>
-              </div>
+              <h3 className="font-black text-[#253D4E] mb-6 flex items-center gap-2">
+                <FiCreditCard className="text-[#3BB77E]" /> Payment Method
+              </h3>
               <div className="grid sm:grid-cols-2 gap-4">
-                <label
-                  className={`block p-5 rounded-2xl border-2 transition-all cursor-pointer ${paymentMethod === "cash" ? "border-[#3BB77E] bg-[#DEF9EC]/20" : "border-gray-100"}`}
+                <button
+                  onClick={() => setPaymentMethod("cash")}
+                  className={`p-5 rounded-2xl border-2 text-left transition-all ${paymentMethod === "cash" ? "border-[#3BB77E] bg-[#DEF9EC]/20" : "border-gray-50 bg-gray-50"} group`}
                 >
-                  <input
-                    type="radio"
-                    name="payment"
-                    className="hidden"
-                    onChange={() => setPaymentMethod("cash")}
-                    checked={paymentMethod === "cash"}
-                  />
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="font-black text-[#253D4E] text-sm">
-                      Cash / UPI on Delivery
-                    </p>
-                    {paymentMethod === "cash" && (
-                      <FiCheck className="text-[#3BB77E]" />
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-400 font-bold">
-                    Pay when your order arrives
+                  <p
+                    className={`font-black text-sm mb-1 ${paymentMethod === "cash" ? "text-[#3BB77E]" : "text-[#253D4E]"}`}
+                  >
+                    Cash / UPI on Delivery
                   </p>
-                </label>
-                <label
-                  className={`block p-5 rounded-2xl border-2 transition-all cursor-pointer ${paymentMethod === "online" ? "border-[#3BB77E] bg-[#DEF9EC]/20" : "border-gray-100"}`}
+                  <p className="text-[10px] text-gray-400 font-bold">
+                    Pay at your doorstep
+                  </p>
+                </button>
+                <button
+                  onClick={() => setPaymentMethod("online")}
+                  className={`p-5 rounded-2xl border-2 text-left transition-all ${paymentMethod === "online" ? "border-[#3BB77E] bg-[#DEF9EC]/20" : "border-gray-50 bg-gray-50"}`}
                 >
-                  <input
-                    type="radio"
-                    name="payment"
-                    className="hidden"
-                    onChange={() => setPaymentMethod("online")}
-                    checked={paymentMethod === "online"}
-                  />
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="font-black text-[#253D4E] text-sm">
-                      Online Payment
-                    </p>
-                    {paymentMethod === "online" && (
-                      <FiCheck className="text-[#3BB77E]" />
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-400 font-bold">
-                    Razorpay (Cards, UPI, GPay)
+                  <p
+                    className={`font-black text-sm mb-1 ${paymentMethod === "online" ? "text-[#3BB77E]" : "text-[#253D4E]"}`}
+                  >
+                    Online Payment
                   </p>
-                </label>
+                  <p className="text-[10px] text-gray-400 font-bold">
+                    Safe & Secure via Razorpay
+                  </p>
+                </button>
               </div>
             </div>
           </div>
 
-          {/* Right Sidebar: Order Summary */}
+          {/* Order Summary */}
           <div className="space-y-6">
-            <div className="bg-[#253D4E] rounded-2xl p-6 text-white shadow-xl sticky top-4">
+            <div className="bg-[#253D4E] rounded-2xl p-6 text-white sticky top-4 shadow-xl">
               <h3 className="text-lg font-black mb-6 flex items-center gap-2">
-                <FiShoppingBag /> Order Summary
+                <FiShoppingBag /> Summary
               </h3>
 
-              <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-4 mb-6 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
                 {cartItems.map((item, i) => (
-                  <div
-                    key={i}
-                    className="flex justify-between text-sm items-start gap-4"
-                  >
-                    <span className="font-bold opacity-80 leading-tight flex-1">
+                  <div key={i} className="flex justify-between text-sm gap-4">
+                    <span className="opacity-70 font-bold">
                       {item.quantity}x {item.name}
                     </span>
-                    <span className="font-black whitespace-nowrap">
+                    <span className="font-black">
                       ₹{item.price * item.quantity}
                     </span>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-white/10 pt-4 space-y-2 text-sm font-bold">
-                <div className="flex justify-between opacity-70">
+              <div className="border-t border-white/10 pt-4 space-y-3">
+                <div className="flex justify-between text-xs font-bold opacity-60">
                   <span>Subtotal</span>
                   <span>₹{subtotal}</span>
                 </div>
-                <div className="flex justify-between opacity-70">
+                <div className="flex justify-between text-xs font-bold opacity-60">
                   <span>Delivery Fee</span>
-                  <span>₹{deliveryFee}</span>
+                  <span>₹25</span>
                 </div>
-                <div className="flex justify-between text-lg font-black pt-2 text-[#3BB77E]">
-                  <span>Total Payable</span>
-                  <span>₹{total}</span>
+                <div className="flex justify-between items-center pt-2">
+                  <span className="font-black">Grand Total</span>
+                  <span className="text-2xl font-black text-[#3BB77E]">
+                    ₹{total}
+                  </span>
                 </div>
               </div>
 
               <button
                 onClick={handlePlaceOrder}
                 disabled={isPlacing || cartItems.length === 0}
-                className="w-full bg-[#3BB77E] text-white py-4 rounded-xl font-black mt-8 hover:bg-[#29A56C] transition-all flex items-center justify-center gap-2 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#3BB77E] text-white py-4 rounded-xl font-black mt-8 hover:bg-[#29A56C] transition-all shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {isPlacing
-                  ? "Placing Order..."
-                  : paymentMethod === "online"
-                    ? "Proceed to Payment"
-                    : "Place Order"}
+                {isPlacing ? (
+                  <>Processing...</>
+                ) : (
+                  <>
+                    {paymentMethod === "online"
+                      ? "Pay & Place Order"
+                      : "Place Order"}
+                  </>
+                )}
               </button>
             </div>
           </div>

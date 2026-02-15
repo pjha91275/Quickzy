@@ -118,7 +118,10 @@ export default function Cart() {
                       </td>
                       <td className="py-6 px-6">
                         <span className="text-2xl font-black text-[#3BB77E]">
-                          ₹{item.price * item.quantity}
+                          ₹
+                          {((item.price || 0) * (item.quantity || 1)).toFixed(
+                            2,
+                          )}
                         </span>
                       </td>
                       <td className="py-6 px-6">
