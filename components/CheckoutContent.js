@@ -18,7 +18,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 export default function CheckoutContent() {
-  const { data: session, update } = useSession();
+  const { data: session, update, status } = useSession();
   const { cartItems, subtotal, clearCart } = useCart();
   const [paymentMethod, setPaymentMethod] = useState(""); // empty initially to force selection
   const [isPlacing, setIsPlacing] = useState(false);
@@ -42,6 +42,9 @@ export default function CheckoutContent() {
   const total = subtotal + 25;
 
   const handleSaveDetails = async () => {
+    if (status !== "authenticated") {
+      return toast.error("Please login to save your details!");
+    }
     if (!name || !phone || !address) {
       return toast.error("Please fill all contact and address fields!");
     }
@@ -59,7 +62,12 @@ export default function CheckoutContent() {
   };
 
   const handlePlaceOrder = async () => {
-    // 1. Validations
+    // 1. Authentication Check
+    if (status !== "authenticated") {
+      return toast.error("Please login before placing the order!");
+    }
+
+    // 2. Validations
     if (cartItems.length === 0) return toast.error("Your cart is empty!");
     if (!name) return toast.error("Please enter your name!");
     if (!phone) return toast.error("Please enter your phone number!");
@@ -89,7 +97,6 @@ export default function CheckoutContent() {
           description: "Order Payment",
           order_id: orderId,
           handler: async (response) => {
-            // Only create order IF payment handler is triggered (payment completed)
             const res = await createOrder({
               ...baseData,
               paymentMethod: "Online",
@@ -99,7 +106,13 @@ export default function CheckoutContent() {
             if (res.success) {
               toast.success("Payment Received & Order Placed!");
               clearCart();
-              router.push("/orders");
+              setTimeout(() => {
+                setIsPlacing(false);
+                router.push("/orders");
+              }, 1000);
+            } else {
+              setIsPlacing(false);
+              toast.error("Order creation failed. Please contact support.");
             }
           },
           prefill: { name: name, email: session.user.email, contact: phone },
@@ -127,14 +140,18 @@ export default function CheckoutContent() {
       paymentMethod: "COD",
       paymentStatus: "Pending",
     });
+
     if (res.success) {
       toast.success("Order placed successfully!");
       clearCart();
-      router.push("/orders");
+      setTimeout(() => {
+        setIsPlacing(false);
+        router.push("/orders");
+      }, 1000);
     } else {
       toast.error("Something went wrong. Try again.");
+      setIsPlacing(false);
     }
-    setIsPlacing(false);
   };
 
   return (
@@ -152,13 +169,15 @@ export default function CheckoutContent() {
                 <h3 className="font-black text-[#253D4E] flex items-center gap-2">
                   <FiUser className="text-[#3BB77E]" /> Your Details
                 </h3>
-                <button
-                  onClick={handleSaveDetails}
-                  disabled={isSaving}
-                  className="text-xs font-black bg-[#DEF9EC] text-[#3BB77E] px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-[#3BB77E] hover:text-white transition-all disabled:opacity-50"
-                >
-                  <FiSave /> {isSaving ? "Saving..." : "Save for next time"}
-                </button>
+                {status === "authenticated" && (
+                  <button
+                    onClick={handleSaveDetails}
+                    disabled={isSaving}
+                    className="text-xs font-black bg-[#DEF9EC] text-[#3BB77E] px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-[#3BB77E] hover:text-white transition-all disabled:opacity-50"
+                  >
+                    <FiSave /> {isSaving ? "Saving..." : "Save for next time"}
+                  </button>
+                )}
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
