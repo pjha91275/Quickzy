@@ -218,7 +218,10 @@ const Navbar = () => {
           </div>
 
           <div className="flex gap-3 md:gap-5 lg:gap-6 items-center text-[#253D4E] shrink-0">
-            <div className="hidden lg:flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group">
+            <Link
+              href="/wishlist"
+              className="hidden lg:flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group"
+            >
               <div className="relative">
                 <FiHeart className="text-2xl" />
                 <span className="absolute -top-1 -right-2 bg-[#3BB77E] text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold">
@@ -228,7 +231,7 @@ const Navbar = () => {
               <span className="text-sm font-medium text-gray-500 group-hover:text-[#3BB77E]">
                 Wishlist
               </span>
-            </div>
+            </Link>
             <Link
               href="/cart"
               className="flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group"
