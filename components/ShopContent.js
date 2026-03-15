@@ -47,20 +47,11 @@ export default function ShopContent({ products, categories }) {
     let pool = products;
     if (selectedCategory !== "All") {
       pool = products.filter((p) => {
-        if (selectedCategory === "Milk & Dairy") return p.category === "Dairy";
-        if (selectedCategory === "Household Essentials")
-          return p.category === "Household Essentials";
-        if (selectedCategory === "Tea & Coffee")
-          return (
-            p.name.toLowerCase().includes("coffee") ||
-            p.name.toLowerCase().includes("tea") ||
-            p.name.toLowerCase().includes("nescafe")
-          );
-        if (selectedCategory === "Electronics")
-          return p.category === "Electronics" || p.category === "Gadgets";
-        if (selectedCategory === "Personal Care")
-          return ["Personal Care", "Beauty", "Grooming"].includes(p.category);
-        return p.category === selectedCategory;
+        const target = selectedCategory.toLowerCase();
+        const pCat = p.category.toLowerCase();
+        // Dynamic match: matches exactly, or if one contains the other (e.g. Dairy in Milk & Dairy)
+        // Also checks if the category keyword is in the product name as a fallback
+        return pCat === target || target.includes(pCat) || pCat.includes(target) || p.name.toLowerCase().includes(target.split(" ")[0]);
       });
     }
 
@@ -309,11 +300,11 @@ export default function ShopContent({ products, categories }) {
                         ₹{prod.price}
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-gray-300 line-through font-bold">
+                        <span className="text-slate-500 text-[11px] line-through font-bold">
                           ₹{prod.oldPrice}
                         </span>
-                        <span className="text-[10px] text-green-600 font-black">
-                          {prod.discount} Off
+                        <span className="bg-blue-500 text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                          {prod.discount} OFF
                         </span>
                       </div>
                     </div>
