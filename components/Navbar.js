@@ -28,16 +28,51 @@ const Navbar = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalStep, setAuthModalStep] = useState(1);
 
+  const [guestAddress, setGuestAddress] = useState("");
+  const [currentAddress, setCurrentAddress] = useState("Select Location");
+
+  // Sync address logic
+  React.useEffect(() => {
+    if (session?.user?.address?.text) {
+      setCurrentAddress(session.user.address.text);
+    } else {
+      const gLoc = localStorage.getItem("quickzy-guest-location");
+      if (gLoc) {
+        setCurrentAddress(gLoc);
+        setGuestAddress(gLoc);
+      } else {
+        setCurrentAddress("Select Location");
+      }
+    }
+  }, [session]);
+
   // Auto-open location step if logged in but no address
   React.useEffect(() => {
     if (session && !session.user?.address?.text) {
       setAuthModalStep(3);
       setIsAuthModalOpen(true);
-    } else {
-      // If we're not logged in, reset back to step 1 for the next time it opens
-      setAuthModalStep(1);
     }
   }, [session]);
+
+  // Listen for global auth open events (from footer or elsewhere)
+  React.useEffect(() => {
+    const handleOpenAuth = (e) => {
+      const { step, email: passedEmail, error } = e.detail || {};
+      if (step) setAuthModalStep(step);
+      setIsAuthModalOpen(true);
+      // We'll let AuthModal handle the LS email or passedEmail
+    };
+    const handleOpenLocation = (e) => {
+      setAuthModalStep(3);
+      setIsAuthModalOpen(true);
+    };
+    window.addEventListener("open-auth", handleOpenAuth);
+    window.addEventListener("open-location", handleOpenLocation);
+    return () => {
+      window.removeEventListener("open-auth", handleOpenAuth);
+      window.removeEventListener("open-location", handleOpenLocation);
+    };
+  }, []);
 
   // Search States
   const [searchTerm, setSearchTerm] = useState("");
@@ -142,28 +177,52 @@ const Navbar = () => {
         onLoginSuccess={() => setIsAuthModalOpen(false)}
       />
       <header className="w-full bg-white border-b relative font-sans z-50">
-        <div className="container mx-auto p-4 flex justify-between items-center gap-4 lg:gap-8">
-          <Link href="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="flex flex-col">
-              <div className="flex items-center leading-none">
-                <img
-                  src="/logo.png"
-                  alt="Quickzy Logo"
-                  className="w-12 h-12 md:w-16 md:h-16 object-contain group-hover:scale-110 transition-transform"
-                />
-                <div className="text-2xl md:text-3xl lg:text-4xl font-black text-[#3BB77E] tracking-tight ml-2">
-                  Quickzy
+        <div className="container mx-auto p-4 flex items-center gap-2 md:gap-3 lg:gap-4">
+          {/* Left Side: Logo + Location */}
+          <div className="flex flex-1 items-center">
+            <Link href="/" className="flex items-center gap-2 shrink-0 group">
+              <div className="flex flex-col">
+                <div className="flex items-center leading-none">
+                  <div className="w-12 h-12 md:w-20 md:h-20 bg-white flex items-center justify-center rounded-lg shadow-sm border border-gray-50 overflow-hidden shrink-0">
+                    <img
+                      src="/logo.png"
+                      alt="Quickzy Logo"
+                      className="w-[85%] h-[85%] object-contain group-hover:scale-110 transition-transform"
+                    />
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <div className="text-2xl md:text-3xl lg:text-4xl font-black text-[#3BB77E] tracking-tight ml-3 leading-none">
+                      Quickzy
+                    </div>
+                    <span className="text-[9px] text-gray-400 font-bold ml-3 mt-1 whitespace-nowrap hidden sm:block uppercase tracking-wider">
+                      Fast. Fresh. Delivered in a Zap.
+                    </span>
+                  </div>
                 </div>
               </div>
-              <span className="text-[10px] text-gray-400 font-bold ml-14 md:ml-20 whitespace-nowrap">
-                Fast. Fresh. Delivered in a Zap.
+            </Link>
+
+            {/* Location Trigger - Premium Blinkit Style */}
+            <div 
+              onClick={() => { setAuthModalStep(3); setIsAuthModalOpen(true); }}
+              className="hidden sm:flex flex-col cursor-pointer hover:bg-gray-50 px-6 py-2 rounded-2xl transition-all group/loc border-l border-gray-100 ml-8 w-[220px] lg:w-[280px] shrink-0 overflow-hidden"
+            >
+              <div className="flex items-center gap-1 leading-none mb-1">
+                <span className="text-[14px] font-black text-[#253D4E] uppercase tracking-tight truncate">
+                  {currentAddress === "Select Location" ? "Select Location" : "Delivery in 10 mins"}
+                </span>
+                <IoIosArrowDown className="text-xs text-[#3BB77E] group-hover/loc:translate-y-0.5 transition-transform shrink-0" />
+              </div>
+              <span className="text-[12px] font-bold text-gray-400 truncate block">
+                {currentAddress === "Select Location" ? "Set your delivery address" : currentAddress}
               </span>
             </div>
-          </Link>
+          </div>
 
-          <div className="hidden sm:flex flex-1 max-w-2xl border-2 border-[#BCE3C9] rounded-md items-center h-11 relative">
+          {/* Middle: Search Bar */}
+          <div className="hidden md:flex flex-1 max-w-5xl border-2 border-[#BCE3C9] rounded-md items-center h-11 relative">
             <div className="px-4 border-r hidden lg:block text-sm font-bold text-gray-700 whitespace-nowrap">
-              All Categories <IoIosArrowDown className="inline ml-1" />
+              All Categories
             </div>
 
             {/* UI PART: Bind value={searchTerm} and add an onChange to update the term. */}
@@ -217,7 +276,8 @@ const Navbar = () => {
             </button>
           </div>
 
-          <div className="flex gap-3 md:gap-5 lg:gap-6 items-center text-[#253D4E] shrink-0">
+          {/* Right Side: Icons */}
+          <div className="flex flex-1 justify-end gap-3 md:gap-5 lg:gap-6 items-center text-[#253D4E] shrink-0">
             <Link
               href="/wishlist"
               className="hidden lg:flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group"
@@ -334,10 +394,28 @@ const Navbar = () => {
         <div className="border-t hidden lg:block bg-white">
           <div className="container mx-auto px-4 flex justify-between items-center h-16">
             <div className="flex gap-10 items-center h-full">
-              <button className="bg-[#3BB77E] text-white px-6 py-2.5 rounded-md flex items-center gap-2 font-black text-sm hover:bg-[#29A56C] transition-colors shadow-sm">
-                <FiGrid className="text-lg" /> Browse All Categories{" "}
-                <IoIosArrowDown />
-              </button>
+              <div className="relative group h-full flex items-center">
+                <button className="bg-[#3BB77E] text-white px-6 py-2.5 rounded-md flex items-center gap-2 font-black text-sm hover:bg-[#29A56C] transition-colors shadow-sm">
+                  <FiGrid className="text-lg" /> Browse All Categories{" "}
+                  <IoIosArrowDown className="group-hover:rotate-180 transition-transform" />
+                </button>
+                <div className="absolute top-[85%] left-0 w-[480px] bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-6 opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50 overflow-hidden backdrop-blur-sm">
+                  <div className="grid grid-cols-2 gap-x-2 gap-y-1 px-4 max-h-[70vh] overflow-y-auto no-scrollbar">
+                    {data.categories.map((cat) => (
+                      <Link 
+                        key={cat.name} 
+                        href={`/shop?category=${encodeURIComponent(cat.name)}`}
+                        className="flex items-center gap-3 px-4 py-3 hover:bg-[#F2FBF6] rounded-xl group/item transition-all border border-transparent hover:border-[#DEF9EC]"
+                      >
+                        <div className="w-10 h-10 flex-shrink-0 bg-gray-50 rounded-lg p-2 group-hover/item:bg-white group-hover/item:shadow-sm transition-all">
+                          <img src={cat.image || cat.img} className="w-full h-full object-contain group-hover/item:scale-110 transition-transform" alt="" />
+                        </div>
+                        <span className="text-[11px] font-black text-[#253D4E] group-hover/item:text-[#3BB77E] uppercase tracking-wider">{cat.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
               <nav className="flex gap-8 font-bold text-[#253D4E] text-sm">
                 <Link
                   href="/"
@@ -351,18 +429,40 @@ const Navbar = () => {
                 >
                   About
                 </Link>
-                <Link
-                  href="/shop"
-                  className="hover:text-[#3BB77E] transition-colors flex items-center gap-1"
-                >
-                  Shop <IoIosArrowDown className="text-xs" />
-                </Link>
+                <div className="relative group">
+                  <Link
+                    href="/shop"
+                    className="hover:text-[#3BB77E] transition-colors flex items-center gap-1"
+                  >
+                    Shop <IoIosArrowDown className="text-xs group-hover:rotate-180 transition-transform" />
+                  </Link>
+                  <div className="absolute top-[85%] left-0 bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-4 w-64 opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50">
+                    <div className="px-2 space-y-1">
+                      {data.categories
+                        .filter(cat => !["Electronics", "Milk & Dairy", "Personal Care", "Snacks", "Vegetables"].includes(cat.name))
+                        .map((cat) => (
+                        <Link 
+                          key={cat.name} 
+                          href={`/shop?category=${encodeURIComponent(cat.name)}`}
+                          className="flex items-center gap-3 px-4 py-3 hover:bg-[#F2FBF6] rounded-xl group/item transition-all"
+                        >
+                          <img src={cat.image || cat.img} className="w-6 h-6 object-contain opacity-70 group-hover/item:opacity-100 transition-opacity" alt="" />
+                          <span className="text-[11px] font-black text-[#253D4E] group-hover/item:text-[#3BB77E] uppercase tracking-widest">
+                            {cat.name}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
                 <Link
                   href="/blog"
-                  className="hover:text-[#3BB77E] transition-colors flex items-center gap-1"
+                  className="hover:text-[#3BB77E] transition-colors"
                 >
-                  Blog <IoIosArrowDown className="text-xs" />
+                  Blog
                 </Link>
+
                 <Link
                   href="/contact"
                   className="hover:text-[#3BB77E] transition-colors"
@@ -374,9 +474,9 @@ const Navbar = () => {
             <div className="flex items-center gap-3">
               <FiHeadphones className="text-4xl text-[#253D4E]" />
               <div className="text-right">
-                <div className="text-[#3BB77E] text-2xl font-black leading-none">
+                <a href="tel:+911800419" className="text-[#3BB77E] text-2xl font-black leading-none hover:underline">
                   +91 1800-419
-                </div>
+                </a>
                 <div className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">
                   24/7 Delivery Support
                 </div>

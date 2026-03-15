@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SessionWrapper from "@/components/SessionWrapper";
 import { CartProvider } from "@/context/CartContext";
+import { WishlistProvider } from "@/context/WishlistContext";
 import { ToastContainer } from "react-toastify";
 import Script from "next/script";
 import "react-toastify/dist/ReactToastify.css";
@@ -32,14 +33,16 @@ export default function RootLayout({ children }) {
       >
         <SessionWrapper>
           <CartProvider>
-            <Navbar />
-            {children}
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-            />
-            <Footer />
+            <WishlistProvider>
+              <Navbar />
+              {children}
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+              />
+              <Footer />
+            </WishlistProvider>
           </CartProvider>
         </SessionWrapper>
         <Script

@@ -4,15 +4,19 @@ import Link from "next/link";
 import {
   FiArrowLeft,
   FiShoppingCart,
+  FiHeart,
+  FiZap,
+  FiTag,
+  FiLayers
 } from "react-icons/fi";
-import { 
-  HiMiniTruck, 
-  HiMiniReceiptPercent, 
-  HiMiniShieldCheck 
-} from "react-icons/hi2";
+import { useWishlist } from "@/context/WishlistContext";
+import { useCart } from "@/context/CartContext";
 
 export default function ProductContent({ product, similarProducts }) {
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const [selectedPack, setSelectedPack] = React.useState("single");
+  const [animatingHeart, setAnimatingHeart] = React.useState(null);
 
   if (!product) return null;
 
@@ -37,39 +41,32 @@ export default function ProductContent({ product, similarProducts }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 items-start">
           {/* Left Side: Image Gallery */}
-          <div className="space-y-8">
-            <div className="bg-white border-2 border-slate-50 rounded-3xl p-8 flex items-center justify-center overflow-hidden h-[450px] lg:h-[500px]">
-              <img
-                src={product.image || product.img}
-                alt={product.name}
-                className="max-h-full object-contain hover:scale-110 transition-transform duration-500"
-              />
-            </div>
-            
-
-
-            {/* Product Details Section (Folded below image on desktop, or keep for later) */}
-            <div className="hidden md:block pt-10 border-t">
-               <h3 className="text-lg font-black text-[#253D4E] mb-4">Product Details</h3>
-               <div className="space-y-4 text-sm font-medium text-gray-600 leading-relaxed">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-gray-400 text-xs">Description</span>
-                    <p>{product.description}</p>
-                  </div>
-                  <div className="flex flex-col gap-1 border-t pt-3">
-                    <span className="text-gray-400 text-xs">Vendor</span>
-                    <p className="text-[#3BB77E] font-bold">{product.vendor}</p>
-                  </div>
-               </div>
-            </div>
+          <div className="bg-white border-2 border-slate-50 rounded-3xl p-8 flex items-center justify-center overflow-hidden h-[450px] lg:h-[500px]">
+             <img
+               src={product.image || product.img}
+               alt={product.name}
+               className="max-h-full object-contain hover:scale-110 transition-transform duration-500"
+             />
           </div>
 
           {/* Right Side: Quick Buy Info */}
           <div className="space-y-8">
             <div className="space-y-2">
-              <h1 className="text-2xl md:text-3xl font-black text-[#253D4E] leading-tight">
-                {product.name}
-              </h1>
+              <div className="flex justify-between items-start">
+                <h1 className="text-2xl md:text-3xl font-black text-[#253D4E] leading-tight pr-4">
+                  {product.name}
+                </h1>
+                <button 
+                  onClick={() => {
+                    setAnimatingHeart('main');
+                    toggleWishlist(product);
+                    setTimeout(() => setAnimatingHeart(null), 400);
+                  }}
+                  className={`bg-gray-50 p-3 rounded-2xl hover:scale-110 transition-transform shadow-sm border border-gray-100 ${animatingHeart === 'main' ? "animate-heart-pop" : ""}`}
+                >
+                  <FiHeart className={`text-2xl ${isInWishlist(product._id || product.id) ? "text-red-500 fill-red-500" : "text-gray-300"}`} />
+                </button>
+              </div>
               {/* Dummy Time/Speed Info */}
               <div className="flex items-center gap-2">
                  <div className="bg-[#DEF9EC] text-[#3BB77E] px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider">
@@ -111,58 +108,76 @@ export default function ProductContent({ product, similarProducts }) {
             </div>
 
             <div className="w-full">
-              <button className="w-full md:w-auto md:min-w-[200px] bg-[#3BB77E] text-white py-4 px-10 rounded-2xl font-black text-lg shadow-xl shadow-green-100 hover:bg-[#29A56C] transition-all flex items-center justify-center gap-3 active:scale-95">
+              <button 
+                onClick={() => addToCart({ ...product, price: displayPrice, pack: selectedPack })}
+                className="w-full md:w-auto md:min-w-[200px] bg-[#3BB77E] text-white py-4 px-10 rounded-2xl font-black text-lg shadow-xl shadow-green-100 hover:bg-[#29A56C] transition-all flex items-center justify-center gap-3 active:scale-95"
+              >
                 Add to Cart
               </button>
             </div>
 
-            {/* Why Shop List */}
-            <div className="pt-10 space-y-6">
-              <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3">Benefits of Shopping from Quickzy</h4>
-              
-              <div className="space-y-5">
-                <div className="flex gap-4 items-center">
-                  <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                    <HiMiniTruck className="text-blue-500" size={24} />
-                  </div>
-                  <div>
-                    <h6 className="text-xs font-black text-slate-800">Superfast Delivery</h6>
-                    <p className="text-[11px] font-bold text-gray-400">Get your order in under 15 minutes.</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 items-center">
-                  <div className="w-12 h-12 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
-                    <HiMiniReceiptPercent className="text-orange-500" size={24} />
-                  </div>
-                  <div>
-                    <h6 className="text-xs font-black text-slate-800">Best Prices & Offers</h6>
-                    <p className="text-[11px] font-bold text-gray-400">Find the lowest prices with high discounts.</p>
-                  </div>
-                </div>
-
-                <div className="flex gap-4 items-center">
-                  <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center shrink-0">
-                    <HiMiniShieldCheck className="text-[#3BB77E]" size={24} />
-                  </div>
-                  <div>
-                    <h6 className="text-xs font-black text-slate-800">Wide Assortment</h6>
-                    <p className="text-[11px] font-bold text-gray-400">Choose from thousands of fresh products.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Mobile Product Details */}
-        <div className="md:hidden mt-12 pt-10 border-t">
-          <h3 className="text-lg font-black text-[#253D4E] mb-4">Product Details</h3>
-          <p className="text-sm font-medium text-gray-600 leading-relaxed italic">{product.description}</p>
+        {/* Details & Benefits Sync Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 pt-16 border-t border-slate-100 mt-10">
+            {/* Product Details */}
+            <div className="space-y-6">
+               <h3 className="text-xl font-black text-[#253D4E] tracking-tight">Product Details</h3>
+               <div className="space-y-4 text-sm font-medium text-gray-500 leading-relaxed">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Description</span>
+                    <p className="text-gray-600">{product.description}</p>
+                  </div>
+                  <div className="flex flex-col gap-1 pb-2">
+                    <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Vendor</span>
+                    <p className="text-[#3BB77E] font-bold">{product.vendor}</p>
+                  </div>
+               </div>
+            </div>
+
+            {/* Why Shop List */}
+            <div className="space-y-8">
+               <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3">Benefits of Shopping from Quickzy</h4>
+               
+               <div className="space-y-6">
+                 <div className="flex gap-5 items-center">
+                   <div className="w-12 h-12 rounded-2xl bg-[#DEF9EC] flex items-center justify-center shrink-0 shadow-sm border border-[#3BB77E]/10">
+                     <FiZap className="text-[#3BB77E]" size={22} />
+                   </div>
+                   <div>
+                     <h6 className="text-[13px] font-black text-[#253D4E] tracking-tight">Superfast Delivery</h6>
+                     <p className="text-[11px] font-bold text-gray-400 leading-tight">Get your order in under 15 minutes.</p>
+                   </div>
+                 </div>
+
+                 <div className="flex gap-5 items-center">
+                   <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 shadow-sm border border-amber-100/50">
+                     <FiTag className="text-amber-500" size={20} />
+                   </div>
+                   <div>
+                     <h6 className="text-[13px] font-black text-[#253D4E] tracking-tight">Best Prices & Offers</h6>
+                     <p className="text-[11px] font-bold text-gray-400 leading-tight">Find the lowest prices with high discounts.</p>
+                   </div>
+                 </div>
+
+                 <div className="flex gap-5 items-center">
+                   <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0 shadow-sm border border-blue-100/50">
+                     <FiLayers className="text-blue-500" size={20} />
+                   </div>
+                   <div>
+                     <h6 className="text-[13px] font-black text-[#253D4E] tracking-tight">Wide Assortment</h6>
+                     <p className="text-[11px] font-bold text-gray-400 leading-tight">Choose from thousands of fresh products.</p>
+                   </div>
+                 </div>
+               </div>
+            </div>
         </div>
 
+
+
         {/* Similar Products */}
-        <div className="mt-24 border-t pt-16">
+        <div className="mt-16 border-t pt-12">
           <h2 className="text-xl font-black text-[#253D4E] mb-10 flex items-center gap-2">
             Customers also bought <span className="w-10 h-1 bg-[#3BB77E]/20 rounded-full"></span>
           </h2>
@@ -183,9 +198,24 @@ export default function ProductContent({ product, similarProducts }) {
                       className="max-h-full object-contain"
                     />
                   </div>
-                  <h4 className="font-bold text-[#253D4E] text-[13px] group-hover:text-[#3BB77E] line-clamp-2 h-10 mb-2 leading-tight">
-                    {prod.name}
-                  </h4>
+                  <div className="flex justify-between items-start mb-2 h-10 overflow-hidden">
+                    <h4 className="font-bold text-[#253D4E] text-[13px] group-hover:text-[#3BB77E] line-clamp-2 leading-tight pr-2">
+                      {prod.name}
+                    </h4>
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const id = prod._id || prod.id;
+                        setAnimatingHeart(id);
+                        toggleWishlist(prod);
+                        setTimeout(() => setAnimatingHeart(null), 400);
+                      }}
+                      className={`text-lg hover:scale-110 transition-transform shrink-0 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+                    >
+                      <FiHeart size={16} className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} />
+                    </button>
+                  </div>
                 </Link>
                 <div className="flex justify-between items-center mt-auto pt-2">
                   <Link

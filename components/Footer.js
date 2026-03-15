@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { FiMapPin, FiPhoneCall, FiMail, FiClock } from "react-icons/fi";
+import { toast } from "react-toastify";
 import {
   FaFacebookF,
   FaTwitter,
@@ -17,12 +18,17 @@ import {
 import Link from "next/link";
 
 const Footer = () => {
+  const comingSoon = (e) => {
+    e.preventDefault();
+    toast.info("This feature is coming soon!");
+  };
+
   return (
     <footer className="bg-white border-t pt-20 pb-10 mt-20">
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 text-sm text-gray-500 pb-8 border-b">
         {/* Logo & Info */}
         <div className="col-span-1 lg:col-span-1">
-          <div className="flex items-center gap-2 mb-4 group cursor-pointer">
+          <Link href="/" className="flex items-center gap-2 mb-4 group cursor-pointer">
             <img
               src="/logo.png"
               alt="Quickzy"
@@ -36,7 +42,7 @@ const Footer = () => {
                 Fast. Fresh. Delivered in a Zap.
               </span>
             </div>
-          </div>
+          </Link>
           <p className="mb-4 font-medium leading-relaxed">
             Instant delivery of electronics, groceries, health care & more.
           </p>
@@ -50,15 +56,15 @@ const Footer = () => {
             </li>
             <li className="flex gap-2 items-center">
               <FiPhoneCall className="text-[#3BB77E] shrink-0" />{" "}
-              <span>
+              <a href="tel:+911800419" className="hover:text-[#3BB77E]">
                 <strong>Call Us:</strong> +91 1800-419
-              </span>
+              </a>
             </li>
             <li className="flex gap-2 items-center">
               <FiMail className="text-[#3BB77E] shrink-0" />{" "}
-              <span>
+              <a href="mailto:support@quickzy.com" className="hover:text-[#3BB77E]">
                 <strong>Email:</strong> support@quickzy.com
-              </span>
+              </a>
             </li>
             <li className="flex gap-2 items-center">
               <FiClock className="text-[#3BB77E] shrink-0" />{" "}
@@ -74,48 +80,49 @@ const Footer = () => {
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Company
           </h4>
-          <ul className="space-y-3 cursor-pointer font-medium hover:text-[#3BB77E] transition-colors">
-            <li>About Us</li>
-            <li>Delivery Information</li>
-            <li>Privacy Policy</li>
-            <li>Terms & Conditions</li>
-            <li>Contact Us</li>
+          <ul className="space-y-3 font-medium">
+            <li><Link href="/about" className="hover:text-[#3BB77E] transition-colors">About Us</Link></li>
+            <li><Link href="/blog" className="hover:text-[#3BB77E] transition-colors">Our Blog</Link></li>
+            <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Delivery Information</a></li>
+            <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Privacy Policy</a></li>
+            <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Terms & Conditions</a></li>
+            <li><Link href="/contact" className="hover:text-[#3BB77E] transition-colors">Contact Us</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Account
           </h4>
-          <ul className="space-y-3 cursor-pointer font-medium hover:text-[#3BB77E] transition-colors">
-            <li>Sign In</li>
-            <li>View Cart</li>
-            <li>My Wishlist</li>
-            <li>Track My Order</li>
-            <li>Shipping Details</li>
+          <ul className="space-y-3 font-medium">
+            <li><Link href="/profile" className="hover:text-[#3BB77E] transition-colors">My Profile</Link></li>
+            <li><Link href="/cart" className="hover:text-[#3BB77E] transition-colors">View Cart</Link></li>
+            <li><Link href="/wishlist" className="hover:text-[#3BB77E] transition-colors">My Wishlist</Link></li>
+            <li><Link href="/orders" className="hover:text-[#3BB77E] transition-colors">Track My Order</Link></li>
+            <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Shipping Details</a></li>
           </ul>
         </div>
         <div>
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Corporate
           </h4>
-          <ul className="space-y-3 cursor-pointer font-medium hover:text-[#3BB77E] transition-colors">
-            <li>Become a Vendor</li>
-            <li>Affiliate Program</li>
-            <li>Farm Business</li>
-            <li>Our Suppliers</li>
-            <li>Accessibility</li>
+          <ul className="space-y-3 font-medium">
+            <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Become a Vendor</a></li>
+            <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Affiliate Program</a></li>
+            <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Farm Business</a></li>
+            <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Our Suppliers</a></li>
+            <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Accessibility</a></li>
           </ul>
         </div>
         <div>
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Popular
           </h4>
-          <ul className="space-y-3 cursor-pointer font-medium hover:text-[#3BB77E] transition-colors">
-            <li>Mobile & Gadgets</li>
-            <li>Health & Beauty</li>
-            <li>Dairy & Bread</li>
-            <li>Kitchen Essentials</li>
-            <li>Snacks & Drinks</li>
+          <ul className="space-y-3 font-medium">
+            <li><Link href="/shop?category=Electronics" className="hover:text-[#3BB77E] transition-colors">Mobile & Gadgets</Link></li>
+            <li><Link href="/shop?category=Personal Care" className="hover:text-[#3BB77E] transition-colors">Health & Beauty</Link></li>
+            <li><Link href="/shop?category=Milk & Dairy" className="hover:text-[#3BB77E] transition-colors">Dairy & Bread</Link></li>
+            <li><Link href="/shop?category=Household Essentials" className="hover:text-[#3BB77E] transition-colors">Kitchen Essentials</Link></li>
+            <li><Link href="/shop?category=Snacks" className="hover:text-[#3BB77E] transition-colors">Snacks & Drinks</Link></li>
           </ul>
         </div>
 
@@ -126,20 +133,20 @@ const Footer = () => {
           </h4>
           <p className="mb-4 font-medium">From App Store or Google Play</p>
           <div className="flex gap-2 mb-6">
-            <div className="w-30 h-15 rounded-lg">
+            <a href="https://apps.apple.com" target="_blank" rel="noopener noreferrer" className="w-30 h-15 rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
               <img
                 src="appstore.png"
                 alt="appstore"
                 className="w-full h-full object-contain"
               />
-            </div>
-            <div className="w-30 h-15 rounded-lg ">
+            </a>
+            <a href="https://play.google.com" target="_blank" rel="noopener noreferrer" className="w-30 h-15 rounded-lg cursor-pointer hover:opacity-80 transition-opacity">
               <img
                 src="playstore.png"
                 alt="playstore"
                 className="w-full h-full object-contain"
               />
-            </div>
+            </a>
           </div>
           <p className="mb-4">Secured Payment Gateways</p>
           <div className="flex gap-2 text-3xl text-gray-600">
@@ -154,25 +161,25 @@ const Footer = () => {
 
       <div className="container mx-auto px-4 mt-10 flex flex-col md:flex-row justify-between items-center gap-8 text-xs font-bold font-sans">
         <p className="text-gray-400">
-          © 2026, <strong className="text-[#3BB77E]">Quickzy</strong> - Instant
+          © 2026, <Link href="/"><strong className="text-[#3BB77E] hover:underline">Quickzy</strong></Link> - Instant
           Delivery. All rights reserved
         </p>
         <div className="flex gap-4">
-          <div className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
             <FaFacebookF />
-          </div>
-          <div className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
+          </a>
+          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
             <FaTwitter />
-          </div>
-          <div className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
             <FaInstagram />
-          </div>
-          <div className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
+          </a>
+          <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
             <FaPinterest />
-          </div>
-          <div className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
+          </a>
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 bg-[#3BB77E] rounded-full flex items-center justify-center text-white cursor-pointer hover:scale-110 transition shadow-inner shadow-black/20">
             <FaYoutube />
-          </div>
+          </a>
         </div>
       </div>
     </footer>

@@ -18,6 +18,7 @@ const UserSchema = new Schema({
     zone: { type: String, default: "" },
   },
   cart: { type: Array, default: [] },
+  wishlist: { type: Array, default: [] },
   orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

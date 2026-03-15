@@ -9,10 +9,18 @@ import {
   FiRefreshCw,
 } from "react-icons/fi";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { FiHeart } from "react-icons/fi";
+import { useSession } from "next-auth/react";
+import { toast } from "react-toastify";
 
 export default function Cart() {
+  const router = useRouter();
+  const { data: session } = useSession();
   const { cartItems, updateQuantity, removeFromCart, subtotal } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   return (
     <main className="container mx-auto px-4 py-10 min-h-[60vh]">
@@ -62,7 +70,8 @@ export default function Cart() {
                   {cartItems.map((item) => (
                     <tr
                       key={item._id || item.id}
-                      className="group hover:bg-gray-50 transition-colors"
+                      onClick={() => router.push(`/product/${item.id_custom || item._id || item.id}`)}
+                      className="group hover:bg-gray-50 transition-colors cursor-pointer"
                     >
                       <td className="py-6 px-6">
                         <div className="flex items-center gap-6">
@@ -74,8 +83,19 @@ export default function Cart() {
                             />
                           </div>
                           <div>
-                            <h4 className="font-black text-[#253D4E] text-lg hover:text-[#3BB77E] transition-colors cursor-pointer leading-tight mb-2">
-                              {item.name}
+                            <h4 className="font-black text-[#253D4E] text-lg group-hover:text-[#3BB77E] transition-colors leading-tight mb-2 flex items-center justify-between gap-4">
+                              <span className="truncate">
+                                {item.name}
+                              </span>
+                              <button 
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleWishlist(item);
+                                }}
+                                className="shrink-0 hover:scale-110 transition-transform"
+                              >
+                                <FiHeart className={`text-xl ${isInWishlist(item._id || item.id) ? "text-red-500 fill-red-500" : "text-gray-300"}`} />
+                              </button>
                             </h4>
                             <div className="flex gap-2 text-xs font-bold">
                               <span className="text-gray-400">
@@ -88,13 +108,16 @@ export default function Cart() {
                           </div>
                         </div>
                       </td>
-                      <td className="py-6 px-6">
+                      <td className="py-6 px-6 text-center">
                         <span className="text-2xl font-black text-[#253D4E]">
                           ₹{item.price}
                         </span>
                       </td>
                       <td className="py-6 px-6">
-                        <div className="flex items-center gap-4 border-2 border-[#3BB77E] w-fit px-4 py-2 rounded-md bg-white shadow-sm">
+                        <div 
+                          className="flex items-center gap-4 border-2 border-[#3BB77E] w-fit px-4 py-2 rounded-md bg-white shadow-sm"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <button
                             onClick={() =>
                               updateQuantity(item._id || item.id, -1)
@@ -116,7 +139,7 @@ export default function Cart() {
                           </button>
                         </div>
                       </td>
-                      <td className="py-6 px-6">
+                      <td className="py-6 px-6 text-center">
                         <span className="text-2xl font-black text-[#3BB77E]">
                           ₹
                           {((item.price || 0) * (item.quantity || 1)).toFixed(
@@ -124,9 +147,12 @@ export default function Cart() {
                           )}
                         </span>
                       </td>
-                      <td className="py-6 px-6">
+                      <td className="py-6 px-6 text-center">
                         <button
-                          onClick={() => removeFromCart(item._id || item.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeFromCart(item._id || item.id);
+                          }}
                           className="text-gray-400 hover:text-red-500 transition-colors text-2xl"
                         >
                           <FiTrash2 />
@@ -170,12 +196,21 @@ export default function Cart() {
                 </span>
               </div>
             </div>
-            <Link
-              href="/checkout"
+            <button
+              onClick={(e) => {
+                const hasLocation = localStorage.getItem("quickzy-guest-location") || session?.user?.address?.text;
+                if (!hasLocation) {
+                  e.preventDefault();
+                  toast.warning("Please select a delivery location to proceed.");
+                  window.dispatchEvent(new CustomEvent("open-location", { detail: { compulsory: true } }));
+                } else {
+                  window.location.href = "/checkout";
+                }
+              }}
               className="w-full bg-[#3BB77E] text-white py-5 rounded-md font-black text-lg hover:bg-[#29A56C] transition shadow-xl shadow-[#3BB77E]/20 flex items-center justify-center gap-2"
             >
               Proceed To CheckOut <FiArrowRight />
-            </Link>
+            </button>
           </div>
 
           <div className="bg-white border rounded-2xl p-8 shadow-sm space-y-4">

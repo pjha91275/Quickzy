@@ -98,6 +98,13 @@ export const CartProvider = ({ children }) => {
       }
       return [...prev, { ...sanitizedProduct, quantity: 1 }];
     });
+
+    // OPTIONAL: Prompt for location if missing
+    const hasLocation = localStorage.getItem("quickzy-guest-location") || session?.user?.address?.text;
+    if (!hasLocation) {
+      window.dispatchEvent(new CustomEvent("open-location", { detail: { compulsory: false } }));
+    }
+
     toast.success("Added to cart!");
   };
 

@@ -1,135 +1,116 @@
 "use client";
-import React, { useState } from "react";
-import { FiTrash2, FiShoppingCart, FiHeart } from "react-icons/fi";
+import React from "react";
 import Link from "next/link";
-// import { useWishlist } from "@/context/WishlistContext"; // TODO: You will create this later
-// import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
+import { FiHeart, FiShoppingCart, FiTrash2, FiArrowRight } from "react-icons/fi";
+import { useWishlist } from "@/context/WishlistContext";
+import { useCart } from "@/context/CartContext";
 
-export default function Wishlist() {
-  // --- INSTRUCTION FOR BACKEND IMPLEMENTATION ---
-  // When you implement backend, you will remove this dummy state and use your context.
-  // const { wishlistItems, removeFromWishlist } = useWishlist();
-  // const { addToCart } = useCart();
-  
-  const [wishlistItems, setWishlistItems] = useState([
-    {
-      id: "1",
-      name: "Fresh Organic Apple",
-      price: 120,
-      image: "https://i.ibb.co/8Yk26D4/apple.png",
-      inStock: true,
-    },
-    {
-      id: "2",
-      name: "Farm Fresh Eggs",
-      price: 80,
-      image: "https://i.ibb.co/3mNksH5/eggs.png",
-      inStock: false,
-    }
-  ]);
+const WishlistPage = () => {
+  const router = useRouter();
+  const { wishlistItems, toggleWishlist } = useWishlist();
+  const { addToCart } = useCart();
+  const [animatingHeart, setAnimatingHeart] = React.useState(null);
 
-  const handleRemove = (id) => {
-    // Dummy temp function
-    setWishlistItems(wishlistItems.filter(item => item.id !== id));
-    // REAL FUNCTION LATER: removeFromWishlist(id);
-  };
-
-  const handleAddToCart = (item) => {
-    // Dummy temp function
-    alert("Added to cart: " + item.name);
-    // REAL FUNCTION LATER: addToCart(item);
-  };
+  if (wishlistItems.length === 0) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-center p-4">
+        <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+          <FiHeart className="text-gray-300 text-5xl" />
+        </div>
+        <h2 className="text-3xl font-black text-[#253D4E] mb-2">Your Wishlist is Empty</h2>
+        <p className="text-gray-500 mb-8 max-w-md">
+          Save your favorite items here to easily find and add them to your cart later.
+        </p>
+        <Link 
+          href="/shop" 
+          className="bg-[#3BB77E] text-white px-8 py-4 rounded-xl font-black hover:bg-[#29A56C] transition-all flex items-center gap-2 shadow-lg shadow-green-100"
+        >
+          Go Shopping <FiArrowRight />
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <main className="container mx-auto px-4 py-10 min-h-[60vh]">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-4xl font-black text-[#253D4E] flex items-center gap-3">
-          Your Wishlist
-        </h1>
-        <p className="text-gray-400 font-bold">
-          <span className="text-[#3BB77E]">{wishlistItems.length}</span> items
+    <div className="container mx-auto px-4 py-12">
+      <div className="mb-10">
+        <h1 className="text-4xl font-black text-[#253D4E] mb-2">My Wishlist</h1>
+        <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">
+          {wishlistItems.length} {wishlistItems.length === 1 ? "Item" : "Items"} saved for later
         </p>
       </div>
 
-      <div className="overflow-x-auto">
-        {wishlistItems.length === 0 ? (
-          <div className="text-center py-20 bg-white border rounded-2xl">
-            <FiHeart className="mx-auto text-gray-200 mb-4" size={64} />
-            <h3 className="text-xl font-black text-gray-400">Wishlist empty!</h3>
-            <Link href="/" className="text-[#3BB77E] font-bold mt-2 hover:underline inline-block">
-              Add some products
-            </Link>
-          </div>
-        ) : (
-          <table className="w-full text-left min-w-[700px]">
-            <thead className="bg-[#ececec] text-[#253D4E] font-bold text-sm">
-              <tr>
-                <th className="py-4 px-6 rounded-l-xl">Product</th>
-                <th className="py-4 px-6">Price</th>
-                <th className="py-4 px-6">Stock Status</th>
-                <th className="py-4 px-6 rounded-r-xl">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {wishlistItems.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="py-6 px-6">
-                    <div className="flex flex-row items-center gap-6">
-                      <div className="w-24 h-24 border rounded-xl bg-white p-2">
-                        <img
-                          src={item.image || item.img}
-                          alt={item.name}
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <h4 className="font-black text-[#253D4E] text-lg hover:text-[#3BB77E] cursor-pointer">
-                        {item.name}
-                      </h4>
-                    </div>
-                  </td>
-                  <td className="py-6 px-6">
-                    <span className="text-2xl font-black text-[#253D4E]">
-                      ₹{item.price}
-                    </span>
-                  </td>
-                  <td className="py-6 px-6">
-                    {item.inStock ? (
-                      <span className="text-[#3BB77E] font-bold bg-[#DEF9EC] px-3 py-1 rounded-md">
-                        In Stock
-                      </span>
-                    ) : (
-                      <span className="text-red-500 font-bold bg-red-50 px-3 py-1 rounded-md">
-                        Out of Stock
-                      </span>
-                    )}
-                  </td>
-                  <td className="py-6 px-6">
-                    <div className="flex gap-4 items-center">
-                      <button
-                        onClick={() => handleAddToCart(item)}
-                        disabled={!item.inStock}
-                        className={`font-black px-6 py-2 rounded-md flex items-center gap-2 ${
-                          item.inStock 
-                            ? "bg-[#3BB77E] text-white hover:bg-[#29a56c]" 
-                            : "bg-gray-200 text-gray-400 cursor-not-allowed"
-                        }`}
-                      >
-                        <FiShoppingCart /> Add
-                      </button>
-                      <button
-                        onClick={() => handleRemove(item.id)}
-                        className="text-gray-400 hover:text-red-500 text-2xl ml-2"
-                      >
-                        <FiTrash2 />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
+      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="hidden md:grid grid-cols-6 gap-4 p-6 bg-gray-50 border-b font-black text-[#253D4E] uppercase tracking-widest text-xs">
+          <div className="col-span-3 text-left pl-4">Product Details</div>
+          <div className="text-center">Price</div>
+          <div className="text-center">Action</div>
+          <div className="text-center">Remove</div>
+        </div>
+
+        <div className="divide-y divide-gray-100">
+          {wishlistItems.map((item) => (
+            <div 
+              key={item._id || item.id} 
+              onClick={() => router.push(`/product/${item.id_custom || item._id || item.id}`)}
+              className="grid grid-cols-1 md:grid-cols-6 gap-6 p-6 items-center hover:bg-gray-50/50 transition-colors group cursor-pointer"
+            >
+              {/* Product Info */}
+              <div className="col-span-1 md:col-span-3 flex items-center gap-6">
+                <div className="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden shrink-0 border border-gray-100">
+                  <img 
+                    src={item.image || item.img} 
+                    alt={item.name} 
+                    className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform" 
+                  />
+                </div>
+                <div>
+                  <h3 className="font-black text-[#253D4E] text-lg leading-tight mb-1 group-hover:text-[#3BB77E] transition-colors">{item.name}</h3>
+                  <p className="text-[#3BB77E] font-bold text-sm tracking-tight">{item.unit}</p>
+                </div>
+              </div>
+
+              {/* Price */}
+              <div className="text-center">
+                <p className="text-2xl font-black text-[#3BB77E]">₹{item.price}</p>
+              </div>
+
+              {/* Add to Cart */}
+              <div className="text-center">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    addToCart(item);
+                  }}
+                  className="bg-[#DEF9EC] text-[#3BB77E] px-6 py-3 rounded-xl font-black hover:bg-[#3BB77E] hover:text-white transition-all inline-flex items-center gap-2 group/cart"
+                >
+                  <FiShoppingCart className="group-hover/cart:animate-bounce" />
+                  Add to Cart
+                </button>
+              </div>
+
+              {/* Remove */}
+              <div className="text-center">
+                <button 
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const id = item._id || item.id;
+                    setAnimatingHeart(id);
+                    toggleWishlist(item);
+                    setTimeout(() => setAnimatingHeart(null), 400);
+                  }}
+                  className={`p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition-all ${animatingHeart === (item._id || item.id) ? "animate-heart-pop" : ""}`}
+                >
+                  <FiTrash2 size={20} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </main>
+    </div>
   );
-}
+};
+
+export default WishlistPage;

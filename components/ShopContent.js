@@ -15,9 +15,13 @@ import {
 } from "react-icons/fi";
 
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { FiHeart } from "react-icons/fi";
 
 export default function ShopContent({ products, categories }) {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const [animatingHeart, setAnimatingHeart] = React.useState(null);
   const searchParams = useSearchParams();
   const router = useRouter();
   const categoryQuery = searchParams.get("category");
@@ -25,6 +29,8 @@ export default function ShopContent({ products, categories }) {
 
   const [view, setView] = useState("grid");
   const [selectedCategory, setSelectedCategory] = useState("All");
+
+
 
   // GUIDE: Step 1 - Create a state to hold the maximum price selected by the user.
   // We initialize it to 5000 so all products are visible by default.
@@ -68,6 +74,16 @@ export default function ShopContent({ products, categories }) {
     // 3. Third, apply Price Filter
     return pool.filter((p) => p.price <= maxPrice);
   }, [selectedCategory, maxPrice, searchQuery, products]);
+
+  // Derive Top 30% Hot Deals based on the current filtered pool pool
+  const hotDealsIds = React.useMemo(() => {
+    const list = [...filteredProducts].sort((a, b) => {
+      const getNum = (str) => parseInt(str?.replace("%", "") || "0");
+      return getNum(b.discount) - getNum(a.discount);
+    });
+    const count = Math.round(list.length * 0.3);
+    return new Set(list.slice(0, count).map(p => p._id || p.id));
+  }, [filteredProducts]);
 
   const [sortedProducts, setSortedProducts] = useState([]);
 
@@ -254,69 +270,163 @@ export default function ShopContent({ products, categories }) {
             className={`grid gap-6 ${view === "grid" ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4" : "grid-cols-1"}`}
           >
             {sortedProducts.map((prod) => (
-              <div
+              <Link
                 key={prod._id}
-                className="bg-white border hover:shadow-2xl hover:border-[#BCE3C9] transition-all rounded-2xl p-4 relative group flex flex-col h-full"
+                href={`/product/${prod.id_custom || prod.id}`}
+                className={`bg-white border hover:shadow-2xl hover:border-[#BCE3C9] transition-all rounded-2xl relative group flex overflow-hidden ${view === "grid" ? "flex-col p-4 h-full" : "flex-row items-center p-6 gap-8 min-h-[220px]"}`}
               >
-                {prod.tag && (
+                {/* Tag Badge */}
+                {(prod.tag || hotDealsIds.has(prod._id || prod.id)) && (
                   <span
-                    className={`absolute top-0 left-0 text-white text-[10px] font-black px-4 py-1.5 rounded-tl-2xl rounded-br-2xl z-10 ${prod.tag === "Hot" ? "bg-pink-500" : prod.tag === "Sale" ? "bg-blue-400" : "bg-orange-400"}`}
+                    className={`absolute top-0 left-0 text-white text-[10px] font-black px-4 py-1.5 rounded-tl-2xl rounded-br-2xl z-10 
+                      ${hotDealsIds.has(prod._id || prod.id) ? "bg-orange-500 italic uppercase" : 
+                        prod.tag === "Hot" ? "bg-pink-500" : 
+                        prod.tag === "Sale" ? "bg-blue-400" : 
+                        "bg-orange-400"}`}
                   >
-                    {prod.tag}
+                    {hotDealsIds.has(prod._id || prod.id) ? "Hot Deal" : prod.tag}
                   </span>
                 )}
-                <Link
-                  href={`/product/${prod.id_custom || prod.id}`}
-                  className="block flex-grow"
-                >
-                  <div className="h-44 flex items-center justify-center p-4 mb-4 group-hover:scale-110 transition-transform cursor-pointer">
-                    <img
-                      src={prod.image || prod.img}
-                      alt={prod.name}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <p className="text-[10px] text-gray-400 font-black uppercase mb-2 tracking-widest">
-                      {prod.category}
-                    </p>
-                    <h3 className="text-sm font-black text-[#253D4E] group-hover:text-[#3BB77E] transition-colors line-clamp-2 h-10 mb-2 leading-tight">
-                      {prod.name}
-                    </h3>
-                    <div className="flex items-center mb-1">
-                      <span className="text-[11px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 py-0.5 rounded-md uppercase">
-                        {prod.unit}
-                      </span>
+
+                {/* Vertical View Layout vs Grid View */}
+                {view === "grid" ? (
+                  <>
+                    <div className="h-44 flex items-center justify-center p-4 mb-4 group-hover:scale-110 transition-transform cursor-pointer">
+                      <img
+                        src={prod.image || prod.img}
+                        alt={prod.name}
+                        className="w-full h-full object-contain"
+                      />
                     </div>
-                    <p className="text-xs text-gray-400 mb-4 font-bold">
-                      By <span className="text-[#3BB77E]">{prod.vendor}</span>
-                    </p>
-                  </div>
-                </Link>
-                <div className="flex justify-between items-center pt-2 border-t border-gray-50 mt-auto">
-                  <Link href={`/product/${prod.id_custom || prod.id}`}>
-                    <div>
-                      <span className="text-lg font-black text-[#3BB77E]">
-                        ₹{prod.price}
-                      </span>
-                      <div className="flex items-center gap-2">
-                        <span className="text-slate-500 text-[11px] line-through font-bold">
-                          ₹{prod.oldPrice}
-                        </span>
-                        <span className="bg-blue-500 text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
-                          {prod.discount} OFF
+                    <div className="mb-2 flex-grow">
+                      <p className="text-[10px] text-gray-400 font-black uppercase mb-2 tracking-widest">
+                        {prod.category}
+                      </p>
+                      <div className="flex justify-between items-start mb-2 h-10 overflow-hidden">
+                        <h3 className="text-sm font-black text-[#253D4E] group-hover:text-[#3BB77E] transition-colors line-clamp-2 pr-2 leading-tight">
+                          {prod.name}
+                        </h3>
+                        <button 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const id = prod._id || prod.id;
+                            setAnimatingHeart(id);
+                            toggleWishlist(prod);
+                            setTimeout(() => setAnimatingHeart(null), 400);
+                          }}
+                          className={`text-lg pt-0.5 hover:scale-110 transition-transform shrink-0 relative z-20 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+                        >
+                          <FiHeart className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} />
+                        </button>
+                      </div>
+                      <div className="flex items-center mb-1">
+                        <span className="text-[11px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 py-0.5 rounded-md uppercase">
+                          {prod.unit}
                         </span>
                       </div>
+                      <p className="text-xs text-gray-400 mb-4 font-bold">
+                        By <span className="text-[#3BB77E]">{prod.vendor}</span>
+                      </p>
                     </div>
-                  </Link>
-                  <button
-                    onClick={() => addToCart(prod)}
-                    className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white p-2.5 rounded-lg transition-all shadow-sm"
-                  >
-                    <FiShoppingCart />
-                  </button>
-                </div>
-              </div>
+                    <div className="flex justify-between items-center pt-2 border-t border-gray-50 mt-auto">
+                      <div>
+                        <span className="text-lg font-black text-[#3BB77E]">
+                          ₹{prod.price}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-slate-500 text-[11px] line-through font-bold">
+                            ₹{prod.oldPrice}
+                          </span>
+                          <span className="bg-[#3BB77E] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                            {prod.discount} OFF
+                          </span>
+                        </div>
+                      </div>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          addToCart(prod);
+                        }}
+                        className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white p-2.5 rounded-lg transition-all shadow-sm relative z-20"
+                      >
+                        <FiShoppingCart />
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  // List View Layout
+                  <>
+                    <div className="w-48 h-48 flex-shrink-0 flex items-center justify-center p-4 border rounded-2xl bg-gray-50 overflow-hidden group-hover:bg-white transition-colors">
+                      <img
+                        src={prod.image || prod.img}
+                        alt={prod.name}
+                        className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
+                      />
+                    </div>
+                    <div className="flex-grow flex flex-col md:flex-row gap-8 justify-between">
+                      <div className="flex-grow space-y-3">
+                        <p className="text-[10px] text-[#3BB77E] font-black uppercase tracking-widest mb-1">{prod.category}</p>
+                        <h3 className="text-xl font-black text-[#253D4E] group-hover:text-[#3BB77E] transition-colors leading-tight mb-2">
+                          {prod.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 line-clamp-2 font-medium max-w-xl">
+                          {prod.description || "Fresh, high-quality product delivered instantly to your doorstep with Quickzy's zap delivery service."}
+                        </p>
+                        <div className="flex items-center gap-4">
+                          <span className="text-[11px] font-black text-[#3BB77E] bg-[#DEF9EC] px-3 py-1 rounded-md uppercase tracking-wider">
+                            {prod.unit}
+                          </span>
+                          <span className="text-xs text-gray-400 font-bold">
+                            By <span className="text-[#3BB77E]">{prod.vendor}</span>
+                          </span>
+                        </div>
+                      </div>
+                      
+                      <div className="w-full md:w-52 flex flex-col justify-center gap-4 md:border-l md:pl-8 border-gray-100">
+                        <div className="space-y-1">
+                          <span className="text-3xl font-black text-[#3BB77E] block leading-none">
+                            ₹{prod.price}
+                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-slate-400 text-sm line-through font-bold">₹{prod.oldPrice}</span>
+                            <span className="bg-pink-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black italic uppercase shadow-sm">
+                              {prod.discount} OFF
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 mt-2">
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              addToCart(prod);
+                            }}
+                            className="flex-grow bg-[#3BB77E] text-white py-3 px-4 rounded-xl font-black text-sm hover:bg-[#29A56C] transition-all shadow-lg shadow-green-100 flex items-center justify-center gap-2 group/btn relative z-20"
+                          >
+                            <FiShoppingCart className="group-hover/btn:scale-125 transition-transform" /> Add
+                          </button>
+                          <button 
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              const id = prod._id || prod.id;
+                              setAnimatingHeart(id);
+                              toggleWishlist(prod);
+                              setTimeout(() => setAnimatingHeart(null), 400);
+                            }}
+                            className={`p-3 border rounded-xl hover:scale-110 transition-transform relative z-20 ${isInWishlist(prod._id || prod.id) ? "border-red-100 bg-red-50 text-red-500" : "border-gray-100 text-gray-300"} ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+                          >
+                            <FiHeart className={isInWishlist(prod._id || prod.id) ? "fill-red-500" : ""} size={20} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </Link>
             ))}
           </div>
         </main>

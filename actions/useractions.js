@@ -17,14 +17,34 @@ export const fetchCart = async (email) => {
   return [];
 };
 
+// 1b. Fetch Wishlist
+export const fetchWishlist = async (email) => {
+  if (!email) return [];
+  await connectDb();
+  const user = await User.findOne({ email: email.toLowerCase() }).lean();
+  if (user?.wishlist) {
+    return JSON.parse(JSON.stringify(user.wishlist));
+  }
+  return [];
+};
+
 // 2. Sync Cart
 export const syncCart = async (email, cart) => {
   if (!email) return;
   await connectDb();
-  // Simple, direct update
   await User.updateOne(
     { email: email.toLowerCase() },
     { $set: { cart: cart } },
+  );
+};
+
+// 2b. Sync Wishlist
+export const syncWishlist = async (email, wishlist) => {
+  if (!email) return;
+  await connectDb();
+  await User.updateOne(
+    { email: email.toLowerCase() },
+    { $set: { wishlist: wishlist } },
   );
 };
 

@@ -12,6 +12,9 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
+import { useWishlist } from "@/context/WishlistContext";
+import { toast } from "react-toastify";
+import { FiHeart } from "react-icons/fi";
 
 // Utility for randomizing product display
 const shuffleArray = (array) => {
@@ -20,6 +23,8 @@ const shuffleArray = (array) => {
 
 export default function HomeContent({ products, categories }) {
   const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const [animatingHeart, setAnimatingHeart] = React.useState(null);
   const router = useRouter();
 
   // Derived state for various sections
@@ -35,8 +40,11 @@ export default function HomeContent({ products, categories }) {
   const [shuffledRecentlyAdded, setShuffledRecentlyAdded] = React.useState([]);
   const [shuffledTopPicks, setShuffledTopPicks] = React.useState([]);
   const [shuffledDailyBest, setShuffledDailyBest] = React.useState([]);
+  const [footerEmail, setFooterEmail] = React.useState("");
 
   const [currentSlide, setCurrentSlide] = React.useState(0);
+
+
 
   const banners = [
     {
@@ -51,7 +59,7 @@ export default function HomeContent({ products, categories }) {
       tag: "Quickzy: Fresh. Fast. Delivered.",
       bgColor: "bg-[#DEF9EC]",
       btnText: "Order Now",
-      dbCategory: null, // No specific category for the first banner
+      dbCategory: null,
       shopLink: "/shop",
     },
     {
@@ -62,9 +70,9 @@ export default function HomeContent({ products, categories }) {
         </>
       ),
       subtitle: "Get fresh milk and dairy delivered daily",
-      image: "/hero-banner-2.png",
+      image: "https://images.unsplash.com/photo-1550583724-125581cc2586?q=80&w=2070",
       tag: "Quickzy: Fresh Dairy",
-      bgColor: "bg-blue-50",
+      bgColor: "bg-[#e3f2fd]",
       btnText: "Shop Dairy",
       dbCategory: "Milk & Dairy",
       shopLink: `/shop?category=${encodeURIComponent("Milk & Dairy")}`,
@@ -72,17 +80,17 @@ export default function HomeContent({ products, categories }) {
     {
       title: (
         <>
-          Tropical Fruits <br />
-          <span className="text-[#3BB77E]">Juicy & Healthy</span>
+          Fresh Vegetables <br />
+          <span className="text-[#3BB77E]">Straight from Farm</span>
         </>
       ),
-      subtitle: "Handpicked premium quality fruits for you",
-      image: "/hero-banner-3.png",
-      tag: "Quickzy: Fresh Fruits",
-      bgColor: "bg-orange-50",
-      btnText: "Browse Fruits",
-      dbCategory: "Fruits",
-      shopLink: "/shop?category=Fruits",
+      subtitle: "Get fresh onions, potatoes and more",
+      image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070",
+      tag: "Quickzy: Farm Fresh",
+      bgColor: "bg-[#fff3e0]",
+      btnText: "Browse Veggies",
+      dbCategory: "Vegetables",
+      shopLink: "/shop?category=Vegetables",
     },
     {
       title: (
@@ -92,9 +100,9 @@ export default function HomeContent({ products, categories }) {
         </>
       ),
       subtitle: "Experience technology at your doorstep",
-      image: "/hero-banner-4.png",
+      image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=2070",
       tag: "Quickzy: Electronics",
-      bgColor: "bg-pink-50",
+      bgColor: "bg-[#fce4ec]",
       btnText: "View Gadgets",
       dbCategory: "Electronics",
       shopLink: "/shop?category=Electronics",
@@ -102,14 +110,14 @@ export default function HomeContent({ products, categories }) {
     {
       title: (
         <>
-          Home Cleaning <br />
-          <span className="text-[#3BB77E]">Essentials</span>
+          Home Cleaners <br />
+          <span className="text-[#3BB77E]">Shiny & Fresh</span>
         </>
       ),
       subtitle: "Everything you need for a sparkling home",
-      image: "/hero-banner-5.png",
+      image: "https://images.unsplash.com/photo-1584622781564-1d9876a13d00?q=80&w=2070",
       tag: "Quickzy: Household",
-      bgColor: "bg-purple-50",
+      bgColor: "bg-[#f3e5f5]",
       btnText: "Clean Now",
       dbCategory: "Household Essentials",
       shopLink: `/shop?category=${encodeURIComponent("Household Essentials")}`,
@@ -171,7 +179,7 @@ export default function HomeContent({ products, categories }) {
       ),
     );
 
-    // 3. APPLY "HOT DEAL" TAG (Logic: Top 7 highest discounts)
+    // 3. APPLY "HOT DEAL" TAG (Logic: Top 40% of candidates)
     // Combine both list to find the global winners
     const allCandidates = [...finalPopular, ...pool.slice(0, 4)];
     
@@ -181,7 +189,8 @@ export default function HomeContent({ products, categories }) {
       return getNum(b.discount) - getNum(a.discount);
     });
 
-    const hotDealIds = new Set(sortedByDiscount.slice(0, 7).map(p => p._id || p.id));
+    const hotCount = Math.round(sortedByDiscount.length * 0.4);
+    const hotDealIds = new Set(sortedByDiscount.slice(0, hotCount).map(p => p._id || p.id));
 
     const applyHotDeal = (p) => ({
       ...p,
@@ -247,6 +256,31 @@ export default function HomeContent({ products, categories }) {
     }
   };
 
+  const handleFooterLogin = () => {
+    if (!footerEmail) {
+      toast.warning("Please enter your email!");
+      return;
+    }
+    
+    // Strict validation: text before @, text after @, and a dot after @
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(footerEmail)) {
+      toast.error("Please enter a valid email address!");
+      window.dispatchEvent(new CustomEvent("open-auth", { 
+        detail: { 
+          step: 1, 
+          email: footerEmail,
+          error: "Invalid email format" 
+        } 
+      }));
+      return;
+    }
+
+    // Save to LS for modal to pick up
+    localStorage.setItem("quickzy-login-email", footerEmail);
+    window.dispatchEvent(new CustomEvent("open-auth", { detail: { step: 2 } }));
+  };
+
   return (
     <>
       <main className="container mx-auto px-4 py-8 space-y-12">
@@ -257,24 +291,24 @@ export default function HomeContent({ products, categories }) {
           }
           className={`${banners[currentSlide].bgColor} rounded-3xl overflow-hidden relative h-[450px] flex items-center px-8 md:px-16 transition-colors duration-700 cursor-pointer shadow-sm hover:shadow-md`}
         >
-          {/* Custom refined background with subtle logo pattern */}
-          <div className="absolute inset-0 transition-opacity duration-700 opacity-100">
-            <div className="absolute inset-0 opacity-5 rotate-12 flex flex-wrap gap-20 p-10 pointer-events-none select-none grayscale contrast-200">
-              {Array(10)
-                .fill()
-                .map((_, i) => (
-                  <img
-                    key={i}
-                    src="/hero-banner-1.png"
-                    className="w-48 h-48"
-                    alt=""
-                  />
-                ))}
+          {/* Custom refined background - Universal submerge layout */}
+          <div className="absolute inset-0 transition-opacity duration-700">
+            <div className="absolute inset-0 flex">
+              <div className="w-1/2" />
+              <div className="w-1/2 relative bg-white/20">
+                <img 
+                  src={banners[currentSlide].image} 
+                  className="w-full h-full object-contain object-right-bottom transition-all duration-700 p-4" 
+                  alt="" 
+                />
+                {/* Seamless Submerge Gradient */}
+                <div className={`absolute inset-0 bg-gradient-to-r from-[${banners[currentSlide].bgColor.replace('bg-[', '').replace(']', '')}] via-transparent to-transparent`} />
+              </div>
             </div>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/10 to-transparent"></div>
 
-          <div className="relative z-10 max-w-xl space-y-4 animate-fadeIn">
+          <div className="relative z-20 max-w-xl space-y-4 animate-fadeIn pl-8 md:pl-16">
             <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-sm mb-4">
               <img src="/logo.png" className="w-4 h-4" alt="" />
               {banners[currentSlide].tag}
@@ -283,43 +317,33 @@ export default function HomeContent({ products, categories }) {
             <h1 className="text-4xl md:text-6xl font-black text-[#253D4E] leading-[1.1]">
               {banners[currentSlide].title}
             </h1>
-            <p className="text-gray-500 font-bold text-lg md:text-xl">
+            <p className="text-gray-500 font-extrabold text-lg md:text-xl">
               {banners[currentSlide].subtitle}
             </p>
             
             {/* Global Search Bar (Static) */}
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-full p-2 flex max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50 mt-6"
+              className="bg-white rounded-full p-2 flex max-w-md shadow-2xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50 mt-6"
             >
               <input
                 type="text"
                 placeholder="Search for essentials..."
-                className="flex-1 px-5 outline-none text-gray-700 bg-transparent font-medium"
+                className="flex-1 px-4 outline-none text-gray-700 bg-transparent font-bold"
                 value={bannerSearchTerm}
                 onChange={(e) => setBannerSearchTerm(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleBannerSearch()}
               />
               <button
                 onClick={handleBannerSearch}
-                className="bg-[#3BB77E] text-white rounded-full px-8 md:px-10 py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg hover:shadow-[#3BB77E]/30"
+                className="bg-[#3BB77E] text-white rounded-full px-6 py-2 font-black hover:bg-[#29A56C] transition shadow-lg"
               >
                 Search
               </button>
             </div>
           </div>
 
-          {/* Floating Product Image for Carousel */}
-          <div className="absolute right-0 bottom-0 top-0 w-1/2 hidden md:flex items-center justify-center p-12">
-            <div className="relative w-full h-full flex items-center justify-center">
-              <img
-                key={currentSlide}
-                src={banners[currentSlide].image}
-                alt="banner-product"
-                className="max-h-full max-w-full object-contain animate-slideInRight"
-              />
-            </div>
-          </div>
+
 
           {/* Dots Navigation */}
           <div
@@ -339,7 +363,6 @@ export default function HomeContent({ products, categories }) {
           </div>
         </section>
 
-        {/* --- Featured Categories --- */}
         <section>
           <div className="flex justify-between items-center gap-10 mb-6">
             <h2 className="text-2xl font-bold text-gray-800">
@@ -371,16 +394,16 @@ export default function HomeContent({ products, categories }) {
                     className="w-full h-full object-contain group-hover:scale-110 transition-transform"
                   />
                 </div>
-                <h6 className="font-bold text-gray-700 text-sm whitespace-nowrap">
+                <h6 className="font-bold text-gray-700 text-[13px] leading-tight mb-1">
                   {cat.name}
                 </h6>
-                <p className="text-[12px] text-gray-400">{cat.count} items</p>
+                <p className="text-[12px] text-gray-400">{cat.count} ITEMS</p>
               </Link>
             ))}
           </div>
         </section>
 
-        {/* --- Banners --- */}
+        {/* --- Promo Banners --- */}
         <section className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
           <div className="bg-amber-100 rounded-2xl p-8 relative overflow-hidden h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition">
             <div className="relative z-10 max-w-[180px]">
@@ -443,9 +466,9 @@ export default function HomeContent({ products, categories }) {
             <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
               <img
                 src={
-                  categories.find((c) => c.name === "Cleaning Essentials")
+                  categories.find((c) => c.name === "Household Essentials")
                     ?.image ||
-                  categories.find((c) => c.name === "Cleaning Essentials")?.img
+                  categories.find((c) => c.name === "Household Essentials")?.img
                 }
                 alt="cleaning"
                 className="w-full h-full object-contain"
@@ -493,9 +516,10 @@ export default function HomeContent({ products, categories }) {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
             {shuffledProducts.map((prod) => (
-              <div
+              <Link
                 key={prod._id || prod.id}
-                className="bg-white border hover:shadow-xl hover:border-green-300 transition-all rounded-2xl p-4 relative group"
+                href={`/product/${prod.id_custom || prod.id}`}
+                className="bg-white border hover:shadow-xl hover:border-green-300 transition-all rounded-2xl p-4 relative group block"
               >
                 {prod.tag && (
                   <span
@@ -504,59 +528,68 @@ export default function HomeContent({ products, categories }) {
                     {prod.tag}
                   </span>
                 )}
-                <Link
-                  href={`/product/${prod.id_custom || prod.id}`}
-                  className="block"
-                >
-                  <div className="h-40 flex items-center justify-center group-hover:scale-105 transition-transform cursor-pointer overflow-hidden p-4">
-                    <img
-                      src={prod.image || prod.img}
-                      alt={prod.name}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="text-[10px] text-gray-400 mb-2 uppercase font-bold tracking-wider">
-                    {prod.category}
-                  </div>
-                  <h3 className="font-bold text-gray-700 text-[14px] mb-1 leading-snug cursor-pointer hover:text-green-600 h-10 line-clamp-2">
+                <div className="h-40 flex items-center justify-center group-hover:scale-105 transition-transform cursor-pointer overflow-hidden p-4">
+                  <img
+                    src={prod.image || prod.img}
+                    alt={prod.name}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="text-[10px] text-gray-400 mb-2 uppercase font-bold tracking-wider">
+                  {prod.category}
+                </div>
+                <div className="flex justify-between items-start mb-1 h-10 overflow-hidden">
+                  <h3 className="font-bold text-gray-700 text-[14px] leading-snug cursor-pointer group-hover:text-green-600 transition-colors line-clamp-2 pr-2">
                     {prod.name}
                   </h3>
-                  <div className="flex mb-2">
-                    <span className="text-[11px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 py-0.5 rounded-md uppercase">
-                      {prod.unit || "Unit"}
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const id = prod._id || prod.id;
+                      setAnimatingHeart(id);
+                      toggleWishlist(prod);
+                      setTimeout(() => setAnimatingHeart(null), 400);
+                    }}
+                    className={`text-xl pt-1 hover:scale-110 transition-transform relative z-20 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+                  >
+                    <FiHeart className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} />
+                  </button>
+                </div>
+                <div className="flex mb-2">
+                  <span className="text-[11px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 py-0.5 rounded-md uppercase">
+                    {prod.unit || "Unit"}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-400 mb-3">
+                  By{" "}
+                  <span className="text-green-600 font-bold">
+                    {prod.vendor}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-50">
+                  <div className="flex flex-col">
+                    <span className="text-green-600 font-black text-lg">
+                      ₹{prod.price}
                     </span>
-                  </div>
-                  <div className="text-xs text-gray-400 mb-3">
-                    By{" "}
-                    <span className="text-green-600 font-bold">
-                      {prod.vendor}
-                    </span>
-                  </div>
-                </Link>
-                <div className="flex justify-between items-center mt-3">
-                  <Link href={`/product/${prod.id}`} className="flex flex-col">
                     <div className="flex items-center gap-2">
-                      <span className="text-green-600 font-bold text-lg">
-                        ₹{prod.price}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-slate-500 text-xs line-through">
+                      <span className="text-slate-500 text-[10px] line-through font-bold">
                         ₹{prod.oldPrice}
                       </span>
-                      <span className="bg-blue-500 text-white text-[10px] px-2 py-0.5 rounded font-black italic uppercase">
-                        {prod.discount} OFF
-                      </span>
                     </div>
-                  </Link>
+                  </div>
                   <button
-                    onClick={() => addToCart(prod)}
-                    className="bg-green-100 text-green-600 hover:bg-green-600 hover:text-white px-3 py-2 rounded-lg transition-colors font-bold text-xs flex items-center gap-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addToCart(prod);
+                    }}
+                    className="bg-green-100 text-green-600 hover:bg-green-600 hover:text-white px-3 py-2 rounded-lg transition-all font-black text-xs flex items-center gap-2 relative z-20 shadow-sm"
                   >
                     Add <FiShoppingCart />
                   </button>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>
@@ -575,21 +608,21 @@ export default function HomeContent({ products, categories }) {
             {/* Banner */}
             <Link
               href="/shop"
-              className="lg:w-1/4 h-[520px] bg-cover bg-center rounded-2xl p-10 flex flex-col justify-start relative overflow-hidden shadow-md border group cursor-pointer"
+              className="lg:w-1/4 h-[520px] bg-cover bg-center rounded-[40px] p-10 flex flex-col justify-start relative overflow-hidden shadow-md border group cursor-pointer"
               style={{
-                backgroundImage: `url('${promotions.petFoodBanner}')`,
+                backgroundImage: `url('https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070&auto=format&fit=crop')`,
               }}
             >
               <div className="relative z-20">
-                <h6 className="text-white/80 font-bold mb-2 uppercase tracking-widest text-xs">Fresh & Fast</h6>
+                <h6 className="text-white/80 font-bold mb-2 uppercase tracking-widest text-xs">Recommended for you</h6>
                 <h3 className="text-white text-5xl font-extrabold mb-10 leading-tight">
                   Premium Products Best Quality
                 </h3>
-                <div className="bg-green-600 text-white px-6 py-2.5 rounded-xl text-sm font-bold flex items-center gap-2 w-fit group-hover:bg-green-700 transition shadow-lg">
+                <div className="bg-[#3BB77E] text-white px-8 py-3 rounded-2xl text-sm font-black flex items-center gap-2 w-fit group-hover:bg-[#29A56C] transition shadow-xl active:scale-95">
                   Order Now <FiArrowRight className="text-sm" />
                 </div>
               </div>
-              <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-slate-900/20 transition-colors z-10"></div>
+              <div className="absolute inset-0 bg-slate-900/20 group-hover:bg-slate-900/30 transition-colors z-10"></div>
             </Link>
 
             {/* Cards Grid */}
@@ -649,7 +682,7 @@ export default function HomeContent({ products, categories }) {
                              ₹{prod.oldPrice}
                           </span>
                         </div>
-                        <span className="bg-blue-500 text-white text-[9px] px-1.5 py-1 rounded font-black italic uppercase">
+                        <span className="bg-[#3BB77E] text-white text-[9px] px-1.5 py-1 rounded font-black italic uppercase">
                            {prod.discount || "SALE"} OFF
                         </span>
                       </div>
@@ -745,7 +778,7 @@ export default function HomeContent({ products, categories }) {
                         <span className="text-slate-500 text-xs line-through">
                           ₹{deal.oldPrice}
                         </span>
-                        <span className="bg-blue-500 text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                        <span className="bg-[#3BB77E] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
                           {deal.discount || "SALE"} OFF
                         </span>
                       </div>
@@ -768,29 +801,45 @@ export default function HomeContent({ products, categories }) {
             </h3>
             <div className="space-y-6">
               {shuffledTopSelling.map((prod) => (
-                <div
+                <Link
                   key={prod._id || prod.id}
+                  href={`/product/${prod.id_custom || prod.id}`}
                   className="flex gap-4 group cursor-pointer items-center"
                 >
                   <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0">
                     <img
                       src={prod.image || prod.img}
                       alt={prod.name}
-                      className="w-full h-full object-contain p-2"
+                      className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform"
                     />
                   </div>
-                  <div>
-                    <h5 className="font-bold text-gray-700 text-[13px] mb-1 group-hover:text-green-600 transition-colors line-clamp-2">
-                      {prod.name}
-                    </h5>
+                  <div className="flex-grow">
+                    <div className="flex justify-between items-start mb-1 gap-2">
+                      <h5 className="font-bold text-gray-700 text-[13px] group-hover:text-green-600 transition-colors line-clamp-2">
+                        {prod.name}
+                      </h5>
+                      <button 
+                        onClick={(e) => { 
+                          e.preventDefault();
+                          e.stopPropagation(); 
+                          const id = prod._id || prod.id;
+                          setAnimatingHeart(id);
+                          toggleWishlist(prod);
+                          setTimeout(() => setAnimatingHeart(null), 400);
+                        }}
+                        className={`hover:scale-110 transition-transform pt-0.5 shrink-0 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+                      >
+                        <FiHeart className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} size={14} />
+                      </button>
+                    </div>
                     <div className="text-green-600 font-bold text-sm">
-                      {prod.price}{" "}
+                      ₹{prod.price}{" "}
                       <span className="text-gray-300 text-[10px] line-through ml-1">
-                        {prod.oldPrice}
+                        ₹{prod.oldPrice}
                       </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -801,21 +850,37 @@ export default function HomeContent({ products, categories }) {
             </h3>
             <div className="space-y-6">
               {shuffledTrending.map((prod) => (
-                <div
+                <Link
                   key={prod._id || prod.id}
+                  href={`/product/${prod.id_custom || prod.id}`}
                   className="flex gap-4 group cursor-pointer items-center"
                 >
                   <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0">
                     <img
                       src={prod.image || prod.img}
                       alt={prod.name}
-                      className="w-full h-full object-contain p-2"
+                      className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform"
                     />
                   </div>
-                  <div>
-                    <h5 className="font-bold text-gray-700 text-[13px] mb-1 group-hover:text-green-600 transition-colors line-clamp-2">
-                      {prod.name}
-                    </h5>
+                  <div className="flex-grow">
+                    <div className="flex justify-between items-start mb-1 gap-2">
+                      <h5 className="font-bold text-gray-700 text-[13px] group-hover:text-green-600 transition-colors line-clamp-2">
+                        {prod.name}
+                      </h5>
+                      <button 
+                        onClick={(e) => { 
+                          e.preventDefault();
+                          e.stopPropagation(); 
+                          const id = prod._id || prod.id;
+                          setAnimatingHeart(id);
+                          toggleWishlist(prod);
+                          setTimeout(() => setAnimatingHeart(null), 400);
+                        }}
+                        className={`hover:scale-110 transition-transform pt-0.5 shrink-0 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+                      >
+                        <FiHeart className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} size={14} />
+                      </button>
+                    </div>
                     <div className="text-green-600 font-bold text-sm">
                       ₹{prod.price}{" "}
                       <span className="text-gray-300 text-[10px] line-through ml-1">
@@ -823,7 +888,7 @@ export default function HomeContent({ products, categories }) {
                       </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -834,21 +899,37 @@ export default function HomeContent({ products, categories }) {
             </h3>
             <div className="space-y-6">
               {shuffledRecentlyAdded.map((prod) => (
-                <div
+                <Link
                   key={prod._id || prod.id}
+                  href={`/product/${prod.id_custom || prod.id}`}
                   className="flex gap-4 group cursor-pointer items-center"
                 >
                   <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0">
                     <img
                       src={prod.image || prod.img}
                       alt={prod.name}
-                      className="w-full h-full object-contain p-2"
+                      className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform"
                     />
                   </div>
-                  <div>
-                    <h5 className="font-bold text-gray-700 text-[13px] mb-1 group-hover:text-green-600 transition-colors line-clamp-2">
-                      {prod.name}
-                    </h5>
+                  <div className="flex-grow">
+                    <div className="flex justify-between items-start mb-1 gap-2">
+                      <h5 className="font-bold text-gray-700 text-[13px] group-hover:text-green-600 transition-colors line-clamp-2">
+                        {prod.name}
+                      </h5>
+                      <button 
+                        onClick={(e) => { 
+                          e.preventDefault();
+                          e.stopPropagation(); 
+                          const id = prod._id || prod.id;
+                          setAnimatingHeart(id);
+                          toggleWishlist(prod);
+                          setTimeout(() => setAnimatingHeart(null), 400);
+                        }}
+                        className={`hover:scale-110 transition-transform pt-0.5 shrink-0 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+                      >
+                        <FiHeart className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} size={14} />
+                      </button>
+                    </div>
                     <div className="text-green-600 font-bold text-sm">
                       ₹{prod.price}{" "}
                       <span className="text-gray-300 text-[10px] line-through ml-1">
@@ -856,7 +937,7 @@ export default function HomeContent({ products, categories }) {
                       </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -867,21 +948,37 @@ export default function HomeContent({ products, categories }) {
             </h3>
             <div className="space-y-6">
               {shuffledTopPicks.map((prod) => (
-                <div
+                <Link
                   key={prod._id || prod.id}
+                  href={`/product/${prod.id_custom || prod.id}`}
                   className="flex gap-4 group cursor-pointer items-center"
                 >
                   <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0">
                     <img
                       src={prod.image || prod.img}
                       alt={prod.name}
-                      className="w-full h-full object-contain p-2"
+                      className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform"
                     />
                   </div>
-                  <div>
-                    <h5 className="font-bold text-gray-700 text-[13px] mb-1 group-hover:text-green-600 transition-colors line-clamp-2">
-                      {prod.name}
-                    </h5>
+                  <div className="flex-grow">
+                    <div className="flex justify-between items-start mb-1 gap-2">
+                      <h5 className="font-bold text-gray-700 text-[13px] group-hover:text-green-600 transition-colors line-clamp-2">
+                        {prod.name}
+                      </h5>
+                      <button 
+                        onClick={(e) => { 
+                          e.preventDefault(); // Add e.preventDefault() here to prevent Link navigation when heart is clicked
+                          e.stopPropagation(); 
+                          const id = prod._id || prod.id;
+                          setAnimatingHeart(id);
+                          toggleWishlist(prod);
+                          setTimeout(() => setAnimatingHeart(null), 400);
+                        }}
+                        className={`hover:scale-110 transition-transform pt-0.5 shrink-0 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+                      >
+                        <FiHeart className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} size={14} />
+                      </button>
+                    </div>
                     <div className="text-green-600 font-bold text-sm">
                       ₹{prod.price}{" "}
                       <span className="text-gray-300 text-[10px] line-through ml-1">
@@ -889,7 +986,7 @@ export default function HomeContent({ products, categories }) {
                       </span>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
@@ -898,7 +995,7 @@ export default function HomeContent({ products, categories }) {
         {/* --- Footer Top --- */}
         <div className="bg-[#ECF7F3] rounded-3xl p-10 md:p-14 mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[450px] flex items-center">
           <div
-            className="absolute inset-0 bg-cover bg-no-repeat bg-right md:bg-right opacity-100"
+            className="absolute inset-0 bg-[#ECF7F3] bg-contain bg-no-repeat bg-right opacity-100"
             style={{
               backgroundImage: "url('/footer_banner.png')",
             }}
@@ -915,11 +1012,17 @@ export default function HomeContent({ products, categories }) {
             <div className="bg-white rounded-full p-2 flex max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
               <input
                 type="email"
-                placeholder="Your email address"
+                placeholder="Enter your email to login"
                 className="flex-1 px-5 outline-none text-gray-700 bg-transparent font-medium"
+                value={footerEmail}
+                onChange={(e) => setFooterEmail(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleFooterLogin()}
               />
-              <button className="bg-[#3BB77E] text-white rounded-full px-8 md:px-10 py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg shrink-0">
-                Subscribe
+              <button 
+                onClick={handleFooterLogin}
+                className="bg-[#3BB77E] text-white rounded-full px-8 md:px-10 py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg shrink-0"
+              >
+                Login
               </button>
             </div>
           </div>

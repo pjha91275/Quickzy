@@ -11,7 +11,7 @@ import {
   FiHome,
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import dynamic from "next/dynamic";
 
 const MapContent = dynamic(() => import("./MapContent"), {
@@ -26,6 +26,7 @@ const MapContent = dynamic(() => import("./MapContent"), {
 });
 
 const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
+  const { data: session, status } = useSession();
   const [step, setStep] = useState(initialStep); // 1: Email, 2: Magic Link Sent, 3: Location
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -33,10 +34,15 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
   const [coords, setCoords] = useState({ lat: null, lng: null });
   const [showMapModal, setShowMapModal] = useState(false);
 
-  // Sync step with initialStep when modal opens
+  // Sync step and pre-fill email if available
   React.useEffect(() => {
     if (isOpen) {
       setStep(initialStep);
+      const savedEmail = localStorage.getItem("quickzy-login-email");
+      if (savedEmail) {
+        setEmail(savedEmail);
+        localStorage.removeItem("quickzy-login-email"); // Use once
+      }
     }
   }, [isOpen, initialStep]);
 
@@ -52,13 +58,58 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
     };
   }, [isOpen]);
 
+  // CHECK: If user just logged in, check if we should skip location step
+  React.useEffect(() => {
+    // Only run this logic if the modal is actually open
+    if (!isOpen) return;
+
+    if (status === "authenticated" && step !== 3) {
+      const guestLoc = localStorage.getItem("quickzy-guest-location");
+      const guestCoords = localStorage.getItem("quickzy-guest-coords");
+
+      // Case A: User already has a location in DB (Returning User)
+      if (session?.user?.address) {
+        onLoginSuccess();
+        return;
+      }
+
+      // Case B: Guest selected location FIRST, then logged in
+      if (guestLoc && guestCoords) {
+        const coords = JSON.parse(guestCoords);
+        
+        // Silently sync to DB
+        fetch("/api/user/update-location", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            address: guestLoc,
+            lat: coords.lat,
+            lng: coords.lng,
+          }),
+        }).then(() => {
+          // Clear guest cache and close
+          localStorage.removeItem("quickzy-guest-location");
+          localStorage.removeItem("quickzy-guest-coords");
+          onLoginSuccess();
+          window.location.reload(); // Refresh to sync header
+        });
+        return;
+      }
+
+      // Case C: Logged in but no location -> Skip to close (let user set it later)
+      onLoginSuccess();
+      return;
+    }
+  }, [status, session, step, onLoginSuccess, isOpen]);
+
   if (!isOpen) return null;
 
   // 1. Send Magic Link
   const handleEmailLogin = async (e) => {
     e.preventDefault();
-    if (!email || !email.includes("@")) {
-      toast.info("Please enter a valid email address");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast.error("Please enter a valid email address");
       return;
     }
 
@@ -153,28 +204,39 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
     toast.success("Location updated from map!");
   };
 
+
+
   const confirmAndSaveLocation = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/user/update-location", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          address: selectedAddress,
-          lat: coords.lat,
-          lng: coords.lng,
-        }),
-      });
+      if (status === "authenticated") {
+        // Logged in: Save to DB
+        const response = await fetch("/api/user/update-location", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            address: selectedAddress,
+            lat: coords.lat,
+            lng: coords.lng,
+          }),
+        });
 
-      if (response.ok) {
-        toast.success("Delivery address saved!");
-        // We force a reload to ensure the session is updated with the new address
-        // throughout the app (Navbar, Checkout, etc.)
+        if (response.ok) {
+          toast.success("Delivery address saved!");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        } else {
+          toast.error("Failed to save location. Please try again.");
+        }
+      } else {
+        // Guest: Save to localStorage
+        localStorage.setItem("quickzy-guest-location", selectedAddress);
+        localStorage.setItem("quickzy-guest-coords", JSON.stringify(coords));
+        toast.success("Location set!");
         setTimeout(() => {
           window.location.reload();
         }, 1000);
-      } else {
-        toast.error("Failed to save location. Please try again.");
       }
     } catch (error) {
       toast.error("Error saving location.");
@@ -201,7 +263,9 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
           <div className="w-full md:w-1/2 bg-[#3BB77E] p-10 flex flex-col justify-center text-white relative h-48 md:h-auto">
             <div className="relative z-10">
               <div className="text-4xl font-black mb-4 flex items-center gap-3">
-                <img src="/logo.png" alt="Logo" className="w-12 h-12" />
+                <div className="w-12 h-12 bg-white flex items-center justify-center rounded-lg shadow-sm border border-white/20 shrink-0">
+                  <img src="/logo.png" alt="Logo" className="w-[80%] h-[80%] object-contain" />
+                </div>
                 Quickzy
               </div>
               <h2 className="text-2xl font-bold mb-2">
@@ -240,7 +304,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
                   </p>
                 </div>
 
-                <form onSubmit={handleEmailLogin} className="space-y-4">
+                <form onSubmit={handleEmailLogin} className="space-y-4" noValidate>
                   <div className="flex items-center border-2 border-gray-100 rounded-2xl px-5 py-4 focus-within:border-[#3BB77E] transition-all bg-gray-50">
                     <FiMail className="text-gray-400 mr-3 text-xl" />
                     <input

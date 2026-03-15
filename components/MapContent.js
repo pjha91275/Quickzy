@@ -3,7 +3,7 @@ import React, { useState, useMemo, useCallback } from "react";
 import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { FiX, FiCheck, FiNavigation } from "react-icons/fi";
+import { FiX, FiCheck, FiNavigation, FiSearch, FiMapPin } from "react-icons/fi";
 
 // FIX: Leaflet default icon issues in Next.js
 import icon from "leaflet/dist/images/marker-icon.png";
@@ -27,6 +27,11 @@ const MapContent = ({ onConfirm, onClose, initialCoords }) => {
   const [address, setAddress] = useState("Drag the marker to your location");
   const [isLoading, setIsLoading] = useState(false);
 
+  // Search States
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   const fetchAddress = async (lat, lng) => {
     setIsLoading(true);
     try {
@@ -39,7 +44,6 @@ const MapContent = ({ onConfirm, onClose, initialCoords }) => {
         throw new Error(data.error);
       }
 
-      // Use display_name or build a fallback string
       const formattedAddress =
         data.display_name ||
         [
@@ -60,6 +64,42 @@ const MapContent = ({ onConfirm, onClose, initialCoords }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSearch = async (query) => {
+    setSearchQuery(query);
+    if (query.length < 3) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      // Using existing LocationIQ key for search
+      const res = await fetch(
+        `https://us1.locationiq.com/v1/search.php?key=${process.env.NEXT_PUBLIC_LOCATIONIQ_KEY}&q=${encodeURIComponent(query)}&format=json&limit=5`,
+      );
+      const data = await res.json();
+      if (!data.error) {
+        setSearchResults(data);
+      } else {
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const selectSearchResult = (item) => {
+    const lat = parseFloat(item.lat);
+    const lon = parseFloat(item.lon);
+    setPosition([lat, lon]);
+    setAddress(item.display_name);
+    setSearchQuery("");
+    setSearchResults([]);
   };
 
   // Automatically try to get user location if no initial coords
@@ -109,7 +149,6 @@ const MapContent = ({ onConfirm, onClose, initialCoords }) => {
       },
     });
 
-    // Update map center when position state changes (e.g., after geolocation)
     React.useEffect(() => {
       map.flyTo(position, map.getZoom());
     }, [position]);
@@ -123,23 +162,67 @@ const MapContent = ({ onConfirm, onClose, initialCoords }) => {
         className="absolute inset-0 bg-black/40 backdrop-blur-sm"
         onClick={onClose}
       ></div>
-      <div className="relative bg-white w-full max-w-[700px] h-[600px] rounded-3xl overflow-hidden shadow-2xl flex flex-col animate-in zoom-in duration-300">
+      <div className="relative bg-white w-full max-w-[700px] h-[650px] rounded-3xl overflow-hidden shadow-2xl flex flex-col animate-in zoom-in duration-300">
         {/* Header */}
-        <div className="p-6 border-b flex justify-between items-center bg-white z-10">
-          <div>
-            <h3 className="text-xl font-black text-[#253D4E]">
-              Select Location
-            </h3>
-            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
-              Move the pin to your doorstep
-            </p>
+        <div className="p-6 border-b flex flex-col gap-4 bg-white z-20">
+          <div className="flex justify-between items-center">
+            <div>
+              <h3 className="text-xl font-black text-[#253D4E]">
+                Select Location
+              </h3>
+              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">
+                Move the pin to your doorstep
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+            >
+              <FiX size={24} />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-gray-400 hover:text-red-500 transition-colors"
-          >
-            <FiX size={24} />
-          </button>
+
+          {/* Search Box */}
+          <div className="relative">
+            <div className="flex items-center gap-2 bg-gray-50 border-2 border-gray-100 rounded-2xl px-4 h-12 focus-within:border-[#3BB77E] transition-all">
+              <FiSearch className="text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search for your area, city or street..."
+                className="flex-1 bg-transparent text-sm font-bold text-[#253D4E] outline-none"
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+              {isSearching && (
+                <div className="w-4 h-4 border-2 border-[#3BB77E] border-t-transparent rounded-full animate-spin"></div>
+              )}
+            </div>
+
+            {/* Search Dropdown */}
+            {searchResults.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden z-[1001]">
+                {searchResults.map((item, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => selectSearchResult(item)}
+                    className="p-4 hover:bg-[#f0fdf4] cursor-pointer border-b last:border-0 transition-colors"
+                  >
+                    <div className="flex items-start gap-3">
+                      <FiMapPin className="text-[#3BB77E] mt-1 shrink-0" />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-black text-[#253D4E] line-clamp-1">
+                          {item.display_name.split(",")[0]}
+                        </span>
+                        <span className="text-[10px] text-gray-400 font-bold uppercase truncate">
+                          {item.display_name.split(",").slice(1).join(", ")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Map Area */}
