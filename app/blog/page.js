@@ -19,7 +19,7 @@ const blogs = [
     category: "Quick Recipes",
     author: "Rahul Varma",
     date: "March 10, 2026",
-    image: "https://images.unsplash.com/photo-1533089860892-a7c6f0aef066?q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?q=80&w=2070",
     excerpt: "Mornings can be a rush. Here are 5 delicious and healthy breakfast recipes you can whip up using items from our app.",
   },
   {
@@ -28,7 +28,7 @@ const blogs = [
     category: "Insider",
     author: "Pranay J.",
     date: "March 08, 2026",
-    image: "https://images.unsplash.com/photo-1566576721346-d4a3b4eaad5b?q=80&w=2070",
+    image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=2070",
     excerpt: "Exploring how hyper-local delivery is changing the way we shop and the technology behind 10-minute deliveries.",
   },
   {

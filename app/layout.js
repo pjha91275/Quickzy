@@ -25,6 +25,8 @@ export const metadata = {
     "Quickzy: Your daily essentials, groceries, electronics and more, delivered instantly.",
 };
 
+import LocationGuard from "@/components/LocationGuard";
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -34,14 +36,16 @@ export default function RootLayout({ children }) {
         <SessionWrapper>
           <CartProvider>
             <WishlistProvider>
-              <Navbar />
-              {children}
+              <LocationGuard>
+                <Navbar />
+                {children}
+                <Footer />
+              </LocationGuard>
               <ToastContainer
                 position="top-right"
                 autoClose={3000}
                 hideProgressBar={false}
               />
-              <Footer />
             </WishlistProvider>
           </CartProvider>
         </SessionWrapper>

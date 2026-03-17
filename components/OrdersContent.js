@@ -74,10 +74,14 @@ export default function OrdersContent() {
           </p>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {orders.map((order) => {
             const date = new Date(order.createdAt);
             const timeStr = date.toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            });
+            const arrivalTime = new Date(date.getTime() + 10 * 60000).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             });
@@ -86,60 +90,53 @@ export default function OrdersContent() {
             return (
               <div
                 key={order._id}
-                className="bg-white rounded-2xl p-5 border shadow-sm flex flex-col md:flex-row gap-4 items-center hover:shadow-md transition-shadow group"
+                className="bg-white rounded-[32px] overflow-hidden border border-gray-100 shadow-xl shadow-gray-200/40 group"
               >
-                <div className="w-20 h-20 bg-gray-50 rounded-xl overflow-hidden p-2 flex-shrink-0 group-hover:scale-105 transition-transform">
-                  <img
-                    src={order.items[0]?.image}
-                    alt={order.items[0]?.name}
-                    className="w-full h-full object-contain"
-                  />
+                {/* Order Header */}
+                <div className="bg-gray-50/50 p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
+                   <div className="flex flex-wrap items-center gap-4 text-[10px] font-black uppercase tracking-widest text-gray-400">
+                      <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-100 text-[#253D4E]">
+                         ID: <span className="text-[#3BB77E]">#{order._id.slice(-6)}</span>
+                      </div>
+                      <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-100 text-[#253D4E]">
+                         <FiCalendar className="text-[#3BB77E]" /> {dateStr}
+                      </div>
+                      <div className="flex items-center gap-2 bg-[#DEF9EC] px-3 py-1.5 rounded-full border border-[#3BB77E]/20 text-[#3BB77E] animate-pulse">
+                         <FiTruck /> Arriving in 10 mins
+                      </div>
+                   </div>
+                   <div className="text-[#253D4E] font-black text-xl">
+                      Total: ₹{order.totalAmount}
+                   </div>
                 </div>
 
-                <div className="flex-1 text-center md:text-left">
-                  <h3 className="font-black text-[#253D4E] text-lg">
-                    {order.items[0]?.name}{" "}
-                    {order.items.length > 1 &&
-                      `+ ${order.items.length - 1} more`}
-                  </h3>
-                  <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-1 text-[10px] uppercase font-black tracking-widest text-gray-400">
-                    <span>ID: #{order._id.slice(-6)}</span>
-                    <span>•</span>
-                    <span className="flex items-center gap-1 text-[#3BB77E]">
-                      <FiCalendar /> {dateStr}
-                    </span>
-                  </div>
-
-                  <div className="flex justify-center md:justify-start gap-4 mt-3">
-                    <span
-                      className={`text-[10px] px-3 py-1 rounded-full font-black flex items-center gap-1 ${
-                        order.status === "Delivered"
-                          ? "bg-green-100 text-green-700"
-                          : order.status === "Cancelled"
-                            ? "bg-red-100 text-red-700"
-                            : "bg-blue-100 text-blue-700"
-                      }`}
-                    >
-                      <FiPackage /> {order.status}
-                    </span>
-                    <span className="text-[10px] bg-gray-100 text-gray-600 px-3 py-1 rounded-full font-black flex items-center gap-1">
-                      <FiClock /> {timeStr}
-                    </span>
-                  </div>
+                {/* Individual Item Cards Grouped */}
+                <div className="p-6 space-y-4">
+                   {order.items.map((item, idx) => (
+                      <div key={idx} className="flex gap-4 items-center bg-gray-50/30 p-4 rounded-2xl border border-transparent hover:border-[#DEF9EC] transition-all">
+                         <div className="w-16 h-16 bg-white rounded-xl border border-gray-100 p-2 flex-shrink-0">
+                            <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                         </div>
+                         <div className="flex-1">
+                            <h4 className="font-bold text-[#253D4E] text-sm leading-tight">{item.name}</h4>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase mt-0.5">{item.category} • {item.unit || "Single Unit"}</p>
+                         </div>
+                         <div className="text-right">
+                            <p className="font-black text-[#253D4E]">₹{item.price}</p>
+                            <p className="text-[10px] text-gray-400 font-bold">Qty: 1</p>
+                         </div>
+                      </div>
+                   ))}
                 </div>
 
-                <div className="text-center md:text-right border-t md:border-none pt-4 md:pt-0 w-full md:w-auto">
-                  <p className="text-[10px] text-gray-400 font-black uppercase mb-1">
-                    Total Paid
-                  </p>
-                  <p className="font-black text-2xl text-[#253D4E]">
-                    ₹{order.totalAmount}
-                  </p>
-                  {order.paymentMethod === "Online" && (
-                    <span className="text-[9px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 py-0.5 rounded uppercase">
-                      Verified Online
-                    </span>
-                  )}
+                {/* Timing Footer */}
+                <div className="px-8 py-3 bg-slate-800 text-white flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
+                   <div className="flex items-center gap-2">
+                      <FiClock className="text-[#3BB77E]" /> Ordered At: {timeStr}
+                   </div>
+                   <div className="flex items-center gap-2">
+                      <FiCheckCircle className="text-[#3BB77E]" /> Estimated Arrival: {arrivalTime}
+                   </div>
                 </div>
               </div>
             );

@@ -51,7 +51,7 @@ export default function HomeContent({ products, categories }) {
       title: (
         <>
           Fresh Grocery <br />
-          <span className="text-[#3BB77E]">Delivered in 10 Mins</span>
+          <span className="text-[#3BB77E]">Within 15 Mins</span>
         </>
       ),
       subtitle: "Save up to 50% on your first order",
@@ -70,7 +70,7 @@ export default function HomeContent({ products, categories }) {
         </>
       ),
       subtitle: "Get fresh milk and dairy delivered daily",
-      image: "https://images.unsplash.com/photo-1550583724-125581cc2586?q=80&w=2070",
+      image: "/hero-banner-2.png",
       tag: "Quickzy: Fresh Dairy",
       bgColor: "bg-[#e3f2fd]",
       btnText: "Shop Dairy",
@@ -85,7 +85,7 @@ export default function HomeContent({ products, categories }) {
         </>
       ),
       subtitle: "Get fresh onions, potatoes and more",
-      image: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070",
+      image: "/hero-banner-3.png",
       tag: "Quickzy: Farm Fresh",
       bgColor: "bg-[#fff3e0]",
       btnText: "Browse Veggies",
@@ -100,7 +100,7 @@ export default function HomeContent({ products, categories }) {
         </>
       ),
       subtitle: "Experience technology at your doorstep",
-      image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=2070",
+      image: "/hero-banner-4.png",
       tag: "Quickzy: Electronics",
       bgColor: "bg-[#fce4ec]",
       btnText: "View Gadgets",
@@ -115,7 +115,7 @@ export default function HomeContent({ products, categories }) {
         </>
       ),
       subtitle: "Everything you need for a sparkling home",
-      image: "https://images.unsplash.com/photo-1584622781564-1d9876a13d00?q=80&w=2070",
+      image: "/hero-banner-5.png",
       tag: "Quickzy: Household",
       bgColor: "bg-[#f3e5f5]",
       btnText: "Clean Now",
@@ -295,10 +295,10 @@ export default function HomeContent({ products, categories }) {
           <div className="absolute inset-0 transition-opacity duration-700">
             <div className="absolute inset-0 flex">
               <div className="w-1/2" />
-              <div className="w-1/2 relative bg-white/20">
+              <div className="w-1/2 relative overflow-hidden">
                 <img 
                   src={banners[currentSlide].image} 
-                  className="w-full h-full object-contain object-right-bottom transition-all duration-700 p-4" 
+                  className="w-full h-full object-cover object-left transition-all duration-700" 
                   alt="" 
                 />
                 {/* Seamless Submerge Gradient */}
@@ -308,23 +308,23 @@ export default function HomeContent({ products, categories }) {
           </div>
           <div className="absolute inset-0 bg-gradient-to-r from-white/40 via-white/10 to-transparent"></div>
 
-          <div className="relative z-20 max-w-xl space-y-4 animate-fadeIn pl-8 md:pl-16">
-            <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest shadow-sm mb-4">
-              <img src="/logo.png" className="w-4 h-4" alt="" />
+          <div className="relative z-20 w-full md:w-[55%] lg:w-1/2 lg:max-w-xl space-y-1 md:space-y-2 animate-fadeIn pl-8 md:pl-16 pr-6 lg:pr-12 py-8">
+            <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-3 py-1 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest shadow-sm mb-1">
+              <img src="/logo.png" className="w-3.5 h-3.5" alt="" />
               {banners[currentSlide].tag}
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-black text-[#253D4E] leading-[1.1]">
+            <h1 className={`${currentSlide === 0 ? "text-3xl md:text-[3.2rem] lg:text-[3.8rem]" : currentSlide === 2 ? "text-3xl md:text-[2.8rem] lg:text-[3.2rem]" : "text-3xl md:text-[3rem] lg:text-[3.6rem]"} font-black text-[#253D4E] leading-[1.05]`}>
               {banners[currentSlide].title}
             </h1>
-            <p className="text-gray-500 font-extrabold text-lg md:text-xl">
+            <p className="text-gray-500 font-extrabold text-sm md:text-md lg:text-lg">
               {banners[currentSlide].subtitle}
             </p>
             
             {/* Global Search Bar (Static) */}
             <div
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-full p-2 flex max-w-md shadow-2xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50 mt-6"
+              className="bg-white rounded-full p-2 flex w-full max-w-[100%] sm:max-w-sm lg:max-w-md shadow-2xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50 mt-2 lg:mt-4"
             >
               <input
                 type="text"
@@ -569,12 +569,15 @@ export default function HomeContent({ products, categories }) {
                 </div>
                 <div className="flex justify-between items-center mt-3 pt-3 border-t border-gray-50">
                   <div className="flex flex-col">
-                    <span className="text-green-600 font-black text-lg">
+                    <span className="text-green-600 font-black text-lg leading-tight">
                       ₹{prod.price}
                     </span>
                     <div className="flex items-center gap-2">
                       <span className="text-slate-500 text-[10px] line-through font-bold">
                         ₹{prod.oldPrice}
+                      </span>
+                      <span className="bg-[#3BB77E] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                        {prod.discount || "SALE"} OFF
                       </span>
                     </div>
                   </div>

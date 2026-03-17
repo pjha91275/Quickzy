@@ -7,7 +7,8 @@ import {
   FiHeart,
   FiZap,
   FiTag,
-  FiLayers
+  FiLayers,
+  FiShield
 } from "react-icons/fi";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
@@ -139,38 +140,37 @@ export default function ProductContent({ product, similarProducts }) {
             {/* Why Shop List */}
             <div className="space-y-8">
                <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3">Benefits of Shopping from Quickzy</h4>
-               
-               <div className="space-y-6">
-                 <div className="flex gap-5 items-center">
-                   <div className="w-12 h-12 rounded-2xl bg-[#DEF9EC] flex items-center justify-center shrink-0 shadow-sm border border-[#3BB77E]/10">
-                     <FiZap className="text-[#3BB77E]" size={22} />
-                   </div>
-                   <div>
-                     <h6 className="text-[13px] font-black text-[#253D4E] tracking-tight">Superfast Delivery</h6>
-                     <p className="text-[11px] font-bold text-gray-400 leading-tight">Get your order in under 15 minutes.</p>
-                   </div>
-                 </div>
+                         <div className="space-y-6">
+                  <div className="flex gap-6 items-center group">
+                    <div className="w-14 h-14 rounded-2xl bg-[#DEF9EC] flex items-center justify-center shrink-0 shadow-sm border border-[#3BB77E]/20 text-[#3BB77E] group-hover:bg-[#3BB77E] group-hover:text-white transition-all duration-300">
+                      <FiZap size={24} />
+                    </div>
+                    <div>
+                      <h6 className="text-[14px] font-black text-[#253D4E] tracking-tight">Rapid 15-Min Delivery</h6>
+                      <p className="text-[11px] font-bold text-gray-400 mt-0.5">Your orders delivered within 15 minutes or less.</p>
+                    </div>
+                  </div>
 
-                 <div className="flex gap-5 items-center">
-                   <div className="w-12 h-12 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 shadow-sm border border-amber-100/50">
-                     <FiTag className="text-amber-500" size={20} />
-                   </div>
-                   <div>
-                     <h6 className="text-[13px] font-black text-[#253D4E] tracking-tight">Best Prices & Offers</h6>
-                     <p className="text-[11px] font-bold text-gray-400 leading-tight">Find the lowest prices with high discounts.</p>
-                   </div>
-                 </div>
+                  <div className="flex gap-6 items-center group">
+                    <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 shadow-sm border border-amber-200/50 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
+                      <FiShield size={22} />
+                    </div>
+                    <div>
+                      <h6 className="text-[14px] font-black text-[#253D4E] tracking-tight">Grade-A Quality Assurance</h6>
+                      <p className="text-[11px] font-bold text-gray-400 mt-0.5">Strict quality checks for every single item.</p>
+                    </div>
+                  </div>
 
-                 <div className="flex gap-5 items-center">
-                   <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0 shadow-sm border border-blue-100/50">
-                     <FiLayers className="text-blue-500" size={20} />
-                   </div>
-                   <div>
-                     <h6 className="text-[13px] font-black text-[#253D4E] tracking-tight">Wide Assortment</h6>
-                     <p className="text-[11px] font-bold text-gray-400 leading-tight">Choose from thousands of fresh products.</p>
-                   </div>
-                 </div>
-               </div>
+                  <div className="flex gap-6 items-center group">
+                    <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0 shadow-sm border border-blue-200/50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                      <FiLayers size={22} />
+                    </div>
+                    <div>
+                      <h6 className="text-[14px] font-black text-[#253D4E] tracking-tight">Massive Product Range</h6>
+                      <p className="text-[11px] font-bold text-gray-400 mt-0.5">Find everything from farm fresh to electronics.</p>
+                    </div>
+                  </div>
+                </div>
             </div>
         </div>
 
@@ -183,52 +183,52 @@ export default function ProductContent({ product, similarProducts }) {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
             {similarProducts.map((prod) => (
-              <div
+              <Link
                 key={prod._id || prod.id}
+                href={`/product/${prod.id_custom || prod.id}`}
                 className="bg-white border-2 border-gray-50 hover:border-green-100 hover:shadow-2xl transition-all rounded-3xl p-4 group flex flex-col relative"
               >
-                <Link
-                  href={`/product/${prod.id_custom || prod.id}`}
-                  className="flex flex-col flex-grow text-inherit no-underline"
-                >
-                  <div className="h-32 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform overflow-hidden">
-                    <img
-                      src={prod.image || prod.img}
-                      alt={prod.name}
-                      className="max-h-full object-contain"
-                    />
-                  </div>
-                  <div className="flex justify-between items-start mb-2 h-10 overflow-hidden">
-                    <h4 className="font-bold text-[#253D4E] text-[13px] group-hover:text-[#3BB77E] line-clamp-2 leading-tight pr-2">
-                      {prod.name}
-                    </h4>
-                    <button 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        const id = prod._id || prod.id;
-                        setAnimatingHeart(id);
-                        toggleWishlist(prod);
-                        setTimeout(() => setAnimatingHeart(null), 400);
-                      }}
-                      className={`text-lg hover:scale-110 transition-transform shrink-0 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
-                    >
-                      <FiHeart size={16} className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} />
-                    </button>
-                  </div>
-                </Link>
-                <div className="flex justify-between items-center mt-auto pt-2">
-                  <Link
-                    href={`/product/${prod.id_custom || prod.id}`}
-                    className="text-[#3BB77E] font-black no-underline text-sm"
+                <div className="h-32 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform overflow-hidden">
+                  <img
+                    src={prod.image || prod.img}
+                    alt={prod.name}
+                    className="max-h-full object-contain"
+                  />
+                </div>
+                <div className="flex justify-between items-start mb-2 h-10 overflow-hidden">
+                  <h4 className="font-bold text-[#253D4E] text-[13px] group-hover:text-[#3BB77E] line-clamp-2 leading-tight pr-2">
+                    {prod.name}
+                  </h4>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const id = prod._id || prod.id;
+                      setAnimatingHeart(id);
+                      toggleWishlist(prod);
+                      setTimeout(() => setAnimatingHeart(null), 400);
+                    }}
+                    className={`text-lg hover:scale-110 transition-transform shrink-0 relative z-20 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
                   >
+                    <FiHeart size={16} className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} />
+                  </button>
+                </div>
+                <div className="flex justify-between items-center mt-auto pt-2">
+                  <span className="text-[#3BB77E] font-black text-sm">
                     ₹{prod.price}
-                  </Link>
-                  <button className="bg-[#DEF9EC] text-[#3BB77E] p-2 rounded-xl hover:bg-[#3BB77E] hover:text-white transition-colors">
+                  </span>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addToCart(prod);
+                    }}
+                    className="bg-[#DEF9EC] text-[#3BB77E] p-2 rounded-xl hover:bg-[#3BB77E] hover:text-white transition-colors relative z-20"
+                  >
                     <FiShoppingCart size={14} />
                   </button>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { fetchProdAndCat } from "@/actions/dbactions";
 
 import AuthModal from "./AuthModal";
+import LocationModal from "./LocationModal";
 import { useCart } from "@/context/CartContext";
 
 const Navbar = () => {
@@ -26,6 +27,7 @@ const Navbar = () => {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [authModalStep, setAuthModalStep] = useState(1);
 
   const [guestAddress, setGuestAddress] = useState("");
@@ -37,7 +39,8 @@ const Navbar = () => {
       setCurrentAddress(session.user.address.text);
     } else {
       const gLoc = localStorage.getItem("quickzy-guest-location");
-      if (gLoc) {
+      const isConfirmed = localStorage.getItem("quickzy-location-confirmed");
+      if (gLoc && isConfirmed) {
         setCurrentAddress(gLoc);
         setGuestAddress(gLoc);
       } else {
@@ -46,12 +49,9 @@ const Navbar = () => {
     }
   }, [session]);
 
-  // Auto-open location step if logged in but no address
+  // No longer auto-opening location from here (handled by LocationGuard)
   React.useEffect(() => {
-    if (session && !session.user?.address?.text) {
-      setAuthModalStep(3);
-      setIsAuthModalOpen(true);
-    }
+    // Left empty or removed if no other logic needed
   }, [session]);
 
   // Listen for global auth open events (from footer or elsewhere)
@@ -62,9 +62,8 @@ const Navbar = () => {
       setIsAuthModalOpen(true);
       // We'll let AuthModal handle the LS email or passedEmail
     };
-    const handleOpenLocation = (e) => {
-      setAuthModalStep(3);
-      setIsAuthModalOpen(true);
+    const handleOpenLocation = () => {
+      setIsLocationModalOpen(true);
     };
     window.addEventListener("open-auth", handleOpenAuth);
     window.addEventListener("open-location", handleOpenLocation);
@@ -176,14 +175,18 @@ const Navbar = () => {
         onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={() => setIsAuthModalOpen(false)}
       />
+      <LocationModal 
+        isOpen={isLocationModalOpen} 
+        onClose={() => setIsLocationModalOpen(false)} 
+      />
       <header className="w-full bg-white border-b relative font-sans z-50">
-        <div className="container mx-auto p-4 flex items-center gap-2 md:gap-3 lg:gap-4">
+        <div className="container mx-auto p-4 flex items-center gap-1.5 md:gap-2 lg:gap-3">
           {/* Left Side: Logo + Location */}
           <div className="flex flex-1 items-center">
             <Link href="/" className="flex items-center gap-2 shrink-0 group">
               <div className="flex flex-col">
                 <div className="flex items-center leading-none">
-                  <div className="w-12 h-12 md:w-20 md:h-20 bg-white flex items-center justify-center rounded-lg shadow-sm border border-gray-50 overflow-hidden shrink-0">
+                  <div className="w-10 h-10 md:w-16 md:h-16 bg-white flex items-center justify-center rounded-lg shadow-sm border border-gray-50 overflow-hidden shrink-0">
                     <img
                       src="/logo.png"
                       alt="Quickzy Logo"
@@ -191,10 +194,10 @@ const Navbar = () => {
                     />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <div className="text-2xl md:text-3xl lg:text-4xl font-black text-[#3BB77E] tracking-tight ml-3 leading-none">
+                    <div className="text-xl md:text-2xl lg:text-3xl font-black text-[#3BB77E] tracking-tight ml-2 -mt-0.5 leading-none">
                       Quickzy
                     </div>
-                    <span className="text-[9px] text-gray-400 font-bold ml-3 mt-1 whitespace-nowrap hidden sm:block uppercase tracking-wider">
+                    <span className="text-[8px] text-gray-400 font-black ml-2 mt-0.5 whitespace-nowrap hidden sm:block uppercase tracking-widest scale-95 origin-left">
                       Fast. Fresh. Delivered in a Zap.
                     </span>
                   </div>
@@ -204,14 +207,14 @@ const Navbar = () => {
 
             {/* Location Trigger - Premium Blinkit Style */}
             <div 
-              onClick={() => { setAuthModalStep(3); setIsAuthModalOpen(true); }}
-              className="hidden sm:flex flex-col cursor-pointer hover:bg-gray-50 px-6 py-2 rounded-2xl transition-all group/loc border-l border-gray-100 ml-8 w-[220px] lg:w-[280px] shrink-0 overflow-hidden"
+              onClick={() => setIsLocationModalOpen(true)}
+              className="hidden sm:flex flex-col cursor-pointer hover:bg-gray-50 px-3 py-1.5 rounded-2xl transition-all group/loc border-l border-gray-100 ml-1 w-[180px] lg:w-[220px] shrink-0 overflow-hidden"
             >
               <div className="flex items-center gap-1 leading-none mb-1">
-                <span className="text-[14px] font-black text-[#253D4E] uppercase tracking-tight truncate">
-                  {currentAddress === "Select Location" ? "Select Location" : "Delivery in 10 mins"}
+                <span className="text-[13px] font-black text-[#253D4E] uppercase tracking-tight truncate">
+                  {(localStorage.getItem("quickzy-location-confirmed") && currentAddress !== "Select Location") ? "Delivering in 15 Mins" : "Select Location"}
                 </span>
-                <IoIosArrowDown className="text-xs text-[#3BB77E] group-hover/loc:translate-y-0.5 transition-transform shrink-0" />
+                <IoIosArrowDown className="text-[10px] text-[#3BB77E] group-hover/loc:translate-y-0.5 transition-transform shrink-0" />
               </div>
               <span className="text-[12px] font-bold text-gray-400 truncate block">
                 {currentAddress === "Select Location" ? "Set your delivery address" : currentAddress}
@@ -220,7 +223,7 @@ const Navbar = () => {
           </div>
 
           {/* Middle: Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-5xl border-2 border-[#BCE3C9] rounded-md items-center h-11 relative">
+          <div className="hidden md:flex flex-[2] lg:flex-[2.5] border-2 border-[#BCE3C9] rounded-md items-center h-10 relative">
             <div className="px-4 border-r hidden lg:block text-sm font-bold text-gray-700 whitespace-nowrap">
               All Categories
             </div>
@@ -250,7 +253,7 @@ const Navbar = () => {
                       </span>
                       {item.type === "product" && (
                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tighter">
-                          In {item.category}
+                          Within 15 Mins.
                         </span>
                       )}
                     </div>

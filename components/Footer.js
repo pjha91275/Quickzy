@@ -50,8 +50,7 @@ const Footer = () => {
             <li className="flex gap-2 items-start">
               <FiMapPin className="text-[#3BB77E] mt-1 shrink-0" />{" "}
               <span>
-                <strong>Address:</strong> 124, Phase III, Udyog Vihar, Sector
-                19, Gurgaon, Haryana 122016
+                <strong>Address:</strong> Flat 402, Sea View Apartments, Worli, Mumbai, Maharashtra 400018
               </span>
             </li>
             <li className="flex gap-2 items-center">

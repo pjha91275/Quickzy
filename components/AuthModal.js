@@ -58,49 +58,16 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
     };
   }, [isOpen]);
 
-  // CHECK: If user just logged in, check if we should skip location step
+  // CHECK: If user just logged in, call onLoginSuccess
   React.useEffect(() => {
     // Only run this logic if the modal is actually open
     if (!isOpen) return;
 
-    if (status === "authenticated" && step !== 3) {
-      const guestLoc = localStorage.getItem("quickzy-guest-location");
-      const guestCoords = localStorage.getItem("quickzy-guest-coords");
-
-      // Case A: User already has a location in DB (Returning User)
-      if (session?.user?.address) {
-        onLoginSuccess();
-        return;
-      }
-
-      // Case B: Guest selected location FIRST, then logged in
-      if (guestLoc && guestCoords) {
-        const coords = JSON.parse(guestCoords);
-        
-        // Silently sync to DB
-        fetch("/api/user/update-location", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            address: guestLoc,
-            lat: coords.lat,
-            lng: coords.lng,
-          }),
-        }).then(() => {
-          // Clear guest cache and close
-          localStorage.removeItem("quickzy-guest-location");
-          localStorage.removeItem("quickzy-guest-coords");
-          onLoginSuccess();
-          window.location.reload(); // Refresh to sync header
-        });
-        return;
-      }
-
-      // Case C: Logged in but no location -> Skip to close (let user set it later)
+    if (status === "authenticated") {
       onLoginSuccess();
       return;
     }
-  }, [status, session, step, onLoginSuccess, isOpen]);
+  }, [status, session, onLoginSuccess, isOpen]);
 
   if (!isOpen) return null;
 
@@ -384,74 +351,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
                  - POST the data to '/api/user/update-location'.
                  - On success: Update local state, call onLoginSuccess(), and redirect.
             */}
-            {step === 3 && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
-                <div>
-                  <h3 className="text-2xl font-black text-[#253D4E] mb-2 tracking-tight">
-                    Delivery Location
-                  </h3>
-                  <p className="text-gray-400 text-xs font-bold uppercase tracking-widest leading-none">
-                    Select where to deliver your orders
-                  </p>
-                </div>
-                <div className="space-y-4">
-                  {/* Option 1: Direct GPS */}
-                  <button
-                    onClick={handleUseCurrentLocation}
-                    className="w-full bg-[#f0fdf4] text-[#3BB77E] py-5 rounded-2xl font-black border-2 border-[#DEF9EC] hover:bg-[#DEF9EC] transition-all flex items-center justify-center gap-3 group"
-                  >
-                    <FiNavigation
-                      size={22}
-                      className="group-hover:rotate-45 transition-transform"
-                    />
-                    Use Current Location
-                  </button>
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-100"></div>
-                    </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-white px-4 text-gray-400 font-bold">
-                        Or
-                      </span>
-                    </div>
-                  </div>
-                  {/* Option 2: Select on Map */}
-                  <button
-                    onClick={() => setShowMapModal(true)}
-                    className="w-full bg-white border-2 border-gray-100 text-[#253D4E] py-5 rounded-2xl font-black hover:bg-gray-50 transition-all flex items-center justify-center gap-3 group"
-                  >
-                    <FiMapPin size={22} className="text-red-500" />
-                    Select on Map
-                  </button>
-                  {/* Manual Address Display (Shown after location is fetched) */}
-                  {selectedAddress && (
-                    <div className="p-4 bg-gray-50 rounded-2xl border-2 border-gray-100 animate-in zoom-in-95">
-                      <div className="flex items-start gap-3">
-                        <FiHome className="text-[#3BB77E] mt-1 shrink-0" />
-                        <div>
-                          <p className="text-[10px] text-[#3BB77E] font-black uppercase tracking-widest mb-1">
-                            Confirm Address
-                          </p>
-                          <textarea
-                            className="text-sm font-bold text-[#253D4E] leading-snug w-full bg-transparent border-none outline-none resize-none focus:ring-0 p-0"
-                            rows={3}
-                            value={selectedAddress}
-                            onChange={(e) => setSelectedAddress(e.target.value)}
-                          />
-                        </div>
-                      </div>
-                      <button
-                        onClick={confirmAndSaveLocation}
-                        className="w-full mt-4 bg-[#3BB77E] text-white py-3 rounded-xl font-bold hover:bg-[#29A56C] transition-all"
-                      >
-                        Confirm & Continue
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
+
           </div>
         </div>
       </div>

@@ -5,93 +5,152 @@ import Link from "next/link";
 
 const AboutPage = () => {
   return (
-    <div className="min-h-screen bg-white font-sans">
-      {/* Hero Section */}
-      <section className="relative h-[400px] flex items-center justify-center overflow-hidden">
-        <img 
-          src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070" 
-          alt="Quickzy Groceries" 
-          className="absolute inset-0 w-full h-full object-cover brightness-50"
-        />
-        <div className="relative text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-4 tracking-tight">
-            About <span className="text-[#3BB77E]">Quickzy</span>
-          </h1>
-          <p className="text-gray-200 font-bold max-w-xl mx-auto uppercase tracking-widest text-xs md:text-sm">
-            Revolutionizing the way you shop for daily essentials.
-          </p>
+    <div className="min-h-screen bg-white">
+      {/* Hero Section - Immersive & Premium */}
+      <section className="relative h-[500px] flex items-center px-4 overflow-hidden">
+        <div className="absolute inset-0">
+          <img 
+            src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070" 
+            alt="Quickzy Background" 
+            className="w-full h-full object-cover brightness-[0.4]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent"></div>
+        </div>
+        
+        <div className="container mx-auto relative z-10 max-w-6xl">
+          <div className="max-w-2xl animate-in fade-in slide-in-from-left-8 duration-700">
+            <h6 className="text-[#3BB77E] font-black uppercase tracking-[0.3em] text-[10px] mb-4">India's Fastest Zap Commerce</h6>
+            <h1 className="text-5xl md:text-7xl font-black text-white mb-6 leading-tight">
+              Delivering <span className="text-[#3BB77E]">Happiness</span> <br />
+              Within 15 Mins.
+            </h1>
+            <p className="text-gray-300 text-lg font-medium leading-relaxed max-w-lg mb-8">
+              At Quickzy, we are redefining the limits of quick commerce by bringing your neighborhood store directly to your doorstep with unmatched speed and care.
+            </p>
+            <div className="flex gap-4">
+               <Link href="/shop" className="bg-[#3BB77E] text-white px-8 py-4 rounded-2xl font-black hover:bg-white hover:text-[#253D4E] transition-all flex items-center gap-2 group">
+                  Start Shopping <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+               </Link>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="bg-gray-50 py-12 border-b">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      {/* Stats - Clean Grid */}
+      <section className="relative -mt-16 container mx-auto px-4 z-20 max-w-6xl">
+        <div className="bg-white rounded-[40px] shadow-2xl shadow-gray-200/50 border border-gray-100 p-8 md:p-12 grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
             {[
-              { val: "10 min", label: "Zap Delivery" },
-              { val: "50k+", label: "Happy Users" },
-              { val: "100+", label: "Local Stores" },
-              { val: "24/7", label: "Premium Support" }
+              { val: "10M+", label: "Orders Monthly" },
+              { val: "500+", label: "Dark Stores" },
+              { val: "99.9%", label: "Ontime Delivery" },
+              { val: "24/7", label: "Expert Support" }
             ].map((stat, i) => (
-              <div key={i} className="group">
-                <div className="text-2xl md:text-3xl font-black text-[#253D4E] group-hover:text-[#3BB77E] transition-colors">{stat.val}</div>
-                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{stat.label}</div>
+              <div key={i} className="text-center group">
+                 <div className="text-3xl md:text-4xl font-black text-[#253D4E] group-hover:text-[#3BB77E] transition-colors mb-1">{stat.val}</div>
+                 <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{stat.label}</div>
               </div>
             ))}
-          </div>
         </div>
       </section>
 
-      {/* Mission & Features */}
-      <section className="py-20 container mx-auto px-4 max-w-6xl">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-black text-[#253D4E] mb-4">Our Core Mission</h2>
-          <p className="text-gray-500 font-medium max-w-2xl mx-auto leading-relaxed">
-            We believe you shouldn't have to wait for your daily necessities. Quickzy is built on the promise of speed, quality, and community.
-          </p>
-        </div>
+      {/* Philosophy Section */}
+      <section className="py-24 container mx-auto px-4 max-w-6xl">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
+           <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">
+              <div className="inline-block bg-[#DEF9EC] text-[#3BB77E] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
+                 Our Philosophy
+              </div>
+              <h2 className="text-4xl md:text-5xl font-black text-[#253D4E] leading-tight tracking-tight">
+                 We're not just fast, <br />
+                 We're <span className="text-[#3BB77E]">Reliable.</span>
+              </h2>
+              <div className="space-y-4 text-gray-500 font-medium leading-relaxed text-base">
+                 <p>
+                    Quickzy was founded in 2026 with a singular vision: to eliminate the friction in daily life. We realized that hours are wasted every week in traffic or queues for simple grocery runs.
+                 </p>
+                 <p>
+                    By leveraging hyper-local dark stores and a proprietary AI-routing engine, we ensure that your milk, bread, or even a new smartwatch reaches you before you've finished your cup of coffee.
+                 </p>
+              </div>
+              <ul className="space-y-4 pt-4">
+                 {[
+                   "Zero-compromise on product freshness",
+                   "Ethical sourcing from local farm partners",
+                   "No-plastic eco-delivery initiative"
+                 ].map((item, i) => (
+                   <li key={i} className="flex items-center gap-3 font-black text-[#253D4E] text-sm">
+                      <div className="w-5 h-5 bg-[#3BB77E] rounded-full flex items-center justify-center text-white shrink-0">
+                         <FiCheckCircle size={12} />
+                      </div>
+                      {item}
+                   </li>
+                 ))}
+              </ul>
+           </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            { icon: <FiZap />, title: "Zap Delivery", desc: "Our lightning-fast logistics network ensures your order reaches you in under 10 minutes.", color: "bg-amber-50 text-amber-500 border-amber-100" },
-            { icon: <FiCheckCircle />, title: "Grade A Quality", desc: "Every product is handpicked and quality-checked before it leaves our local hubs.", color: "bg-green-50 text-[#3BB77E] border-green-100" },
-            { icon: <FiShield />, title: "Local Partners", desc: "We empower local vendors and neighborhood stores to grow with our hyper-local platform.", color: "bg-blue-50 text-blue-500 border-blue-100" },
-            { icon: <FiTruck />, title: "Sustainability", desc: "Optimized route planning and eco-friendly packaging lead our way to a greener future.", color: "bg-purple-50 text-purple-500 border-purple-100" }
-          ].map((feat, i) => (
-            <div key={i} className={`p-8 rounded-3xl border-2 transition-all hover:shadow-xl hover:-translate-y-1 flex flex-col items-center text-center ${feat.color}`}>
-              <div className="text-3xl mb-4">{feat.icon}</div>
-              <h4 className="text-lg font-black text-[#253D4E] mb-3">{feat.title}</h4>
-              <p className="text-xs font-bold leading-relaxed">{feat.desc}</p>
-            </div>
-          ))}
+           <div className="relative">
+              <div className="absolute -inset-4 bg-[#DEF9EC] rounded-[60px] -rotate-3 z-0"></div>
+              <div className="relative z-10 rounded-[60px] overflow-hidden shadow-2xl border-8 border-white group">
+                 <img 
+                   src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=2070" 
+                   alt="Quickzy Hub" 
+                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
+                 />
+              </div>
+              {/* Floating Badge */}
+              <div className="absolute -bottom-10 -left-10 bg-white p-6 rounded-[32px] shadow-2xl z-20 hidden md:flex items-center gap-4 animate-bounce duration-[3000ms]">
+                 <div className="w-16 h-16 bg-[#3BB77E] text-white rounded-2xl flex items-center justify-center shadow-lg shadow-green-200">
+                    <FiZap size={30} />
+                 </div>
+                 <div>
+                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Zap Delivery</p>
+                    <p className="text-xl font-black text-[#253D4E]">Avg. 9m 42s</p>
+                 </div>
+              </div>
+           </div>
         </div>
       </section>
 
-      {/* Story Section */}
-      <section className="bg-gray-50 py-20 px-4">
-        <div className="container mx-auto max-w-6xl grid md:grid-cols-2 gap-12 items-center">
-          <div className="rounded-[40px] overflow-hidden shadow-2xl bg-white border-8 border-white group">
-            <img 
-              src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=2070" 
-              alt="Quickzy Delivery" 
-              className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
-            />
-          </div>
-          <div className="space-y-6">
-            <h6 className="text-[#3BB77E] font-black uppercase tracking-widest text-xs">Our Journey</h6>
-            <h2 className="text-4xl font-black text-[#253D4E] leading-tight">Starting a Fresh <span className="text-green-200">Revolution.</span></h2>
-            <p className="text-gray-600 font-medium leading-relaxed">
-              Quickzy was born from a simple observation: time is the most valuable commodity. We started in a small garage with a big vision: to bring the neighborhood store to your phone, but faster than you can walk there.
-            </p>
-            <p className="text-gray-600 font-medium leading-relaxed">
-              Today, we are proud to serve thousands of families, providing not just groceries, but the freedom to spend time on what truly matters.
-            </p>
-            <div className="pt-4">
-              <Link href="/contact" className="bg-[#3BB77E] text-white px-8 py-4 rounded-2xl font-black hover:bg-[#29A56C] transition-all flex items-center gap-2 w-fit shadow-lg shadow-green-100">
-                Contact Our Team <FiArrowRight />
-              </Link>
-            </div>
-          </div>
+      {/* Values Grid */}
+      <section className="bg-slate-50 py-24 px-4 overflow-hidden">
+        <div className="container mx-auto max-w-6xl">
+           <div className="text-center mb-16 space-y-4">
+              <h2 className="text-4xl font-black text-[#253D4E]">Why the World Loves Quickzy</h2>
+              <p className="text-gray-500 font-bold max-w-xl mx-auto uppercase tracking-widest text-[10px]">
+                 Built on trust, speed, and community.
+              </p>
+           </div>
+
+           <div className="grid md:grid-cols-3 gap-8">
+              {[
+                { 
+                  icon: <FiZap />, 
+                  title: "Zap Logistics", 
+                  desc: "Our dark stores are strategically placed across Mumbai to ensure rapid, last-mile fulfillment.",
+                  color: "bg-[#3BB77E] group-hover:bg-[#253D4E]"
+                },
+                { 
+                  icon: <FiShield />, 
+                  title: "Pure Quality", 
+                  desc: "We hand-check every item. If it's not Grade-A, it doesn't leave our fulfillment center.",
+                  color: "bg-[#3BB77E] group-hover:bg-[#253D4E]"
+                },
+                { 
+                  icon: <FiTruck />, 
+                  title: "Zero Emission", 
+                  desc: "Our EV-first fleet reduces the carbon footprint while ensuring your groceries stay fresh.",
+                  color: "bg-[#3BB77E] group-hover:bg-[#253D4E]"
+                }
+              ].map((val, i) => (
+                <div key={i} className="bg-white p-10 rounded-[40px] border border-transparent hover:border-[#DEF9EC] hover:shadow-2xl transition-all duration-500 group">
+                   <div className={`w-16 h-16 ${val.color} text-white rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-green-100 transition-all duration-300`}>
+                      {React.cloneElement(val.icon, { size: 28 })}
+                   </div>
+                   <h4 className="text-xl font-black text-[#253D4E] mb-4 tracking-tight">{val.title}</h4>
+                   <p className="text-gray-500 font-medium leading-relaxed text-sm">{val.desc}</p>
+                </div>
+              ))}
+           </div>
         </div>
       </section>
     </div>

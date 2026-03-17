@@ -18,9 +18,51 @@ import { toast } from "react-toastify";
 
 export default function Cart() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const { cartItems, updateQuantity, removeFromCart, subtotal } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#3BB77E]"></div>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center p-6 bg-gray-50/50">
+        <div className="bg-white max-w-md w-full rounded-[48px] p-12 text-center shadow-2xl shadow-gray-200/50 border border-gray-100 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+          <div className="w-24 h-24 bg-[#DEF9EC] text-[#3BB77E] rounded-full flex items-center justify-center mb-10 ring-8 ring-[#DEF9EC]/50 shadow-inner">
+            <FiShoppingBag size={42} className="animate-bounce" />
+          </div>
+          
+          <h1 className="text-4xl font-black text-[#253D4E] mb-4 tracking-tight">Your Cart</h1>
+          <p className="text-gray-400 font-bold mb-10 leading-relaxed">
+            Personalize your shopping experience. Please login to view and manage your cart.
+          </p>
+
+          <button 
+            onClick={() => window.dispatchEvent(new CustomEvent("open-auth"))}
+            className="w-full bg-[#3BB77E] text-white py-5 rounded-[22px] font-black text-xl hover:bg-[#29A56C] transition-all shadow-xl shadow-[#3BB77E]/30 flex items-center justify-center gap-3 active:scale-95 translate-y-0 hover:-translate-y-1"
+          >
+            Login to Quickzy <FiArrowRight />
+          </button>
+
+          <div className="mt-10 text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] flex items-center gap-6 w-full">
+             <span className="flex-1 h-[1.5px] bg-gray-100"></span>
+             OR
+             <span className="flex-1 h-[1.5px] bg-gray-100"></span>
+          </div>
+
+          <Link href="/shop" className="mt-8 text-[#3BB77E] font-black text-sm hover:underline tracking-tight flex items-center gap-2 group">
+             Explore Products <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main className="container mx-auto px-4 py-10 min-h-[60vh]">
