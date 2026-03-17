@@ -1,0 +1,12 @@
+﻿Uploading: public/hero-banner-1.png
+RESULT_URL [public/hero-banner-1.png]: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743306/quickzy/banners/hero-banner-1.jpg
+Uploading: public/hero-banner-2.png
+RESULT_URL [public/hero-banner-2.png]: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743307/quickzy/banners/hero-banner-2.png
+Uploading: public/hero-banner-3.png
+RESULT_URL [public/hero-banner-3.png]: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743308/quickzy/banners/hero-banner-3.jpg
+Uploading: public/hero-banner-4.png
+RESULT_URL [public/hero-banner-4.png]: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743310/quickzy/banners/hero-banner-4.png
+Uploading: public/hero-banner-5.png
+RESULT_URL [public/hero-banner-5.png]: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743311/quickzy/banners/hero-banner-5.png
+Uploading: public/footer_banner.png
+RESULT_URL [public/footer_banner.png]: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743312/quickzy/banners/footer_banner.jpg

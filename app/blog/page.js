@@ -10,7 +10,7 @@ const blogs = [
     category: "Fresh Produce",
     author: "Chef Anita",
     date: "March 12, 2026",
-    image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=2070",
+    image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773742471/quickzy/blogs/wtp9znloagecvv218pfu.jpg",
     excerpt: "Learn the secret techniques to maintain that crisp crunch in your spinach and kale even days after delivery.",
   },
   {
@@ -19,7 +19,7 @@ const blogs = [
     category: "Quick Recipes",
     author: "Rahul Varma",
     date: "March 10, 2026",
-    image: "https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?q=80&w=2070",
+    image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773742471/quickzy/blogs/d6vnmmjpkdv3urofx88a.jpg",
     excerpt: "Mornings can be a rush. Here are 5 delicious and healthy breakfast recipes you can whip up using items from our app.",
   },
   {
@@ -28,7 +28,7 @@ const blogs = [
     category: "Insider",
     author: "Pranay J.",
     date: "March 08, 2026",
-    image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=2070",
+    image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773742472/quickzy/blogs/skvhi4ucrsizayre2qqs.jpg",
     excerpt: "Exploring how hyper-local delivery is changing the way we shop and the technology behind 10-minute deliveries.",
   },
   {
@@ -37,7 +37,7 @@ const blogs = [
     category: "Household",
     author: "Sarah Mendis",
     date: "March 05, 2026",
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2070",
+    image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773742473/quickzy/blogs/yukvukvrqasyhjxljkdh.jpg",
     excerpt: "Save money and keep your home sparkling with these clever cleaning hacks using basic household supplies.",
   },
 ];

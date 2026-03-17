@@ -1,0 +1,8 @@
+﻿Uploading: https://images.unsplash.com/photo-1540420773420-3366772f4999?q=80&w=2070
+RESULT_URL: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773742471/quickzy/blogs/wtp9znloagecvv218pfu.jpg
+Uploading: https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?q=80&w=2070
+RESULT_URL: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773742471/quickzy/blogs/d6vnmmjpkdv3urofx88a.jpg
+Uploading: https://images.unsplash.com/photo-1580674285054-bed31e145f59?q=80&w=2070
+RESULT_URL: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773742472/quickzy/blogs/skvhi4ucrsizayre2qqs.jpg
+Uploading: https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=2070
+RESULT_URL: https://res.cloudinary.com/dnafzpa8x/image/upload/v1773742473/quickzy/blogs/yukvukvrqasyhjxljkdh.jpg

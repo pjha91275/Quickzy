@@ -151,9 +151,17 @@ export default function Cart() {
                         </div>
                       </td>
                       <td className="py-6 px-6 text-center">
-                        <span className="text-2xl font-black text-[#253D4E]">
-                          ₹{item.price}
-                        </span>
+                        <div className="flex flex-col items-center">
+                          <span className="text-2xl font-black text-[#253D4E]">
+                            ₹{item.price}
+                          </span>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-gray-300 text-[10px] line-through font-bold">₹{item.oldPrice}</span>
+                            <span className="bg-[#3BB77E] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                              {item.discount} OFF
+                            </span>
+                          </div>
+                        </div>
                       </td>
                       <td className="py-6 px-6">
                         <div 

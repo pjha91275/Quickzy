@@ -79,6 +79,12 @@
       "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062852/quickzy/categories/zzfhnpqjcxhzl7fk2hbs.png",
       "bg": "bg-red-50",
       "__v": 0
+    },
+    {
+      "name": "Grocery",
+      "count": 4,
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062884/quickzy/products/iywzdsijdvxhweyqjxr0.png",
+      "bg": "bg-yellow-100"
     }
   ],
   "products": [
@@ -315,7 +321,7 @@
       "unit": "50 GM",
       "description": "Nescafe Gold is a premium, freeze-dried soluble coffee that offers a smooth and sophisticated taste with a rich aroma. Crafted with a blend of Arabica and Robusta beans, it is roasted to perfection to bring out a distinctive depth of flavor. Ideal for those who enjoy a cafe-quality experience at home, it dissolves instantly to create a consistently perfect cup of coffee. The elegant glass jar preserves the aroma and freshness, ensuring that every cup is as good as the first one.",
       "vendor": "Nescafe",
-      "category": "Beverages",
+      "category": "Tea & Coffee",
       "discount": "15%",
       "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062866/quickzy/products/retshbajfkwplrmywjug.webp",
       "__v": 0
@@ -331,7 +337,7 @@
       "vendor": "Real",
       "category": "Beverages",
       "discount": "12%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062867/quickzy/products/uu8amfjpneziurhkgdsi.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773766079/quickzy/products/wqafuxiloby3kg4c5epk.png",
       "__v": 0
     },
     {
@@ -469,7 +475,7 @@
       "unit": "4 PCS",
       "description": "Energizer MAX AA alkaline batteries are designed to provide long-lasting and reliable power to your frequently used household devices. They feature PowerSeal technology that protects your devices from damaging leaks for up to two years after they are fully used. These batteries are ideal for toys, remote controls, flashlights, and smoke detectors, ensuring your essentials are always ready when you need them. They can hold their power for up to 10 years in storage, making them a perfect choice for your emergency kits.",
       "vendor": "Energizer",
-      "category": "Gadgets",
+      "category": "Electronics",
       "discount": "14%",
       "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062874/quickzy/products/l7bjmgbaphjyhil1jksp.webp",
       "__v": 0
@@ -539,7 +545,7 @@
       "unit": "650 ML",
       "description": "Dove Intense Repair Shampoo is enriched with fiber actives that penetrate deep into the hair to nourish and help repair damaged strands from within. Designed for hair that is prone to breakage and split ends, it progressively strengthens your hair and makes it more resilient against daily damage. It leaves your hair feeling remarkably smooth, shiny, and manageable after every wash, making it ideal for daily hair care. Enjoy the classic and mild Dove scent that stays with you, giving a clean and fresh feeling all day.",
       "vendor": "Dove",
-      "category": "Beauty",
+      "category": "Personal Care",
       "discount": "13%",
       "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062879/quickzy/products/ta2tsopwbp9i2e9mw3bb.webp",
       "__v": 0
@@ -553,7 +559,7 @@
       "unit": "150 ML",
       "description": "Wild Stone Ultra Sensual Deodorant for men offers an irresistibly masculine fragrance that is perfect for office wear or special evenings. Its unique blend of spicy and aromatic notes provides long-lasting freshness and effectively neutralizes body odor throughout the day's activities. The spray bottle provides a fine mist that covers well and dries quickly, leaving a confident trail of scent behind you. Experience a boost of self-confidence with this premium fragrance that is crafted for the modern, active man.",
       "vendor": "Wild Stone",
-      "category": "Grooming",
+      "category": "Personal Care",
       "discount": "18%",
       "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062879/quickzy/products/igb4gel7wqzbxnqtzn9i.webp",
       "__v": 0
@@ -725,6 +731,42 @@
       "discount": "17%",
       "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062889/quickzy/products/bixl2nsl6wp080rjftye.webp",
       "__v": 0
+    },
+    {
+      "id_custom": 101,
+      "name": "Red Label Natural Care Tea (1KG)",
+      "price": 545,
+      "oldPrice": 600,
+      "unit": "1 KG",
+      "description": "Red Label Natural Care Tea is a premium blend enriched with the goodness of five natural ingredients: Ginger, Tulsi, Cardamom, Ashwagandha, and Mulethi. These herbs are known to boost immunity and provide a rich, soothing flavor and aroma that characterizes a healthy morning cup. Perfect for daily consumption, it helps in maintaining overall health while offering a refreshing taste that your entire family will enjoy. The high-quality tea leaves ensure a consistent and deep color in every brew.",
+      "vendor": "Brooke Bond",
+      "category": "Tea & Coffee",
+      "discount": "9%",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773766083/quickzy/products/ozzcctvknmcdgzweqlcg.png"
+    },
+    {
+      "id_custom": 102,
+      "name": "Starbucks Caffe Verona (250GM)",
+      "price": 850,
+      "oldPrice": 999,
+      "unit": "250 GM",
+      "description": "Starbucks Caffe Verona is a full-bodied, multi-region blend with a rich, dark cocoa texture and a sweet, roasty finish. Named after a city known for romance, this coffee is well-loved for its deep and intense flavor profile that is perfect for espresso or brewing at home. Each pack is carefully roasted to the Starbucks Dark Roast standard to ensure you get the same premium quality experience in your own kitchen. Ideal for coffee enthusiasts who appreciate a sophisticated and complex cup of coffee.",
+      "vendor": "Starbucks",
+      "category": "Tea & Coffee",
+      "discount": "15%",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773766082/quickzy/products/tbigq9sdnen4yemch6vz.png"
+    },
+    {
+      "id_custom": 103,
+      "name": "Tropicana Orange Juice (1LTR)",
+      "price": 120,
+      "oldPrice": 145,
+      "unit": "1 LTR",
+      "description": "Tropicana 100% Orange Juice is made from the finest quality oranges, providing an excellent natural source of Vitamin C and refreshing flavor. It contains no added sugar, preservatives, or artificial colors, ensuring you get the wholesome goodness of pure fruit in every sip. Perfect for your breakfast table or as a refreshing energy booster throughout the day, it offers a consistent and vibrant taste that everyone loves. Start your morning with the crisp and tangy flavor of Tropicana juice.",
+      "vendor": "Tropicana",
+      "category": "Beverages",
+      "discount": "17%",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773766081/quickzy/products/m2friyndasj5bq8xlpyw.png"
     }
   ]
 }

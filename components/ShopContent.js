@@ -30,8 +30,6 @@ export default function ShopContent({ products, categories }) {
   const [view, setView] = useState("grid");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-
-
   // GUIDE: Step 1 - Create a state to hold the maximum price selected by the user.
   // We initialize it to 5000 so all products are visible by default.
   const [maxPrice, setMaxPrice] = useState(5000);
@@ -57,7 +55,12 @@ export default function ShopContent({ products, categories }) {
         const pCat = p.category.toLowerCase();
         // Dynamic match: matches exactly, or if one contains the other (e.g. Dairy in Milk & Dairy)
         // Also checks if the category keyword is in the product name as a fallback
-        return pCat === target || target.includes(pCat) || pCat.includes(target) || p.name.toLowerCase().includes(target.split(" ")[0]);
+        return (
+          pCat === target ||
+          target.includes(pCat) ||
+          pCat.includes(target) ||
+          p.name.toLowerCase().includes(target.split(" ")[0])
+        );
       });
     }
 
@@ -82,7 +85,7 @@ export default function ShopContent({ products, categories }) {
       return getNum(b.discount) - getNum(a.discount);
     });
     const count = Math.round(list.length * 0.3);
-    return new Set(list.slice(0, count).map(p => p._id || p.id));
+    return new Set(list.slice(0, count).map((p) => p._id || p.id));
   }, [filteredProducts]);
 
   const [sortedProducts, setSortedProducts] = useState([]);
@@ -279,12 +282,19 @@ export default function ShopContent({ products, categories }) {
                 {(prod.tag || hotDealsIds.has(prod._id || prod.id)) && (
                   <span
                     className={`absolute top-0 left-0 text-white text-[10px] font-black px-4 py-1.5 rounded-tl-2xl rounded-br-2xl z-10 
-                      ${hotDealsIds.has(prod._id || prod.id) ? "bg-orange-500 italic uppercase" : 
-                        prod.tag === "Hot" ? "bg-pink-500" : 
-                        prod.tag === "Sale" ? "bg-blue-400" : 
-                        "bg-orange-400"}`}
+                      ${
+                        hotDealsIds.has(prod._id || prod.id)
+                          ? "bg-orange-500 italic uppercase"
+                          : prod.tag === "Hot"
+                            ? "bg-pink-500"
+                            : prod.tag === "Sale"
+                              ? "bg-blue-400"
+                              : "bg-orange-400"
+                      }`}
                   >
-                    {hotDealsIds.has(prod._id || prod.id) ? "Hot Deal" : prod.tag}
+                    {hotDealsIds.has(prod._id || prod.id)
+                      ? "Hot Deal"
+                      : prod.tag}
                   </span>
                 )}
 
@@ -306,7 +316,7 @@ export default function ShopContent({ products, categories }) {
                         <h3 className="text-sm font-black text-[#253D4E] group-hover:text-[#3BB77E] transition-colors line-clamp-2 pr-2 leading-tight">
                           {prod.name}
                         </h3>
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
@@ -317,7 +327,13 @@ export default function ShopContent({ products, categories }) {
                           }}
                           className={`text-lg pt-0.5 hover:scale-110 transition-transform shrink-0 relative z-20 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
                         >
-                          <FiHeart className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} />
+                          <FiHeart
+                            className={
+                              isInWishlist(prod._id || prod.id)
+                                ? "text-red-500 fill-red-500"
+                                : "text-gray-300"
+                            }
+                          />
                         </button>
                       </div>
                       <div className="flex items-center mb-1">
@@ -334,7 +350,7 @@ export default function ShopContent({ products, categories }) {
                         <span className="text-lg font-black text-[#3BB77E]">
                           ₹{prod.price}
                         </span>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 mt-1">
                           <span className="text-slate-500 text-[11px] line-through font-bold">
                             ₹{prod.oldPrice}
                           </span>
@@ -367,36 +383,44 @@ export default function ShopContent({ products, categories }) {
                     </div>
                     <div className="flex-grow flex flex-col md:flex-row gap-8 justify-between">
                       <div className="flex-grow space-y-3">
-                        <p className="text-[10px] text-[#3BB77E] font-black uppercase tracking-widest mb-1">{prod.category}</p>
+                        <p className="text-[10px] text-[#3BB77E] font-black uppercase tracking-widest mb-1">
+                          {prod.category}
+                        </p>
                         <h3 className="text-xl font-black text-[#253D4E] group-hover:text-[#3BB77E] transition-colors leading-tight mb-2">
                           {prod.name}
                         </h3>
                         <p className="text-xs text-gray-500 line-clamp-2 font-medium max-w-xl">
-                          {prod.description || "Fresh, high-quality product delivered instantly to your doorstep with Quickzy's zap delivery service."}
+                          {prod.description ||
+                            "Fresh, high-quality product delivered instantly to your doorstep with Quickzy's zap delivery service."}
                         </p>
                         <div className="flex items-center gap-4">
                           <span className="text-[11px] font-black text-[#3BB77E] bg-[#DEF9EC] px-3 py-1 rounded-md uppercase tracking-wider">
                             {prod.unit}
                           </span>
                           <span className="text-xs text-gray-400 font-bold">
-                            By <span className="text-[#3BB77E]">{prod.vendor}</span>
+                            By{" "}
+                            <span className="text-[#3BB77E]">
+                              {prod.vendor}
+                            </span>
                           </span>
                         </div>
                       </div>
-                      
+
                       <div className="w-full md:w-52 flex flex-col justify-center gap-4 md:border-l md:pl-8 border-gray-100">
                         <div className="space-y-1">
                           <span className="text-3xl font-black text-[#3BB77E] block leading-none">
                             ₹{prod.price}
                           </span>
                           <div className="flex items-center gap-2">
-                            <span className="text-slate-400 text-sm line-through font-bold">₹{prod.oldPrice}</span>
+                            <span className="text-slate-400 text-sm line-through font-bold">
+                              ₹{prod.oldPrice}
+                            </span>
                             <span className="bg-pink-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black italic uppercase shadow-sm">
                               {prod.discount} OFF
                             </span>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-2 mt-2">
                           <button
                             onClick={(e) => {
@@ -406,9 +430,10 @@ export default function ShopContent({ products, categories }) {
                             }}
                             className="flex-grow bg-[#3BB77E] text-white py-3 px-4 rounded-xl font-black text-sm hover:bg-[#29A56C] transition-all shadow-lg shadow-green-100 flex items-center justify-center gap-2 group/btn relative z-20"
                           >
-                            <FiShoppingCart className="group-hover/btn:scale-125 transition-transform" /> Add
+                            <FiShoppingCart className="group-hover/btn:scale-125 transition-transform" />{" "}
+                            Add
                           </button>
-                          <button 
+                          <button
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
@@ -419,7 +444,14 @@ export default function ShopContent({ products, categories }) {
                             }}
                             className={`p-3 border rounded-xl hover:scale-110 transition-transform relative z-20 ${isInWishlist(prod._id || prod.id) ? "border-red-100 bg-red-50 text-red-500" : "border-gray-100 text-gray-300"} ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
                           >
-                            <FiHeart className={isInWishlist(prod._id || prod.id) ? "fill-red-500" : ""} size={20} />
+                            <FiHeart
+                              className={
+                                isInWishlist(prod._id || prod.id)
+                                  ? "fill-red-500"
+                                  : ""
+                              }
+                              size={20}
+                            />
                           </button>
                         </div>
                       </div>

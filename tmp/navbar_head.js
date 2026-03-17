@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 import React, { useState } from "react";
 import Link from "next/link";
 import {
@@ -442,7 +442,7 @@ const Navbar = () => {
                   <div className="absolute top-[85%] left-0 bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-4 w-64 opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50">
                     <div className="px-2 space-y-1">
                       {data.categories
-                        .filter(cat => !["Electronics", "Milk & Dairy", "Personal Care", "Snacks", "Vegetables", "Grocery"].includes(cat.name))
+                        .filter(cat => !["Electronics", "Milk & Dairy", "Personal Care", "Snacks", "Vegetables"].includes(cat.name))
                         .map((cat) => (
                         <Link 
                           key={cat.name} 
