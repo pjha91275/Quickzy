@@ -43,7 +43,7 @@ export default function RootLayout({ children }) {
               </LocationGuard>
               <ToastContainer
                 position="top-right"
-                autoClose={3000}
+                autoClose={2000}
                 hideProgressBar={false}
               />
             </WishlistProvider>

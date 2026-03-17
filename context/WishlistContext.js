@@ -70,6 +70,8 @@ export const WishlistProvider = ({ children }) => {
         _id: productId,
         name: product.name,
         price: product.price,
+        oldPrice: product.oldPrice,
+        discount: product.discount,
         image: product.image || product.img,
         unit: product.unit || product.weight,
       };

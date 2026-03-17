@@ -367,16 +367,16 @@ export default function HomeContent({ products, categories }) {
       {/* Promo Banners */}
       <section className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
         {[
-          { color: "bg-amber-100", title: "Premium Fresh Quality Products", cat: "Fruits" },
-          { color: "bg-pink-100", title: "Latest Gadgets & Hearables", cat: "Electronics" },
-          { color: "bg-blue-100", title: "Daily Household Essentials", cat: "Household Essentials" }
+          { color: "bg-amber-100", title: "Premium Fresh Quality Products", cat: "Fruits", imgClass: "w-72 h-72 -right-8 -bottom-20" },
+          { color: "bg-pink-100", title: "Latest Gadgets & Hearables", cat: "Electronics", imgClass: "w-48 h-48 -right-4 -bottom-4" },
+          { color: "bg-blue-100", title: "Daily Household Essentials", cat: "Household Essentials", imgClass: "w-48 h-48 -right-4 -bottom-4" }
         ].map(p => (
           <div key={p.cat} className={`${p.color} rounded-2xl p-8 relative overflow-hidden h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition`}>
             <div className="relative z-10 max-w-[180px]">
               <h4 className="font-bold text-xl mb-4 text-gray-800 leading-tight">{p.title}</h4>
               <Link href={`/shop?category=${encodeURIComponent(p.cat)}`} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition-colors">Shop Now <FiArrowRight /></Link>
             </div>
-            <div className="absolute -right-4 -bottom-4 w-48 h-48 group-hover:scale-110 transition-transform">
+            <div className={`absolute transition-transform group-hover:scale-110 ${p.imgClass}`}>
               <img src={categories.find(c => c.name === p.cat)?.image || categories.find(c => c.name === p.cat)?.img} alt="" className="w-full h-full object-contain" />
             </div>
           </div>

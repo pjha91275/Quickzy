@@ -74,15 +74,21 @@ const WishlistPage = () => {
               {/* Price */}
               <div className="text-center">
                 <p className="text-2xl font-black text-[#3BB77E]">₹{item.price}</p>
-                <div className="flex items-center justify-center gap-2 mt-1">
-                  <span className="text-[#adadad] text-[10px] font-bold relative">
-                    ₹{item.oldPrice}
-                    <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
-                  </span>
-                  <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
-                    {item.discount} OFF
-                  </span>
-                </div>
+                {(item.oldPrice || item.discount) && (
+                  <div className="flex items-center justify-center gap-2 mt-1">
+                    {item.oldPrice && (
+                      <span className="text-[#adadad] text-[10px] font-bold relative inline-block whitespace-nowrap">
+                        ₹{item.oldPrice}
+                        <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
+                      </span>
+                    )}
+                    {item.discount && (
+                      <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase min-w-max inline-block whitespace-nowrap">
+                        {item.discount} OFF
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Add to Cart */}

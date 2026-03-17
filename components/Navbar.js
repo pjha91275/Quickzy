@@ -22,7 +22,7 @@ import LocationModal from "./LocationModal";
 import { useCart } from "@/context/CartContext";
 
 const Navbar = () => {
-  const { cartItems } = useCart();
+  const { cartItems, subtotal } = useCart();
   const { data: session } = useSession();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -208,11 +208,11 @@ const Navbar = () => {
             {/* Location Trigger - Premium Blinkit Style */}
             <div 
               onClick={() => setIsLocationModalOpen(true)}
-              className="hidden sm:flex flex-col cursor-pointer hover:bg-gray-50 px-3 py-1.5 rounded-2xl transition-all group/loc border-l border-gray-100 ml-1 w-[180px] lg:w-[220px] shrink-0 overflow-hidden"
+              className="hidden sm:flex flex-col justify-center cursor-pointer hover:bg-gray-50 px-3 py-2.5 rounded-2xl transition-all group/loc border-l border-gray-100 ml-1 w-[180px] lg:w-[220px] shrink-0 overflow-hidden"
             >
               <div className="flex items-center gap-1 leading-none mb-1">
                 <span className="text-[13px] font-black text-[#253D4E] uppercase tracking-tight truncate">
-                  {(localStorage.getItem("quickzy-location-confirmed") && currentAddress !== "Select Location") ? "Delivering in 15 Mins" : "Select Location"}
+                  {(localStorage.getItem("quickzy-location-confirmed") && currentAddress !== "Select Location") ? "Delivery within 15 Mins" : "Select Location"}
                 </span>
                 <IoIosArrowDown className="text-[10px] text-[#3BB77E] group-hover/loc:translate-y-0.5 transition-transform shrink-0" />
               </div>
@@ -223,7 +223,7 @@ const Navbar = () => {
           </div>
 
           {/* Middle: Search Bar */}
-          <div className="hidden md:flex flex-[2] lg:flex-[2.5] border-2 border-[#BCE3C9] rounded-md items-center h-10 relative">
+          <div className="hidden md:flex flex-[1.5] lg:flex-[2] border-2 border-[#BCE3C9] rounded-md items-center h-[44px] sm:h-[48px] relative">
             <div className="px-4 border-r hidden lg:block text-sm font-bold text-gray-700 whitespace-nowrap">
               All Categories
             </div>
@@ -283,47 +283,55 @@ const Navbar = () => {
           <div className="flex flex-1 justify-end gap-3 md:gap-5 lg:gap-6 items-center text-[#253D4E] shrink-0">
             <Link
               href="/wishlist"
-              className="hidden lg:flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group"
+              className="hidden lg:flex items-center justify-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group h-[44px] sm:h-[48px]"
             >
               <div className="relative">
-                <FiHeart className="text-2xl" />
-                <span className="absolute -top-1 -right-2 bg-[#3BB77E] text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold">
+                <FiHeart className="text-[26px]" />
+                <span className="absolute -top-1 -right-2 bg-[#3BB77E] text-white rounded-full w-[17px] h-[17px] text-[10px] flex items-center justify-center font-bold">
                   2
                 </span>
               </div>
-              <span className="text-sm font-medium text-gray-500 group-hover:text-[#3BB77E]">
+              <span className="text-[15px] font-medium text-gray-500 group-hover:text-[#3BB77E]">
                 Wishlist
               </span>
             </Link>
-            <Link
-              href="/cart"
-              className="flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group"
-            >
-              <div className="relative">
+            {cartItems.length === 0 ? (
+              <div className="flex items-center justify-center min-w-[110px] sm:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 bg-gray-100 rounded-lg text-gray-400 cursor-not-allowed border border-gray-200 opacity-80">
                 <FiShoppingCart className="text-2xl" />
-                <span className="absolute -top-1 -right-2 bg-[#3BB77E] text-white rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold">
-                  {cartItems.length}
-                </span>
+                <span className="hidden sm:block text-sm font-bold tracking-wide">My Cart</span>
               </div>
-              <span className="hidden sm:block text-sm font-medium text-gray-500 group-hover:text-[#3BB77E]">
-                Cart
-              </span>
-            </Link>
+            ) : (
+              <Link
+                href="/cart"
+                className="flex items-center justify-center min-w-[110px] sm:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 bg-[#3BB77E] text-white rounded-lg shadow-md hover:shadow-lg hover:bg-[#2e9262] transition-all cursor-pointer hover:-translate-y-0.5"
+              >
+                <div className="relative">
+                  <FiShoppingCart className="text-2xl" />
+                  <span className="sm:hidden absolute -top-1.5 -right-2 bg-white text-[#3BB77E] rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold shadow-sm">
+                    {cartItems.length}
+                  </span>
+                </div>
+                <div className="hidden sm:flex flex-col leading-none items-start">
+                  <span className="text-[11px] font-bold text-green-100">{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</span>
+                  <span className="text-sm font-black mt-0.5">₹{subtotal.toFixed(0)}</span>
+                </div>
+              </Link>
+            )}
 
             <div className="relative group/account">
               {!isLoggedIn ? (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="flex items-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group outline-none"
+                  className="flex items-center justify-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group outline-none h-[44px] sm:h-[48px]"
                 >
-                  <FiUser className="text-2xl" />
-                  <span className="hidden sm:block text-sm font-medium text-gray-500 group-hover:text-[#3BB77E]">
+                  <FiUser className="text-[26px]" />
+                  <span className="hidden sm:block text-[15px] font-medium text-gray-500 group-hover:text-[#3BB77E]">
                     Login
                   </span>
                 </button>
               ) : (
-                <div className="flex items-center gap-1 cursor-pointer group">
-                  <div className="w-8 h-8 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-xs uppercase overflow-hidden border border-[#3BB77E]/20">
+                <div className="flex items-center justify-center gap-1 cursor-pointer group h-[44px] sm:h-[48px]">
+                  <div className="w-[34px] h-[34px] rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-[13px] uppercase overflow-hidden border border-[#3BB77E]/20">
                     {session.user.image ? (
                       <img
                         src={session.user.image}
@@ -334,7 +342,7 @@ const Navbar = () => {
                       userInitials
                     )}
                   </div>
-                  <span className="hidden sm:block text-sm font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[100px]">
+                  <span className="hidden sm:block text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[100px]">
                     {session.user.name || "My Account"}{" "}
                     <IoIosArrowDown className="inline text-[10px]" />
                   </span>

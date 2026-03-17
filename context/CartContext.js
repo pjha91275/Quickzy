@@ -81,6 +81,8 @@ export const CartProvider = ({ children }) => {
       _id: (product._id || product.id)?.toString(),
       name: product.name,
       price: parseFloat(product.price),
+      oldPrice: product.oldPrice,
+      discount: product.discount,
       image: product.image || product.img,
       unit: product.unit || product.weight,
     };
@@ -105,7 +107,7 @@ export const CartProvider = ({ children }) => {
       window.dispatchEvent(new CustomEvent("open-location", { detail: { compulsory: false } }));
     }
 
-    toast.success("Added to cart!");
+    toast.success("Added to cart!", { autoClose: 1000 });
   };
 
   const removeFromCart = (productId) => {
