@@ -102,8 +102,11 @@ export default function ProductContent({ product, similarProducts }) {
             <div className="flex flex-col gap-1.5 p-6 bg-slate-50 rounded-[32px] border border-slate-100/50">
                <div className="flex items-baseline gap-3">
                  <span className="text-4xl font-black text-slate-800 tracking-tight">₹{displayPrice}</span>
-                 <span className="text-lg text-slate-300 line-through font-bold whitespace-nowrap">₹{displayOldPrice}</span>
-                 <span className="text-[11px] bg-pink-500 text-white px-2.5 py-1 rounded-lg font-black italic shadow-lg shadow-pink-100 uppercase">{displayDiscountBadge} OFF</span>
+                 <span className="text-lg text-[#adadad] font-bold whitespace-nowrap relative">
+                   ₹{displayOldPrice}
+                   <span className="absolute top-1/2 left-[-4px] w-[calc(100%+8px)] h-[2px] bg-[#888]"></span>
+                 </span>
+                 <span className="text-[11px] bg-[#FF7F50] text-white px-2.5 py-1 rounded-lg font-black italic shadow-lg shadow-orange-100 uppercase">{displayDiscountBadge} OFF</span>
                </div>
                <p className="text-[11px] text-slate-400 font-bold tracking-wide italic">Price inclusive of all taxes</p>
             </div>

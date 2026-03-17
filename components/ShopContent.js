@@ -284,7 +284,7 @@ export default function ShopContent({ products, categories }) {
                     className={`absolute top-0 left-0 text-white text-[10px] font-black px-4 py-1.5 rounded-tl-2xl rounded-br-2xl z-10 
                       ${
                         hotDealsIds.has(prod._id || prod.id)
-                          ? "bg-orange-500 italic uppercase"
+                          ? "bg-red-500 italic uppercase"
                           : prod.tag === "Hot"
                             ? "bg-pink-500"
                             : prod.tag === "Sale"
@@ -351,10 +351,11 @@ export default function ShopContent({ products, categories }) {
                           ₹{prod.price}
                         </span>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-slate-500 text-[11px] line-through font-bold">
+                          <span className="text-[#adadad] text-[11px] font-bold relative">
                             ₹{prod.oldPrice}
+                            <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
                           </span>
-                          <span className="bg-[#3BB77E] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                          <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
                             {prod.discount} OFF
                           </span>
                         </div>
@@ -412,10 +413,11 @@ export default function ShopContent({ products, categories }) {
                             ₹{prod.price}
                           </span>
                           <div className="flex items-center gap-2">
-                            <span className="text-slate-400 text-sm line-through font-bold">
+                            <span className="text-[#adadad] text-sm font-bold relative">
                               ₹{prod.oldPrice}
+                              <span className="absolute top-1/2 left-[-3px] w-[calc(100%+6px)] h-[1.5px] bg-[#888]"></span>
                             </span>
-                            <span className="bg-pink-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black italic uppercase shadow-sm">
+                            <span className="bg-[#FF7F50] text-white text-[10px] px-2 py-0.5 rounded-full font-black italic uppercase shadow-sm">
                               {prod.discount} OFF
                             </span>
                           </div>

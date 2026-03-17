@@ -75,8 +75,11 @@ const WishlistPage = () => {
               <div className="text-center">
                 <p className="text-2xl font-black text-[#3BB77E]">₹{item.price}</p>
                 <div className="flex items-center justify-center gap-2 mt-1">
-                  <span className="text-gray-300 text-[10px] line-through font-bold">₹{item.oldPrice}</span>
-                  <span className="bg-[#3BB77E] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                  <span className="text-[#adadad] text-[10px] font-bold relative">
+                    ₹{item.oldPrice}
+                    <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
+                  </span>
+                  <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
                     {item.discount} OFF
                   </span>
                 </div>

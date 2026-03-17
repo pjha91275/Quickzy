@@ -129,7 +129,7 @@ export default function HomeContent({ products, categories }) {
         return getNum(b.discount) - getNum(a.discount);
       });
       const topIds = new Set(sorted.slice(0, count).map(p => p._id || p.id));
-      return list.map(p => topIds.has(p._id || p.id) ? { ...p, tag: "Hot Deal", tagColor: "bg-orange-500 italic uppercase" } : p);
+      return list.map(p => topIds.has(p._id || p.id) ? { ...p, tag: "Hot Deal", tagColor: "bg-red-500 italic uppercase" } : p);
     };
 
     let rawPopular = [];
@@ -235,8 +235,11 @@ export default function HomeContent({ products, categories }) {
         <div className="flex flex-col">
           <span className="text-[#3BB77E] font-black text-xl leading-none">₹{prod.price}</span>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-gray-400 text-[11px] line-through font-bold">₹{prod.oldPrice}</span>
-            <span className="bg-[#3BB77E] text-white text-[10px] px-2 py-0.5 rounded font-black italic uppercase">
+            <span className="text-[#adadad] text-[11px] font-bold relative">
+              ₹{prod.oldPrice}
+              <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1.5px] bg-[#888]"></span>
+            </span>
+            <span className="bg-[#FF7F50] text-white text-[10px] px-2 py-0.5 rounded font-black italic uppercase">
               {prod.discount} OFF
             </span>
           </div>
@@ -282,10 +285,13 @@ export default function HomeContent({ products, categories }) {
               </Link>
               <div className="flex items-center gap-2">
                 <span className="text-[#3BB77E] font-black text-sm leading-none">₹{prod.price}</span>
-                <span className="text-gray-300 text-[10px] line-through font-bold">₹{prod.oldPrice}</span>
+                <span className="text-[#adadad] text-[10px] font-bold relative">
+                  ₹{prod.oldPrice}
+                  <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
+                </span>
               </div>
               <div className="mt-1">
-                <span className="bg-[#3BB77E] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase inline-block">
+                <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase inline-block">
                   {prod.discount} OFF
                 </span>
               </div>
@@ -452,8 +458,11 @@ export default function HomeContent({ products, categories }) {
                   <div className="flex flex-col">
                     <span className="text-[#3BB77E] font-black text-xl leading-tight">₹{deal.price}</span>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-gray-400 text-xs line-through font-bold">₹{deal.oldPrice}</span>
-                      <span className="bg-[#3BB77E] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                      <span className="text-[#adadad] text-xs font-bold relative">
+                        ₹{deal.oldPrice}
+                        <span className="absolute top-1/2 left-[-3px] w-[calc(100%+6px)] h-[1.5px] bg-[#888]"></span>
+                      </span>
+                      <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
                         {deal.discount} OFF
                       </span>
                     </div>
