@@ -180,9 +180,9 @@ const Navbar = () => {
         onClose={() => setIsLocationModalOpen(false)} 
       />
       <header className="w-full bg-white border-b relative font-sans z-50">
-        <div className="container mx-auto p-4 flex items-center gap-1.5 md:gap-2 lg:gap-3">
+        <div className="container mx-auto p-4 flex flex-wrap md:flex-nowrap items-center justify-between md:justify-start gap-3 md:gap-2 lg:gap-3">
           {/* Left Side: Logo + Location */}
-          <div className="flex flex-1 items-center">
+          <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2 shrink-0 group">
               <div className="flex flex-col">
                 <div className="flex items-center leading-none">
@@ -223,7 +223,7 @@ const Navbar = () => {
           </div>
 
           {/* Middle: Search Bar */}
-          <div className="hidden md:flex flex-[1.5] lg:flex-[2] border-2 border-[#BCE3C9] rounded-md items-center h-[44px] sm:h-[48px] relative">
+          <div className="flex w-full md:w-auto md:flex-[1.5] lg:flex-[2] order-last md:order-none mt-3 md:mt-0 border-2 border-[#BCE3C9] rounded-md items-center h-[44px] sm:h-[48px] relative">
             <div className="px-4 border-r hidden lg:block text-sm font-bold text-gray-700 whitespace-nowrap">
               All Categories
             </div>
@@ -280,7 +280,7 @@ const Navbar = () => {
           </div>
 
           {/* Right Side: Icons */}
-          <div className="flex flex-1 justify-end gap-3 md:gap-5 lg:gap-6 items-center text-[#253D4E] shrink-0">
+          <div className="flex justify-end gap-3 md:gap-5 lg:gap-6 items-center text-[#253D4E] shrink-0 ml-auto md:ml-0 md:flex-1">
             <Link
               href="/wishlist"
               className="hidden lg:flex items-center justify-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group h-[44px] sm:h-[48px]"
@@ -297,8 +297,8 @@ const Navbar = () => {
             </Link>
             {cartItems.length === 0 ? (
               <div className="flex items-center justify-center min-w-[110px] sm:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 bg-gray-100 rounded-lg text-gray-400 cursor-not-allowed border border-gray-200 opacity-80">
-                <FiShoppingCart className="text-2xl" />
-                <span className="hidden sm:block text-sm font-bold tracking-wide">My Cart</span>
+                <FiShoppingCart className="text-xl sm:text-2xl" />
+                <span className="text-xs sm:text-sm font-bold tracking-wide">My Cart</span>
               </div>
             ) : (
               <Link
@@ -306,14 +306,11 @@ const Navbar = () => {
                 className="flex items-center justify-center min-w-[110px] sm:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 bg-[#3BB77E] text-white rounded-lg shadow-md hover:shadow-lg hover:bg-[#2e9262] transition-all cursor-pointer hover:-translate-y-0.5"
               >
                 <div className="relative">
-                  <FiShoppingCart className="text-2xl" />
-                  <span className="sm:hidden absolute -top-1.5 -right-2 bg-white text-[#3BB77E] rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold shadow-sm">
-                    {cartItems.length}
-                  </span>
+                  <FiShoppingCart className="text-xl sm:text-2xl" />
                 </div>
-                <div className="hidden sm:flex flex-col leading-none items-start">
-                  <span className="text-[11px] font-bold text-green-100">{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</span>
-                  <span className="text-sm font-black mt-0.5">₹{subtotal.toFixed(0)}</span>
+                <div className="flex flex-col leading-none items-start">
+                  <span className="text-[10px] sm:text-[11px] font-bold text-green-100">{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</span>
+                  <span className="text-xs sm:text-sm font-black mt-0.5">₹{subtotal.toFixed(0)}</span>
                 </div>
               </Link>
             )}
@@ -410,8 +407,8 @@ const Navbar = () => {
                   <FiGrid className="text-lg" /> Browse All Categories{" "}
                   <IoIosArrowDown className="group-hover:rotate-180 transition-transform" />
                 </button>
-                <div className="absolute top-[85%] left-0 w-[480px] bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-6 opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50 overflow-hidden backdrop-blur-sm">
-                  <div className="grid grid-cols-2 gap-x-2 gap-y-1 px-4 max-h-[70vh] overflow-y-auto no-scrollbar">
+                <div className="absolute top-[85%] left-0 w-full sm:w-[480px] bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-6 opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50 overflow-hidden backdrop-blur-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-1 px-4 max-h-[70vh] overflow-y-auto no-scrollbar">
                     {data.categories.map((cat) => (
                       <Link 
                         key={cat.name} 
@@ -509,70 +506,108 @@ const Navbar = () => {
                 <FiX />
               </button>
             </div>
-            <nav className="flex flex-col gap-5 font-bold text-[#253D4E] overflow-y-auto flex-1 pb-10">
+            <nav className="flex flex-col font-bold text-[#253D4E] overflow-y-auto flex-1 pb-[100px]">
+              {/* Browse All Categories Dropdown */}
+              <div className="border-b border-gray-50 py-3 relative group/mobcat">
+                <div className="flex items-center justify-between cursor-pointer w-full text-left">
+                  <div className="flex items-center gap-2 group-hover/mobcat:text-[#3BB77E] transition-colors">
+                    <FiGrid className="text-lg text-[#3BB77E]" />
+                    <span className="font-black text-[15px]">Browse All Categories</span>
+                  </div>
+                  <IoIosArrowDown className="text-gray-400 group-hover/mobcat:text-[#3BB77E] transition-colors" />
+                </div>
+                {/* Visible on hover or touch on mobile dropdown item container */}
+                <div className="max-h-0 overflow-hidden group-hover/mobcat:max-h-96 transition-all duration-300 ease-in-out bg-gray-50/50 rounded-xl mt-2">
+                  <div className="py-2 px-4 flex flex-col gap-2">
+                    {data.categories.map((cat) => (
+                      <Link 
+                        key={cat.name} 
+                        href={`/shop?category=${encodeURIComponent(cat.name)}`}
+                        onClick={() => setIsMenuOpen(false)}
+                        className="text-[12px] font-bold text-gray-600 hover:text-[#3BB77E] py-1.5 transition-colors border-b border-gray-100 last:border-0"
+                      >
+                        {cat.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               <Link
                 href="/"
                 onClick={() => setIsMenuOpen(false)}
-                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
+                className="hover:text-[#3BB77E] py-4 border-b border-gray-50 transition-colors font-black flex items-center gap-2"
               >
                 Home
               </Link>
               <Link
+                href="/about"
+                onClick={() => setIsMenuOpen(false)}
+                className="hover:text-[#3BB77E] py-4 border-b border-gray-50 transition-colors font-black flex items-center gap-2"
+              >
+                About
+              </Link>
+              <Link
                 href="/shop"
                 onClick={() => setIsMenuOpen(false)}
-                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
+                className="hover:text-[#3BB77E] py-4 border-b border-gray-50 transition-colors font-black flex items-center gap-2"
               >
                 Shop
               </Link>
               <Link
-                href="/vendors"
-                onClick={() => setIsMenuOpen(false)}
-                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
-              >
-                Vendors
-              </Link>
-              <Link
                 href="/blog"
                 onClick={() => setIsMenuOpen(false)}
-                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
+                className="hover:text-[#3BB77E] py-4 border-b border-gray-50 transition-colors font-black flex items-center gap-2"
               >
                 Blog
               </Link>
               <Link
-                href="/profile"
-                onClick={() => setIsMenuOpen(false)}
-                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
-              >
-                My Profile
-              </Link>
-              <Link
-                href="/orders"
-                onClick={() => setIsMenuOpen(false)}
-                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
-              >
-                My Orders
-              </Link>
-              <Link
                 href="/contact"
                 onClick={() => setIsMenuOpen(false)}
-                className="hover:text-[#3BB77E] py-2 border-b border-gray-50 transition-colors"
+                className="hover:text-[#3BB77E] py-4 border-b border-gray-50 transition-colors font-black flex items-center gap-2"
               >
                 Contact
               </Link>
-              <div className="mt-auto space-y-6 pt-10">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full border flex items-center justify-center text-[#3BB77E]">
-                    <FiHeadphones />
+
+              <div className="mt-8 pt-4 border-t border-gray-100 flex flex-col gap-2">
+                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2 px-2">Your Account</p>
+                <Link
+                  href="/wishlist"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="hover:text-[#3BB77E] py-3 px-2 rounded-xl transition-colors font-bold flex items-center gap-3 text-sm hover:bg-[#DEF9EC]"
+                >
+                  <FiHeart className="text-gray-400 group-hover:text-[#3BB77E]" /> Wishlist
+                </Link>
+                <Link
+                  href="/orders"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="hover:text-[#3BB77E] py-3 px-2 rounded-xl transition-colors font-bold flex items-center gap-3 text-sm hover:bg-[#DEF9EC]"
+                >
+                  <FiShoppingCart className="text-gray-400 group-hover:text-[#3BB77E]" /> My Orders
+                </Link>
+                <Link
+                  href="/profile"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="hover:text-[#3BB77E] py-3 px-2 rounded-xl transition-colors font-bold flex items-center gap-3 text-sm hover:bg-[#DEF9EC]"
+                >
+                  <FiUser className="text-gray-400 group-hover:text-[#3BB77E]" /> My Profile
+                </Link>
+              </div>
+
+              <div className="mt-auto pt-10 px-2 lg:hidden">
+                <a href="tel:+911800419" className="flex items-center gap-4 group cursor-pointer w-max">
+                  <div className="w-12 h-12 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] group-hover:scale-110 transition-transform">
+                    <FiHeadphones className="text-xl" />
                   </div>
                   <div>
-                    <p className="font-black text-[#3BB77E] leading-none">
+                    <p className="font-black text-[#253D4E] group-hover:text-[#3BB77E] leading-none text-lg transition-colors">
                       +91 1800-419
                     </p>
-                    <p className="text-[10px] text-gray-400">
+                    <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-1">
                       24/7 Delivery Support
                     </p>
                   </div>
-                </div>
+                </a>
               </div>
             </nav>
           </div>

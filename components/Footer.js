@@ -25,9 +25,9 @@ const Footer = () => {
 
   return (
     <footer className="bg-white border-t pt-20 pb-10 mt-20">
-      <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 text-sm text-gray-500 pb-8 border-b">
+      <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-6 gap-8 text-sm text-gray-500 pb-8 border-b">
         {/* Logo & Info */}
-        <div className="col-span-1 lg:col-span-1">
+        <div className="col-span-2 lg:col-span-1">
           <Link href="/" className="flex items-center gap-2 mb-4 group cursor-pointer">
             <img
               src="/logo.png"
@@ -75,7 +75,7 @@ const Footer = () => {
         </div>
 
         {/* Links */}
-        <div>
+        <div className="col-span-1">
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Company
           </h4>
@@ -88,7 +88,7 @@ const Footer = () => {
             <li><Link href="/contact" className="hover:text-[#3BB77E] transition-colors">Contact Us</Link></li>
           </ul>
         </div>
-        <div>
+        <div className="col-span-1">
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Account
           </h4>
@@ -100,7 +100,7 @@ const Footer = () => {
             <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Shipping Details</a></li>
           </ul>
         </div>
-        <div>
+        <div className="col-span-1">
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Corporate
           </h4>
@@ -112,7 +112,7 @@ const Footer = () => {
             <li><a href="#" onClick={comingSoon} className="hover:text-[#3BB77E] transition-colors">Accessibility</a></li>
           </ul>
         </div>
-        <div>
+        <div className="col-span-1">
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Popular
           </h4>
@@ -126,7 +126,7 @@ const Footer = () => {
         </div>
 
         {/* App & Payment */}
-        <div>
+        <div className="col-span-2 lg:col-span-1">
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Install App
           </h4>

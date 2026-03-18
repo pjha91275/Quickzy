@@ -147,34 +147,34 @@ export default function ProductContent({ product, similarProducts }) {
             {/* Why Shop List */}
             <div className="space-y-8">
                <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3">Benefits of Shopping from Quickzy</h4>
-                         <div className="space-y-6">
-                  <div className="flex gap-6 items-center group">
-                    <div className="w-14 h-14 rounded-2xl bg-[#DEF9EC] flex items-center justify-center shrink-0 shadow-sm border border-[#3BB77E]/20 text-[#3BB77E] group-hover:bg-[#3BB77E] group-hover:text-white transition-all duration-300">
-                      <FiZap size={24} />
+                <div className="flex flex-col gap-5 md:gap-6 mt-4">
+                  <div className="flex gap-4 md:gap-6 items-start md:items-center group">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-[#DEF9EC] flex items-center justify-center shrink-0 shadow-sm border border-[#3BB77E]/20 text-[#3BB77E] group-hover:bg-[#3BB77E] group-hover:text-white transition-all duration-300">
+                      <FiZap className="text-xl md:text-2xl" />
                     </div>
-                    <div>
-                      <h6 className="text-[14px] font-black text-[#253D4E] tracking-tight">Rapid 15-Min Delivery</h6>
-                      <p className="text-[11px] font-bold text-gray-400 mt-0.5">Your orders delivered within 15 minutes or less.</p>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-6 items-center group">
-                    <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 shadow-sm border border-amber-200/50 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
-                      <FiShield size={22} />
-                    </div>
-                    <div>
-                      <h6 className="text-[14px] font-black text-[#253D4E] tracking-tight">Grade-A Quality Assurance</h6>
-                      <p className="text-[11px] font-bold text-gray-400 mt-0.5">Strict quality checks for every single item.</p>
+                    <div className="flex-1 pt-1 md:pt-0">
+                      <h6 className="text-[13px] md:text-[14px] font-black text-[#253D4E] tracking-tight leading-tight mb-1 md:mb-0">Rapid 15-Min Delivery</h6>
+                      <p className="text-[11px] font-bold text-gray-400 leading-snug">Your orders delivered within 15 minutes or less.</p>
                     </div>
                   </div>
 
-                  <div className="flex gap-6 items-center group">
-                    <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center shrink-0 shadow-sm border border-blue-200/50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
-                      <FiLayers size={22} />
+                  <div className="flex gap-4 md:gap-6 items-start md:items-center group">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-amber-50 flex items-center justify-center shrink-0 shadow-sm border border-amber-200/50 text-amber-500 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300">
+                      <FiShield className="text-xl md:text-2xl" />
                     </div>
-                    <div>
-                      <h6 className="text-[14px] font-black text-[#253D4E] tracking-tight">Massive Product Range</h6>
-                      <p className="text-[11px] font-bold text-gray-400 mt-0.5">Find everything from farm fresh to electronics.</p>
+                    <div className="flex-1 pt-1 md:pt-0">
+                      <h6 className="text-[13px] md:text-[14px] font-black text-[#253D4E] tracking-tight leading-tight mb-1 md:mb-0">Grade-A Quality Assurance</h6>
+                      <p className="text-[11px] font-bold text-gray-400 leading-snug">Strict quality checks for every single item.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 md:gap-6 items-start md:items-center group">
+                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-blue-50 flex items-center justify-center shrink-0 shadow-sm border border-blue-200/50 text-blue-500 group-hover:bg-blue-500 group-hover:text-white transition-all duration-300">
+                      <FiLayers className="text-xl md:text-2xl" />
+                    </div>
+                    <div className="flex-1 pt-1 md:pt-0">
+                      <h6 className="text-[13px] md:text-[14px] font-black text-[#253D4E] tracking-tight leading-tight mb-1 md:mb-0">Massive Product Range</h6>
+                      <p className="text-[11px] font-bold text-gray-400 leading-snug">Find everything from farm fresh to electronics.</p>
                     </div>
                   </div>
                 </div>

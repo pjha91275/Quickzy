@@ -35,13 +35,13 @@ export const authOptions = {
               <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 20px; overflow: hidden; background-color: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
                 <!-- Hero Banner -->
                 <div style="background-color: #3BB77E; padding: 0; text-align: center;">
-                  <img src="${process.env.NEXT_PUBLIC_URL}/footer_banner.png" alt="Quickzy Banner" style="width: 100%; max-height: 200px; object-fit: cover;">
+                  <img src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743312/quickzy/banners/footer_banner.jpg" alt="Quickzy Banner" style="width: 100%; max-height: 200px; object-fit: cover;">
                 </div>
                 
                 <div style="padding: 40px 30px; text-align: center;">
                   <!-- Logo & Branding -->
                   <div style="margin-bottom: 25px;">
-                    <img src="${process.env.NEXT_PUBLIC_URL}/logo.png" alt="Quickzy Logo" style="width: 60px; height: 60px; margin-bottom: 10px;">
+                    <img src="https://raw.githubusercontent.com/google/material-design-icons/master/png/action/shopping_cart/materialicons/48dp/2x/baseline_shopping_cart_green_48dp.png" alt="Quickzy Logo" style="width: 60px; height: 60px; margin-bottom: 10px; background-color:#DEF9EC; border-radius:50%; padding:10px; object-fit:contain;">
                     <h1 style="color: #253D4E; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -1px;">Quickzy</h1>
                     <p style="color: #7E7E7E; margin: 5px 0 0 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Fast. Fresh. Delivered in a Zap.</p>
                   </div>
