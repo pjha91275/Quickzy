@@ -32,7 +32,8 @@ export default function ShopContent({ products, categories }) {
 
   // GUIDE: Step 1 - Create a state to hold the maximum price selected by the user.
   // We initialize it to 5000 so all products are visible by default.
-  const [maxPrice, setMaxPrice] = useState(5000);
+  const [sliderPrice, setSliderPrice] = useState(5000);
+  const [filterPrice, setFilterPrice] = useState(5000);
 
   // Sync state with URL
   React.useEffect(() => {
@@ -75,8 +76,8 @@ export default function ShopContent({ products, categories }) {
     }
 
     // 3. Third, apply Price Filter
-    return pool.filter((p) => p.price <= maxPrice);
-  }, [selectedCategory, maxPrice, searchQuery, products]);
+    return pool.filter((p) => p.price <= filterPrice);
+  }, [selectedCategory, filterPrice, searchQuery, products]);
 
   // Derive Top 30% Hot Deals based on the current filtered pool pool
   const hotDealsIds = React.useMemo(() => {
@@ -181,7 +182,7 @@ export default function ShopContent({ products, categories }) {
               Fill by Price
             </h3>
             <div className="space-y-6">
-              {/* GUIDE: Step 3 - Connect the slider to the maxPrice state.
+              {/* GUIDE: Step 3 - Connect the slider to the sliderPrice state.
                   'value' makes it a controlled component.
                   'onChange' updates the state every time you slide. */}
               <input
@@ -189,19 +190,22 @@ export default function ShopContent({ products, categories }) {
                 className="w-full accent-[#3BB77E] cursor-pointer"
                 min="0"
                 max="5000"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(parseInt(e.target.value))}
+                value={sliderPrice}
+                onChange={(e) => setSliderPrice(parseInt(e.target.value))}
               />
               <div className="flex justify-between text-xs font-bold text-gray-400">
                 <span>
                   From: <strong className="text-[#3BB77E]">₹0</strong>
                 </span>
                 <span>
-                  {/* GUIDE: Step 4 - Display the current maxPrice dynamically in the UI. */}
-                  To: <strong className="text-[#3BB77E]">₹{maxPrice}</strong>
+                  {/* GUIDE: Step 4 - Display the current sliderPrice dynamically in the UI. */}
+                  To: <strong className="text-[#3BB77E]">₹{sliderPrice}</strong>
                 </span>
               </div>
-              <button className="w-full bg-[#3BB77E] text-white py-3 rounded-lg font-black text-sm hover:bg-[#29A56C] transition-colors shadow-lg flex items-center justify-center gap-2">
+              <button 
+                onClick={() => setFilterPrice(sliderPrice)}
+                className="w-full bg-[#3BB77E] text-white py-3 rounded-lg font-black text-sm hover:bg-[#29A56C] transition-colors shadow-lg flex items-center justify-center gap-2"
+              >
                 <FiFilter /> Filter
               </button>
             </div>
@@ -279,22 +283,9 @@ export default function ShopContent({ products, categories }) {
                 className={`bg-white border hover:shadow-2xl hover:border-[#BCE3C9] transition-all rounded-2xl relative group flex overflow-hidden ${view === "grid" ? "flex-col p-4 h-full" : "flex-row items-center p-6 gap-8 min-h-[220px]"}`}
               >
                 {/* Tag Badge */}
-                {(prod.tag || hotDealsIds.has(prod._id || prod.id)) && (
-                  <span
-                    className={`absolute top-0 left-0 text-white text-[10px] font-black px-4 py-1.5 rounded-tl-2xl rounded-br-2xl z-10 
-                      ${
-                        hotDealsIds.has(prod._id || prod.id)
-                          ? "bg-red-500 italic uppercase"
-                          : prod.tag === "Hot"
-                            ? "bg-pink-500"
-                            : prod.tag === "Sale"
-                              ? "bg-blue-400"
-                              : "bg-orange-400"
-                      }`}
-                  >
-                    {hotDealsIds.has(prod._id || prod.id)
-                      ? "Hot Deal"
-                      : prod.tag}
+                {prod.discount && (
+                  <span className="absolute top-0 left-0 text-white text-[10px] font-black px-4 py-1.5 rounded-tl-2xl rounded-br-2xl z-10 bg-[#f74b81] italic uppercase">
+                    Hot Deal
                   </span>
                 )}
 
@@ -350,15 +341,17 @@ export default function ShopContent({ products, categories }) {
                         <span className="text-lg font-black text-[#3BB77E]">
                           ₹{prod.price}
                         </span>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[#adadad] text-[11px] font-bold relative">
-                            ₹{prod.oldPrice}
-                            <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
-                          </span>
-                          <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
-                            {prod.discount} OFF
-                          </span>
-                        </div>
+                        {prod.oldPrice && (
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[#adadad] text-[11px] font-bold relative">
+                              ₹{prod.oldPrice}
+                              <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
+                            </span>
+                            <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                              {prod.discount} OFF
+                            </span>
+                          </div>
+                        )}
                       </div>
                       <button
                         onClick={(e) => {

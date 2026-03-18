@@ -440,32 +440,12 @@ const Navbar = () => {
                 >
                   About
                 </Link>
-                <div className="relative group">
-                  <Link
-                    href="/shop"
-                    className="hover:text-[#3BB77E] transition-colors flex items-center gap-1"
-                  >
-                    Shop <IoIosArrowDown className="text-xs group-hover:rotate-180 transition-transform" />
-                  </Link>
-                  <div className="absolute top-[85%] left-0 bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-4 w-64 opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50">
-                    <div className="px-2 space-y-1">
-                      {data.categories
-                        .filter(cat => !["Electronics", "Milk & Dairy", "Personal Care", "Snacks", "Vegetables", "Grocery"].includes(cat.name))
-                        .map((cat) => (
-                        <Link 
-                          key={cat.name} 
-                          href={`/shop?category=${encodeURIComponent(cat.name)}`}
-                          className="flex items-center gap-3 px-4 py-3 hover:bg-[#F2FBF6] rounded-xl group/item transition-all"
-                        >
-                          <img src={cat.image || cat.img} className="w-6 h-6 object-contain opacity-70 group-hover/item:opacity-100 transition-opacity" alt="" />
-                          <span className="text-[11px] font-black text-[#253D4E] group-hover/item:text-[#3BB77E] uppercase tracking-widest">
-                            {cat.name}
-                          </span>
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+                <Link
+                  href="/shop"
+                  className="hover:text-[#3BB77E] transition-colors"
+                >
+                  Shop
+                </Link>
 
                 <Link
                   href="/blog"

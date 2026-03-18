@@ -33,6 +33,18 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
   const [selectedAddress, setSelectedAddress] = useState("");
   const [coords, setCoords] = useState({ lat: null, lng: null });
   const [showMapModal, setShowMapModal] = useState(false);
+  const [resendTimer, setResendTimer] = useState(0);
+
+  // Timer for resend link
+  React.useEffect(() => {
+    let interval;
+    if (step === 2 && resendTimer > 0) {
+      interval = setInterval(() => {
+        setResendTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [step, resendTimer]);
 
   // Sync step and pre-fill email if available
   React.useEffect(() => {
@@ -90,6 +102,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
 
       if (result?.ok) {
         setStep(2);
+        setResendTimer(30);
         toast.success("Magic link sent! Check your inbox.");
       } else {
         toast.error("Failed to send magic link. Try again.");
@@ -328,12 +341,30 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
                     <strong className="text-[#3BB77E]">{email}</strong>
                   </p>
                 </div>
-                <button
-                  onClick={() => setStep(1)}
-                  className="text-[#3BB77E] font-black text-sm hover:underline"
-                >
-                  Change email address
-                </button>
+                <div className="flex flex-col items-center gap-3">
+                  <button
+                    onClick={() => setStep(1)}
+                    className="text-gray-400 font-bold text-sm hover:text-[#3BB77E] transition-colors"
+                  >
+                    Change email address
+                  </button>
+                  <div className="mt-2 pt-4 border-t border-gray-100 w-full text-sm">
+                    <p className="text-gray-400 font-medium mb-1.5">
+                      Didn't receive the link?
+                    </p>
+                    <button
+                      onClick={handleEmailLogin}
+                      disabled={resendTimer > 0 || isLoading}
+                      className={`font-black px-6 py-2.5 mt-2 rounded-xl transition-all outline-none shadow-sm ${
+                        resendTimer > 0 || isLoading
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed border border-gray-200"
+                          : "bg-[#3BB77E] hover:bg-[#29A56C] text-white shadow-md shadow-[#3BB77E]/20 hover:shadow-lg hover:-translate-y-0.5"
+                      }`}
+                    >
+                      {isLoading && resendTimer === 0 ? "Sending..." : resendTimer > 0 ? `Resend Link in ${resendTimer}s` : "Resend Link Now"}
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
 

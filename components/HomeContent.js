@@ -122,15 +122,7 @@ export default function HomeContent({ products, categories }) {
   React.useEffect(() => {
     if (!products.length || !categories.length) return;
 
-    const calculateHot = (list, percent) => {
-      const count = Math.round(list.length * percent);
-      const sorted = [...list].sort((a, b) => {
-        const getNum = (v) => parseInt(v?.toString().replace("%", "") || "0");
-        return getNum(b.discount) - getNum(a.discount);
-      });
-      const topIds = new Set(sorted.slice(0, count).map(p => p._id || p.id));
-      return list.map(p => topIds.has(p._id || p.id) ? { ...p, tag: "Hot Deal", tagColor: "bg-red-500 italic uppercase" } : p);
-    };
+    const applyHotTag = (list) => list.map(p => p.discount ? { ...p, tag: "Hot Deal", tagColor: "bg-[#f74b81] italic uppercase" } : p);
 
     let rawPopular = [];
     if (activePopularFilter === "All") {
@@ -165,13 +157,13 @@ export default function HomeContent({ products, categories }) {
 
     setDataReady(prev => ({
       ...prev,
-      popular: calculateHot(rawPopular, 0.4),
-      dailyBest: calculateHot(stableSections.dailyBest, 0.4),
-      deals: stableSections.deals,
-      topSelling: stableSections.topSelling,
-      trending: stableSections.trending,
-      recentlyAdded: stableSections.recentlyAdded,
-      topPicks: stableSections.topPicks
+      popular: applyHotTag(rawPopular),
+      dailyBest: applyHotTag(stableSections.dailyBest),
+      deals: applyHotTag(stableSections.deals),
+      topSelling: applyHotTag(stableSections.topSelling),
+      trending: applyHotTag(stableSections.trending),
+      recentlyAdded: applyHotTag(stableSections.recentlyAdded),
+      topPicks: applyHotTag(stableSections.topPicks)
     }));
   }, [products, categories, activePopularFilter, stableSections]);
 
@@ -200,7 +192,10 @@ export default function HomeContent({ products, categories }) {
 
   // Sub-component for product cards
   const ProductCard = ({ prod, isDailyBest, showProgress }) => (
-    <div className={`bg-white border hover:shadow-xl transition-all relative group flex flex-col ${isDailyBest ? 'rounded-[30px] p-6 h-[500px]' : 'rounded-2xl p-4 hover:border-green-300'}`}>
+    <div 
+      onClick={() => router.push(`/product/${prod.id_custom || prod.id}`)}
+      className={`bg-white border hover:shadow-xl transition-all relative group flex flex-col cursor-pointer ${isDailyBest ? 'rounded-[30px] p-6 h-[500px]' : 'rounded-2xl p-4 hover:border-green-300'}`}
+    >
       {prod.tag && (
         <span className={`absolute top-0 left-0 text-white text-[10px] font-bold px-4 py-1.5 rounded-br-2xl z-10 ${isDailyBest ? 'rounded-tl-[28px]' : 'rounded-tl-2xl'} ${prod.tagColor || (prod.tag === "Hot" ? "bg-pink-500" : "bg-orange-400")}`}>
           {prod.tag}
@@ -234,15 +229,17 @@ export default function HomeContent({ products, categories }) {
       <div className="flex items-center justify-between mt-auto pt-2">
         <div className="flex flex-col">
           <span className="text-[#3BB77E] font-black text-xl leading-none">₹{prod.price}</span>
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-[#adadad] text-[11px] font-bold relative">
-              ₹{prod.oldPrice}
-              <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1.5px] bg-[#888]"></span>
-            </span>
-            <span className="bg-[#FF7F50] text-white text-[10px] px-2 py-0.5 rounded font-black italic uppercase">
-              {prod.discount} OFF
-            </span>
-          </div>
+          {prod.oldPrice && (
+            <div className="flex items-center gap-2 mt-1">
+              <span className="text-[#adadad] text-[11px] font-bold relative">
+                ₹{prod.oldPrice}
+                <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1.5px] bg-[#888]"></span>
+              </span>
+              <span className="bg-[#FF7F50] text-white text-[10px] px-2 py-0.5 rounded font-black italic uppercase">
+                {prod.discount} OFF
+              </span>
+            </div>
+          )}
         </div>
         <button 
           onClick={(e) => {
@@ -275,39 +272,65 @@ export default function HomeContent({ products, categories }) {
       </h3>
       <div className="space-y-6">
         {items.map(prod => (
-          <div key={prod._id || prod.id} className="flex gap-4 group items-center relative">
-            <Link href={`/product/${prod.id_custom || prod.id}`} className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0">
+          <div 
+            key={prod._id || prod.id} 
+            onClick={() => router.push(`/product/${prod.id_custom || prod.id}`)}
+            className="flex gap-4 group items-center relative cursor-pointer"
+          >
+            <div className="w-20 h-20 rounded-lg flex items-center justify-center overflow-hidden bg-gray-50 border shrink-0 relative">
               <img src={prod.image || prod.img} alt={prod.name} className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform" />
-            </Link>
+              {prod.tag && (
+                <span className={`absolute top-0 left-0 text-white text-[7px] font-black px-1.5 py-0.5 rounded-br-lg z-10 ${prod.tagColor || "bg-[#f74b81]"}`}>
+                  {prod.tag}
+                </span>
+              )}
+            </div>
               <div className="flex-grow">
               <Link href={`/product/${prod.id_custom || prod.id}`}>
                 <h5 className="font-bold text-gray-700 text-[13px] group-hover:text-[#3BB77E] transition-colors line-clamp-2 leading-tight mb-1">{prod.name}</h5>
               </Link>
               <div className="flex items-center gap-2">
                 <span className="text-[#3BB77E] font-black text-sm leading-none">₹{prod.price}</span>
-                <span className="text-[#adadad] text-[10px] font-bold relative">
-                  ₹{prod.oldPrice}
-                  <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
-                </span>
+                {prod.oldPrice && (
+                  <span className="text-[#adadad] text-[10px] font-bold relative">
+                    ₹{prod.oldPrice}
+                    <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
+                  </span>
+                )}
               </div>
-              <div className="mt-1">
-                <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase inline-block">
-                  {prod.discount} OFF
-                </span>
-              </div>
+              {prod.discount && (
+                <div className="mt-1">
+                  <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase inline-block">
+                    {prod.discount} OFF
+                  </span>
+                </div>
+              )}
             </div>
-            <button 
-              onClick={(e) => {
-                e.preventDefault();
-                const id = prod._id || prod.id;
-                setAnimatingHeart(id);
-                toggleWishlist(prod);
-                setTimeout(() => setAnimatingHeart(null), 400);
-              }}
-              className={`p-1 hover:bg-red-50 rounded-full transition-all ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
-            >
-              <FiHeart className={`text-sm ${isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"}`} />
-            </button>
+            <div className="flex flex-col items-end justify-between h-full py-1">
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const id = prod._id || prod.id;
+                  setAnimatingHeart(id);
+                  toggleWishlist(prod);
+                  setTimeout(() => setAnimatingHeart(null), 400);
+                }}
+                className={`p-1 hover:bg-red-50 rounded-full transition-all ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+              >
+                <FiHeart className={`text-sm ${isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"}`} />
+              </button>
+              <button 
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  addToCart(prod);
+                }}
+                className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white px-2.5 py-1.5 rounded-lg transition-all font-black text-[10px] flex items-center gap-1 shadow-sm mt-1"
+              >
+                Add <FiShoppingCart />
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -388,7 +411,7 @@ export default function HomeContent({ products, categories }) {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Popular Products</h2>
           <div className="flex gap-4 text-sm font-semibold text-gray-600 hidden md:flex">
-            {["All", "Electronics", "Milk & Dairy", "Snacks", "Vegetables", "Personal Care", "Grocery"].map(cat => (
+            {["All", "Milk & Dairy", "Grocery", "Vegetables", "Snacks", "Beverages", "Household Essentials"].map(cat => (
               <span key={cat} onClick={() => setActivePopularFilter(cat)} className={`cursor-pointer transition-all ${activePopularFilter === cat ? "text-green-600 underline" : "hover:text-green-600"}`}>{cat}</span>
             ))}
           </div>
@@ -430,6 +453,11 @@ export default function HomeContent({ products, categories }) {
             >
               <div className="h-64 bg-gray-50 p-8 flex items-center justify-center relative">
                 <img src={deal.image || deal.img} alt={deal.name} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" />
+                {deal.tag && (
+                  <span className={`absolute top-0 left-0 text-white text-[10px] font-bold px-4 py-1.5 rounded-br-2xl z-10 rounded-tl-xl ${deal.tagColor || "bg-[#f74b81]"}`}>
+                    {deal.tag}
+                  </span>
+                )}
                 <button 
                   onClick={(e) => {
                     e.preventDefault();
@@ -457,15 +485,17 @@ export default function HomeContent({ products, categories }) {
                 <div className="flex justify-between items-center">
                   <div className="flex flex-col">
                     <span className="text-[#3BB77E] font-black text-xl leading-tight">₹{deal.price}</span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[#adadad] text-xs font-bold relative">
-                        ₹{deal.oldPrice}
-                        <span className="absolute top-1/2 left-[-3px] w-[calc(100%+6px)] h-[1.5px] bg-[#888]"></span>
-                      </span>
-                      <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
-                        {deal.discount} OFF
-                      </span>
-                    </div>
+                    {deal.oldPrice && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[#adadad] text-xs font-bold relative">
+                          ₹{deal.oldPrice}
+                          <span className="absolute top-1/2 left-[-3px] w-[calc(100%+6px)] h-[1.5px] bg-[#888]"></span>
+                        </span>
+                        <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                          {deal.discount} OFF
+                        </span>
+                      </div>
+                    )}
                   </div>
                   <button 
                     onClick={(e) => {
