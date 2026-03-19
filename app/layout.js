@@ -26,8 +26,11 @@ export const metadata = {
 };
 
 import LocationGuard from "@/components/LocationGuard";
+import { fetchCategories } from "@/actions/dbactions";
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const categories = await fetchCategories();
+
   return (
     <html lang="en">
       <body
@@ -37,7 +40,7 @@ export default function RootLayout({ children }) {
           <CartProvider>
             <WishlistProvider>
               <LocationGuard>
-                <Navbar />
+                <Navbar initialCategories={categories} />
                 {children}
                 <Footer />
               </LocationGuard>

@@ -12,8 +12,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -49,4 +47,13 @@ input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px white inset !important;
   -webkit-text-fill-color: #253D4E !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Visibility Shadows (Added for Cleaner Banners) */
+.text-shadow-strong {
+  filter: drop-shadow(0 2px 14px rgba(0, 0, 0, 0.7));
+}
+
+.text-shadow-medium {
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
 }

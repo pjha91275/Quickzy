@@ -21,7 +21,7 @@ import AuthModal from "./AuthModal";
 import LocationModal from "./LocationModal";
 import { useCart } from "@/context/CartContext";
 
-const Navbar = () => {
+const Navbar = ({ initialCategories = [] }) => {
   const { cartItems, subtotal } = useCart();
   const { data: session } = useSession();
   const router = useRouter();
@@ -29,6 +29,7 @@ const Navbar = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [authModalStep, setAuthModalStep] = useState(1);
+  const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
 
   const [guestAddress, setGuestAddress] = useState("");
   const [currentAddress, setCurrentAddress] = useState("Select Location");
@@ -76,13 +77,13 @@ const Navbar = () => {
   // Search States
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [data, setData] = useState({ products: [], categories: [] });
+  const [data, setData] = useState({ products: [], categories: initialCategories });
 
   // 1. DATA FETCHING: Get categories and products for search filter
   React.useEffect(() => {
     const loadSearchData = async () => {
       const result = await fetchProdAndCat();
-      setData(result);
+      if (result) setData(result);
     };
     loadSearchData();
   }, []);
@@ -508,27 +509,43 @@ const Navbar = () => {
             </div>
             <nav className="flex flex-col font-bold text-[#253D4E] overflow-y-auto flex-1 pb-[100px]">
               {/* Browse All Categories Dropdown */}
-              <div className="border-b border-gray-50 py-3 relative group/mobcat">
-                <div className="flex items-center justify-between cursor-pointer w-full text-left">
-                  <div className="flex items-center gap-2 group-hover/mobcat:text-[#3BB77E] transition-colors">
+              <div className="border-b border-gray-50 py-3">
+                <div 
+                  className="flex items-center justify-between cursor-pointer w-full text-left"
+                  onClick={() => setIsMobileCategoriesOpen(!isMobileCategoriesOpen)}
+                >
+                  <div className={`flex items-center gap-2 transition-colors ${isMobileCategoriesOpen ? 'text-[#3BB77E]' : ''}`}>
                     <FiGrid className="text-lg text-[#3BB77E]" />
                     <span className="font-black text-[15px]">Browse All Categories</span>
                   </div>
-                  <IoIosArrowDown className="text-gray-400 group-hover/mobcat:text-[#3BB77E] transition-colors" />
+                  <IoIosArrowDown className={`text-gray-400 transition-transform duration-300 ${isMobileCategoriesOpen ? 'rotate-180 text-[#3BB77E]' : ''}`} />
                 </div>
-                {/* Visible on hover or touch on mobile dropdown item container */}
-                <div className="max-h-0 overflow-hidden group-hover/mobcat:max-h-96 transition-all duration-300 ease-in-out bg-gray-50/50 rounded-xl mt-2">
-                  <div className="py-2 px-4 flex flex-col gap-2">
-                    {data.categories.map((cat) => (
-                      <Link 
-                        key={cat.name} 
-                        href={`/shop?category=${encodeURIComponent(cat.name)}`}
-                        onClick={() => setIsMenuOpen(false)}
-                        className="text-[12px] font-bold text-gray-600 hover:text-[#3BB77E] py-1.5 transition-colors border-b border-gray-100 last:border-0"
-                      >
-                        {cat.name}
-                      </Link>
-                    ))}
+                
+                <div 
+                  className={`overflow-hidden transition-all duration-300 ease-in-out bg-gray-50/50 rounded-xl mt-2 ${isMobileCategoriesOpen ? 'max-h-[800px] py-4 opacity-100' : 'max-h-0 py-0 opacity-0'}`}
+                >
+                  <div className="px-3 grid grid-cols-2 gap-2">
+                    {data?.categories?.length > 0 ? (
+                      data.categories.map((cat) => (
+                        <Link 
+                          key={cat.name} 
+                          href={`/shop?category=${encodeURIComponent(cat.name)}`}
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            setIsMobileCategoriesOpen(false);
+                          }}
+                          className="flex flex-col items-center p-3 bg-white border border-gray-100 rounded-xl shadow-sm hover:border-[#3BB77E] transition-all"
+                        >
+                          <img src={cat.image || cat.img} className="w-8 h-8 object-contain mb-1" alt="" />
+                          <span className="text-[10px] font-bold text-gray-700 text-center uppercase tracking-tighter leading-tight">{cat.name}</span>
+                        </Link>
+                      ))
+                    ) : (
+                      <div className="col-span-2 py-8 text-center bg-white/50 rounded-xl">
+                        <div className="inline-block w-5 h-5 border-2 border-[#3BB77E] border-t-transparent rounded-full animate-spin mb-2"></div>
+                        <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest animate-pulse">Preloading Categories...</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -570,7 +587,7 @@ const Navbar = () => {
               </Link>
 
               <div className="mt-8 pt-4 border-t border-gray-100 flex flex-col gap-2">
-                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2 px-2">Your Account</p>
+                <p className="text-[11px] text-[#253D4E] font-black uppercase tracking-widest mb-2 px-2">Your Account</p>
                 <Link
                   href="/wishlist"
                   onClick={() => setIsMenuOpen(false)}

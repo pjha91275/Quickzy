@@ -54,71 +54,74 @@ const WishlistPage = () => {
             <div 
               key={item._id || item.id} 
               onClick={() => router.push(`/product/${item.id_custom || item._id || item.id}`)}
-              className="grid grid-cols-1 md:grid-cols-6 gap-6 p-6 items-center hover:bg-gray-50/50 transition-colors group cursor-pointer"
+              className="flex flex-col md:grid md:grid-cols-6 gap-4 md:gap-6 p-4 md:p-6 items-center hover:bg-gray-50/50 transition-colors group cursor-pointer border-b md:border-b-0 last:border-0 relative"
             >
               {/* Product Info */}
-              <div className="col-span-1 md:col-span-3 flex items-center gap-6">
-                <div className="w-24 h-24 bg-gray-100 rounded-2xl overflow-hidden shrink-0 border border-gray-100">
+              <div className="w-full md:col-span-3 flex items-center gap-4 md:gap-6">
+                <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-gray-100">
                   <img 
                     src={item.image || item.img} 
                     alt={item.name} 
                     className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform" 
                   />
                 </div>
-                <div>
-                  <h3 className="font-black text-[#253D4E] text-lg leading-tight mb-1 group-hover:text-[#3BB77E] transition-colors">{item.name}</h3>
-                  <p className="text-[#3BB77E] font-bold text-sm tracking-tight">{item.unit}</p>
+                <div className="flex-grow">
+                  <h3 className="font-black text-[#253D4E] text-base md:text-lg leading-tight mb-1 group-hover:text-[#3BB77E] transition-colors line-clamp-2">{item.name}</h3>
+                  <p className="text-[#3BB77E] font-bold text-xs md:text-sm tracking-tight">{item.unit}</p>
                 </div>
               </div>
 
-              {/* Price */}
-              <div className="text-center">
-                <p className="text-2xl font-black text-[#3BB77E]">₹{item.price}</p>
-                {(item.oldPrice || item.discount) && (
-                  <div className="flex items-center justify-center gap-2 mt-1">
-                    {item.oldPrice && (
-                      <span className="text-[#adadad] text-[10px] font-bold relative inline-block whitespace-nowrap">
-                        ₹{item.oldPrice}
-                        <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
-                      </span>
-                    )}
-                    {item.discount && (
-                      <span className="bg-[#FF7F50] text-white text-[9px] px-1.5 py-0.5 rounded font-black italic uppercase min-w-max inline-block whitespace-nowrap">
-                        {item.discount} OFF
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
+              {/* Price & Actions Container for Mobile */}
+              <div className="w-full flex md:contents items-center justify-between gap-2">
+                {/* Price */}
+                <div className="text-left md:text-center shrink-0">
+                  <p className="text-2xl md:text-2xl font-black text-[#3BB77E]">₹{item.price}</p>
+                  {(item.oldPrice || item.discount) && (
+                    <div className="flex items-center md:justify-center gap-1.5 mt-0.5 md:mt-1">
+                      {item.oldPrice && (
+                        <span className="text-[#adadad] text-xs md:text-[10px] font-bold relative inline-block whitespace-nowrap">
+                          ₹{item.oldPrice}
+                          <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
+                        </span>
+                      )}
+                      {item.discount && (
+                        <span className="bg-[#FF7F50] text-white text-[10px] md:text-[9px] px-2.5 py-0.5 rounded font-black italic uppercase min-w-max inline-block whitespace-nowrap text-center">
+                          {item.discount} OFF
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
 
-              {/* Add to Cart */}
-              <div className="text-center">
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    addToCart(item);
-                  }}
-                  className="bg-[#DEF9EC] text-[#3BB77E] px-6 py-3 rounded-xl font-black hover:bg-[#3BB77E] hover:text-white transition-all inline-flex items-center gap-2 group/cart"
-                >
-                  <FiShoppingCart className="group-hover/cart:animate-bounce" />
-                  Add to Cart
-                </button>
-              </div>
+                {/* Action Column (Add to Cart) */}
+                <div className="md:col-span-1 flex items-center justify-end md:justify-center">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(item);
+                    }}
+                    className="bg-[#DEF9EC] text-[#3BB77E] px-5 py-2.5 rounded-xl font-black hover:bg-[#3BB77E] hover:text-white transition-all inline-flex items-center gap-2 group/cart text-xs md:text-sm whitespace-nowrap shadow-sm"
+                  >
+                    <FiShoppingCart className="shrink-0 group-hover/cart:animate-bounce" />
+                    <span>Add</span>
+                  </button>
+                </div>
 
-              {/* Remove */}
-              <div className="text-center">
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const id = item._id || item.id;
-                    setAnimatingHeart(id);
-                    toggleWishlist(item);
-                    setTimeout(() => setAnimatingHeart(null), 400);
-                  }}
-                  className={`p-3 bg-red-50 rounded-xl transition-all group/heart ${animatingHeart === (item._id || item.id) ? "animate-heart-pop" : ""}`}
-                >
-                  <FiHeart size={20} className="text-red-500 fill-red-500" />
-                </button>
+                {/* Remove Column (Heart Button) */}
+                <div className="md:col-span-1 flex items-center justify-end md:justify-center">
+                  <button 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const id = item._id || item.id;
+                      setAnimatingHeart(id);
+                      toggleWishlist(item);
+                      setTimeout(() => setAnimatingHeart(null), 400);
+                    }}
+                    className={`absolute top-4 right-4 md:relative md:top-0 md:right-0 p-3 bg-red-50 rounded-xl transition-all group/heart w-max flex items-center justify-center ${animatingHeart === (item._id || item.id) ? "animate-heart-pop" : "hover:bg-red-100"}`}
+                  >
+                    <FiHeart size={18} className="text-red-500 fill-red-500" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}

@@ -216,7 +216,10 @@ export default function ShopContent({ products, categories }) {
               New products
             </h3>
             <div className="space-y-6">
-              {products.slice(0, 3).map((item) => (
+              {[...products]
+                .sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+                .slice(0, 3)
+                .map((item) => (
                 <Link
                   key={item._id}
                   href={`/product/${item.id_custom || item.id}`}
@@ -280,7 +283,7 @@ export default function ShopContent({ products, categories }) {
               <Link
                 key={prod._id}
                 href={`/product/${prod.id_custom || prod.id}`}
-                className={`bg-white border hover:shadow-2xl hover:border-[#BCE3C9] transition-all rounded-2xl relative group flex overflow-hidden ${view === "grid" ? "flex-col p-4 h-full" : "flex-row items-center p-6 gap-8 min-h-[220px]"}`}
+                className={`bg-white border hover:shadow-2xl hover:border-[#BCE3C9] transition-all rounded-2xl relative group overflow-hidden ${view === "grid" ? "flex flex-col p-4 h-full" : "flex flex-row items-start p-4 md:p-6 gap-4 md:gap-8 min-h-[160px] md:min-h-[220px]"}`}
               >
                 {/* Tag Badge */}
                 {prod.discount && (
@@ -366,41 +369,90 @@ export default function ShopContent({ products, categories }) {
                     </div>
                   </>
                 ) : (
-                  // List View Layout
-                  <>
-                    <div className="w-48 h-48 flex-shrink-0 flex items-center justify-center p-4 border rounded-2xl bg-gray-50 overflow-hidden group-hover:bg-white transition-colors">
+  <>
+    {/* List View Layout */}
+
+    {/* Image: smaller on mobile, larger on desktop */}
+                    <div className="w-24 h-24 md:w-48 md:h-48 flex-shrink-0 flex items-center justify-center p-2 md:p-4 border rounded-xl md:rounded-2xl bg-gray-50 overflow-hidden group-hover:bg-white transition-colors self-start md:self-center">
                       <img
                         src={prod.image || prod.img}
                         alt={prod.name}
                         className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                       />
                     </div>
-                    <div className="flex-grow flex flex-col md:flex-row gap-8 justify-between">
-                      <div className="flex-grow space-y-3">
-                        <p className="text-[10px] text-[#3BB77E] font-black uppercase tracking-widest mb-1">
+                    {/* Content: min-w-0 to allow flex children to shrink properly */}
+                    <div className="flex-grow min-w-0 flex flex-col gap-2 md:flex-row md:gap-8 md:justify-between">
+                      <div className="flex-grow min-w-0 space-y-1.5 md:space-y-3">
+                        <p className="text-[10px] text-[#3BB77E] font-black uppercase tracking-widest">
                           {prod.category}
                         </p>
-                        <h3 className="text-xl font-black text-[#253D4E] group-hover:text-[#3BB77E] transition-colors leading-tight mb-2">
+                        <h3 className="text-base md:text-xl font-black text-[#253D4E] group-hover:text-[#3BB77E] transition-colors leading-tight line-clamp-2">
                           {prod.name}
                         </h3>
-                        <p className="text-xs text-gray-500 line-clamp-2 font-medium max-w-xl">
+                        <p className="text-xs text-gray-500 line-clamp-2 font-medium hidden sm:block max-w-xl">
                           {prod.description ||
                             "Fresh, high-quality product delivered instantly to your doorstep with Quickzy's zap delivery service."}
                         </p>
-                        <div className="flex items-center gap-4">
-                          <span className="text-[11px] font-black text-[#3BB77E] bg-[#DEF9EC] px-3 py-1 rounded-md uppercase tracking-wider">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <span className="text-[10px] md:text-[11px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 md:px-3 py-1 rounded-md uppercase tracking-wider">
                             {prod.unit}
                           </span>
-                          <span className="text-xs text-gray-400 font-bold">
+                          <span className="text-xs text-gray-400 font-bold hidden sm:inline">
                             By{" "}
                             <span className="text-[#3BB77E]">
                               {prod.vendor}
                             </span>
                           </span>
                         </div>
+
+                        {/* Price + Actions: shown inline on mobile below the details */}
+                        <div className="flex items-center justify-between gap-2 md:hidden pt-1 border-t border-gray-50">
+                          <div>
+                            <span className="text-xl font-black text-[#3BB77E] block leading-tight">₹{prod.price}</span>
+                            {prod.oldPrice && (
+                              <div className="flex items-center gap-1 mt-0.5">
+                                <span className="text-[#adadad] text-[10px] font-bold relative">
+                                  ₹{prod.oldPrice}
+                                  <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
+                                </span>
+                                {prod.discount && (
+                                  <span className="bg-[#FF7F50] text-white text-[8px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                                    {prod.discount} OFF
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                addToCart(prod);
+                              }}
+                              className="bg-[#3BB77E] text-white py-2 px-4 rounded-xl font-black text-xs hover:bg-[#29A56C] transition-all flex items-center gap-1.5 relative z-20"
+                            >
+                              <FiShoppingCart size={14} /> Add
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                const id = prod._id || prod.id;
+                                setAnimatingHeart(id);
+                                toggleWishlist(prod);
+                                setTimeout(() => setAnimatingHeart(null), 400);
+                              }}
+                              className={`p-2 border rounded-xl transition-all relative z-20 ${isInWishlist(prod._id || prod.id) ? "border-red-100 bg-red-50 text-red-500" : "border-gray-100 text-gray-300"} ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
+                            >
+                              <FiHeart size={14} className={isInWishlist(prod._id || prod.id) ? "fill-red-500" : ""} />
+                            </button>
+                          </div>
+                        </div>
                       </div>
 
-                      <div className="w-full md:w-52 flex flex-col justify-center gap-4 md:border-l md:pl-8 border-gray-100">
+                      {/* Price + Actions: desktop only (hidden on mobile) */}
+                      <div className="hidden md:flex w-52 flex-col justify-center gap-4 border-l pl-8 border-gray-100">
                         <div className="space-y-1">
                           <span className="text-3xl font-black text-[#3BB77E] block leading-none">
                             ₹{prod.price}
@@ -440,11 +492,7 @@ export default function ShopContent({ products, categories }) {
                             className={`p-3 border rounded-xl hover:scale-110 transition-transform relative z-20 ${isInWishlist(prod._id || prod.id) ? "border-red-100 bg-red-50 text-red-500" : "border-gray-100 text-gray-300"} ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
                           >
                             <FiHeart
-                              className={
-                                isInWishlist(prod._id || prod.id)
-                                  ? "fill-red-500"
-                                  : ""
-                              }
+                              className={isInWishlist(prod._id || prod.id) ? "fill-red-500" : ""}
                               size={20}
                             />
                           </button>
@@ -452,6 +500,7 @@ export default function ShopContent({ products, categories }) {
                       </div>
                     </div>
                   </>
+
                 )}
               </Link>
             ))}

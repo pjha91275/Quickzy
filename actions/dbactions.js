@@ -11,6 +11,12 @@ export const fetchProdAndCat = async () => {
   return JSON.parse(JSON.stringify({ products, categories }));
 };
 
+export const fetchCategories = async () => {
+  await connectDb();
+  const categories = await Category.find({}).lean();
+  return JSON.parse(JSON.stringify(categories));
+};
+
 export const fetchProductById = async (id) => {
   await connectDb();
 

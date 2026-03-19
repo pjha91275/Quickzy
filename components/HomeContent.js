@@ -127,20 +127,20 @@ export default function HomeContent({ products, categories }) {
       shopLink: "/shop",
     },
     {
-      title: <>Pure Dairy <br /><span className="text-[#3BB77E]">Morning Freshness</span></>,
-      subtitle: "Get fresh milk and dairy delivered daily",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743307/quickzy/banners/hero-banner-2.png",
-      tag: "Quickzy: Fresh Dairy",
-      bgColor: "bg-[#e3f2fd]",
-      shopLink: `/shop?category=${encodeURIComponent("Milk & Dairy")}`,
-    },
-    {
       title: <>Fresh Vegetables <br /><span className="text-[#3BB77E]">Straight from Farm</span></>,
       subtitle: "Get fresh onions, potatoes and more",
       image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743308/quickzy/banners/hero-banner-3.jpg",
       tag: "Quickzy: Farm Fresh",
       bgColor: "bg-[#fff3e0]",
       shopLink: "/shop?category=Vegetables",
+    },
+    {
+      title: <>Pure Dairy <br /><span className="text-[#3BB77E]">Morning Freshness</span></>,
+      subtitle: "Get fresh milk and dairy delivered daily",
+      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743307/quickzy/banners/hero-banner-2.png",
+      tag: "Quickzy: Fresh Dairy",
+      bgColor: "bg-[#e3f2fd]",
+      shopLink: `/shop?category=${encodeURIComponent("Milk & Dairy")}`,
     },
     {
       title: <>Latest Gadgets <br /><span className="text-[#3BB77E]">& Wearables</span></>,
@@ -284,7 +284,7 @@ export default function HomeContent({ products, categories }) {
               <img src={prod.image || prod.img} alt={prod.name} className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform" />
               {prod.tag && (
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none rounded-lg z-10">
-                  <span className="absolute top-[8px] left-[-22px] w-[70px] bg-[#f74b81] text-white text-[7px] font-black py-0.5 text-center -rotate-45 shadow-sm uppercase italic">
+                  <span className="absolute top-[8px] left-[-22px] w-[85px] bg-[#f74b81] text-white text-[7px] font-black py-0.5 text-center -rotate-45 shadow-sm uppercase italic">
                     {prod.tag}
                   </span>
                 </div>
@@ -345,29 +345,64 @@ export default function HomeContent({ products, categories }) {
   return (
     <main className="container mx-auto px-4 py-8 space-y-12">
       {/* Hero Banner */}
-      <section onClick={() => (window.location.href = banners[currentSlide].shopLink)} className={`${banners[currentSlide].bgColor} rounded-3xl overflow-hidden relative h-[250px] sm:h-[350px] md:h-[450px] flex items-center px-6 md:px-16 transition-colors duration-700 cursor-pointer shadow-sm hover:shadow-md group`}>
-        <div className="absolute inset-0 flex transition-opacity duration-700">
-          <div className="w-1/2" />
-          <div className="w-1/2 relative">
-            <img src={banners[currentSlide].image} className="w-full h-full object-cover object-left" alt="" />
-            <div className={`absolute inset-0 bg-gradient-to-r from-[${banners[currentSlide].bgColor.replace('bg-[', '').replace(']', '')}] via-transparent to-transparent`} />
+      <section onClick={() => (window.location.href = banners[currentSlide].shopLink)} className={`rounded-3xl overflow-hidden relative cursor-pointer shadow-sm hover:shadow-md group transition-colors duration-700`}>
+        {/* Mobile: Full background image with text overlay */}
+        <div className="md:hidden relative h-[250px] sm:h-[320px] w-full">
+          <img src={banners[currentSlide].image} className="absolute inset-0 w-full h-full object-cover" alt="" />
+          {/* Specific overlays for brightness control: Hero 1 & 5 (2%), Hero 2-4 (1%) */}
+          <div className={`absolute inset-0 transition-opacity duration-700 ${[1, 2, 3].includes(currentSlide) ? 'bg-black/[0.01]' : 'bg-black/[0.02]'}`} />
+          <div className={`relative z-20 h-full flex flex-col px-6 ${currentSlide === 0 ? 'justify-between pt-15 pb-9' : 'justify-start pt-6 pb-12'}`}>
+            <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-[#253D4E] px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm w-max shrink-0">
+              <img src="/logo.png" className="w-3.5 h-3.5" alt="" />{banners[currentSlide].tag}
+            </div>
+            
+            {/* 1st Banner: Minimal with spacing, Others: Balanced large text (reduced from 4xl to 1.95rem) */}
+            {currentSlide !== 0 ? (
+              <div className="mt-3 space-y-2">
+                <h1 className="text-[1.95rem] font-black text-white leading-tight text-shadow-strong pr-2 transition-all duration-500">{banners[currentSlide].title}</h1>
+                <p className="text-white font-bold text-base text-shadow-medium transition-all duration-500">{banners[currentSlide].subtitle}</p>
+              </div>
+            ) : (
+              <div className="flex-1" /> // Spacer for Slide 1 to push search bar to bottom
+            )}
+
+            <div onClick={e => e.stopPropagation()} className="bg-white rounded-full p-1 flex shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50 shrink-0 mt-auto">
+              <input type="text" placeholder="Search..." className="flex-1 px-3 outline-none text-gray-700 font-bold text-xs w-full min-w-0" value={bannerSearchTerm} onChange={e => setBannerSearchTerm(e.target.value)} onKeyDown={e => e.key === "Enter" && handleBannerSearch()} />
+              <button onClick={handleBannerSearch} className="bg-[#3BB77E] text-white rounded-full px-4 py-1.5 font-black hover:bg-[#29A56C] transition shadow-lg text-xs shrink-0">Search</button>
+            </div>
+          </div>
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2 z-20" onClick={e => e.stopPropagation()}>
+            {banners.map((_, i) => (
+              <button key={i} onClick={() => setCurrentSlide(i)} className={`h-2.5 rounded-full transition-all duration-300 ${currentSlide === i ? "w-6 bg-[#3BB77E]" : "w-2.5 bg-white/60"}`} />
+            ))}
           </div>
         </div>
-        <div className="relative z-20 w-3/4 md:w-1/2 space-y-3 md:space-y-6 animate-fadeIn pb-4">
-          <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-2 md:px-3 py-0.5 md:py-1 rounded-full text-[9px] md:text-xs font-black uppercase tracking-widest shadow-sm">
-            <img src="/logo.png" className="w-3 md:w-4 h-3 md:h-4" alt="" />{banners[currentSlide].tag}
+
+        {/* Desktop: Original two-column layout */}
+        <div className={`hidden md:flex ${banners[currentSlide].bgColor} h-[350px] md:h-[450px] items-center px-16 relative`}>
+          <div className="absolute inset-0 flex transition-opacity duration-700">
+            <div className="w-1/2" />
+            <div className="w-1/2 relative">
+              <img src={banners[currentSlide].image} className="w-full h-full object-cover object-left" alt="" />
+              <div className={`absolute inset-0 bg-gradient-to-r from-[${banners[currentSlide].bgColor.replace('bg-[', '').replace(']', '')}] via-transparent to-transparent`} />
+            </div>
           </div>
-          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-[3.8rem] font-black text-[#253D4E] leading-[1.1] md:leading-[1.05] transition-all duration-300">{banners[currentSlide].title}</h1>
-          <p className="text-gray-500 font-bold text-sm md:text-xl hidden sm:block">{banners[currentSlide].subtitle}</p>
-          <div onClick={e => e.stopPropagation()} className="bg-white rounded-full p-1.5 md:p-2 flex max-w-md shadow-2xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50">
-            <input type="text" placeholder="Search..." className="flex-1 px-3 md:px-4 outline-none text-gray-700 font-bold text-xs md:text-base w-full min-w-0" value={bannerSearchTerm} onChange={e => setBannerSearchTerm(e.target.value)} onKeyDown={e => e.key === "Enter" && handleBannerSearch()} />
-            <button onClick={handleBannerSearch} className="bg-[#3BB77E] text-white rounded-full px-4 md:px-6 py-1.5 md:py-2 font-black hover:bg-[#29A56C] transition shadow-lg text-xs md:text-base shrink-0">Search</button>
+          <div className="relative z-20 w-1/2 space-y-6 animate-fadeIn pb-4">
+            <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-sm">
+              <img src="/logo.png" className="w-4 h-4" alt="" />{banners[currentSlide].tag}
+            </div>
+            <h1 className="text-5xl lg:text-[3.8rem] font-black text-[#253D4E] leading-[1.05] transition-all duration-300">{banners[currentSlide].title}</h1>
+            <p className="text-gray-500 font-bold text-xl">{banners[currentSlide].subtitle}</p>
+            <div onClick={e => e.stopPropagation()} className="bg-white rounded-full p-2 flex max-w-md shadow-2xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50">
+              <input type="text" placeholder="Search..." className="flex-1 px-4 outline-none text-gray-700 font-bold text-base w-full min-w-0" value={bannerSearchTerm} onChange={e => setBannerSearchTerm(e.target.value)} onKeyDown={e => e.key === "Enter" && handleBannerSearch()} />
+              <button onClick={handleBannerSearch} className="bg-[#3BB77E] text-white rounded-full px-6 py-2 font-black hover:bg-[#29A56C] transition shadow-lg text-base shrink-0">Search</button>
+            </div>
           </div>
-        </div>
-        <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex gap-2 md:gap-3 z-20" onClick={e => e.stopPropagation()}>
-          {banners.map((_, i) => (
-            <button key={i} onClick={() => setCurrentSlide(i)} className={`h-1.5 md:h-2.5 rounded-full transition-all duration-300 ${currentSlide === i ? "w-6 md:w-8 bg-[#3BB77E]" : "w-1.5 md:w-2.5 bg-gray-300 hover:bg-gray-400"}`} />
-          ))}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3 z-20" onClick={e => e.stopPropagation()}>
+            {banners.map((_, i) => (
+              <button key={i} onClick={() => setCurrentSlide(i)} className={`h-2.5 rounded-full transition-all duration-300 ${currentSlide === i ? "w-8 bg-[#3BB77E]" : "w-2.5 bg-gray-300 hover:bg-gray-400"}`} />
+            ))}
+          </div>
         </div>
       </section>
 
@@ -560,13 +595,25 @@ export default function HomeContent({ products, categories }) {
       </section>
 
       {/* Newsletter / Footer Top */}
-      <div className="bg-[#ECF7F3] rounded-[40px] p-6 md:p-14 mt-10 relative overflow-hidden border border-gray-100 shadow-sm flex items-center min-h-[300px] md:min-h-[400px]">
-        <div className="absolute inset-0 bg-cover bg-no-repeat bg-right opacity-100" style={{ backgroundImage: "url('https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743312/quickzy/banners/footer_banner.jpg')" }}></div>
-        <div className="relative z-10 w-full md:max-w-lg space-y-4 md:space-y-6">
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-[#253D4E] leading-tight">Stay home & get your daily <br /><span className="text-[#3BB77E]">needs from our shop</span></h2>
-          <div className="bg-white rounded-full p-1.5 md:p-2 flex max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
-            <input type="email" placeholder="Enter email" className="flex-1 px-3 md:px-5 outline-none text-xs md:text-base text-gray-700 bg-transparent" value={footerEmail} onChange={e => setFooterEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && handleFooterLogin()} />
-            <button onClick={handleFooterLogin} className="bg-[#3BB77E] text-white rounded-full px-4 md:px-8 py-2 md:py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg text-xs md:text-base">Login</button>
+      <div className="rounded-[40px] mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[300px] md:min-h-[400px]">
+        {/* Extreme scale (2.8x) to crop out peripheral blurred pixels and guarantee top-to-bottom edge coverage */}
+        <img 
+          src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743312/quickzy/banners/footer_banner.jpg" 
+          className="absolute inset-0 w-full h-full object-cover scale-[2.8] md:scale-100 object-center transition-transform duration-700" 
+          alt="" 
+        />
+        {/* Maximum brightness: No overlay on mobile for best clarity */}
+        <div className="absolute inset-0 bg-black/0 md:bg-black/25 transition-colors" />
+        {/* Mobile: stacked layout — text top-left, email at bottom */}
+        <div className="relative z-10 flex flex-col justify-between h-full p-8 md:p-14 min-h-[300px] md:min-h-[400px]">
+          <div className="max-w-[280px] md:max-w-lg">
+            <h2 className="text-3xl md:text-5xl font-black text-white leading-tight transition-all text-shadow-strong">Stay home &amp; get <br />your daily <br /><span className="text-[#3BB77E]">needs from <br />our shop</span></h2>
+          </div>
+          <div className="mt-8">
+            <div className="bg-white rounded-full p-1.5 md:p-2 flex max-w-sm md:max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
+              <input type="email" placeholder="Enter email" className="flex-1 px-4 md:px-5 outline-none text-xs md:text-base text-gray-700 bg-transparent min-w-0" value={footerEmail} onChange={e => setFooterEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && handleFooterLogin()} />
+              <button onClick={handleFooterLogin} className="bg-[#3BB77E] text-white rounded-full px-5 md:px-8 py-2 md:py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg text-xs md:text-base shrink-0">Login</button>
+            </div>
           </div>
         </div>
       </div>
