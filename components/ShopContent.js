@@ -16,6 +16,7 @@ import {
 
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useStore } from "@/context/StoreContext";
 import { FiHeart } from "react-icons/fi";
 
 export default function ShopContent({ products, categories }) {
@@ -27,13 +28,18 @@ export default function ShopContent({ products, categories }) {
   const categoryQuery = searchParams.get("category");
   const searchQuery = searchParams.get("search");
 
+  const { storeData, initializeStore } = useStore();
   const [view, setView] = useState("grid");
   const [selectedCategory, setSelectedCategory] = useState("All");
 
-  // GUIDE: Step 1 - Create a state to hold the maximum price selected by the user.
-  // We initialize it to 5000 so all products are visible by default.
   const [sliderPrice, setSliderPrice] = useState(5000);
   const [filterPrice, setFilterPrice] = useState(5000);
+
+  React.useEffect(() => {
+    if (products?.length > 0) {
+      initializeStore(products, categories);
+    }
+  }, [products, categories, initializeStore]);
 
   // Sync state with URL
   React.useEffect(() => {
@@ -49,23 +55,20 @@ export default function ShopContent({ products, categories }) {
 
   const filteredProducts = React.useMemo(() => {
     // 1. First, apply Category Filter (if any)
-    let pool = products;
+    let pool = storeData.shopShuffled || [];
     if (selectedCategory !== "All") {
-      pool = products.filter((p) => {
+      pool = pool.filter((p) => {
         const target = selectedCategory.toLowerCase();
         const pCat = p.category.toLowerCase();
-        // Dynamic match: matches exactly, or if one contains the other (e.g. Dairy in Milk & Dairy)
-        // Also checks if the category keyword is in the product name as a fallback
         return (
           pCat === target ||
           target.includes(pCat) ||
-          pCat.includes(target) ||
-          p.name.toLowerCase().includes(target.split(" ")[0])
+          pCat.includes(target)
         );
       });
     }
 
-    // 2. Second, apply Text Search Filter (if any from URL)
+    // 2. Second, apply Text Search Filter
     if (searchQuery) {
       const term = searchQuery.toLowerCase();
       pool = pool.filter(
@@ -77,23 +80,9 @@ export default function ShopContent({ products, categories }) {
 
     // 3. Third, apply Price Filter
     return pool.filter((p) => p.price <= filterPrice);
-  }, [selectedCategory, filterPrice, searchQuery, products]);
+  }, [selectedCategory, filterPrice, searchQuery, storeData.shopShuffled]);
 
-  // Derive Top 30% Hot Deals based on the current filtered pool pool
-  const hotDealsIds = React.useMemo(() => {
-    const list = [...filteredProducts].sort((a, b) => {
-      const getNum = (str) => parseInt(str?.replace("%", "") || "0");
-      return getNum(b.discount) - getNum(a.discount);
-    });
-    const count = Math.round(list.length * 0.3);
-    return new Set(list.slice(0, count).map((p) => p._id || p.id));
-  }, [filteredProducts]);
-
-  const [sortedProducts, setSortedProducts] = useState([]);
-
-  React.useEffect(() => {
-    setSortedProducts([...filteredProducts].sort(() => Math.random() - 0.5));
-  }, [filteredProducts]);
+  const sortedProducts = filteredProducts;
 
   const handleCategoryClick = (name) => {
     router.push(`/shop?category=${encodeURIComponent(name)}`);
@@ -216,12 +205,9 @@ export default function ShopContent({ products, categories }) {
               New products
             </h3>
             <div className="space-y-6">
-              {[...products]
-                .sort((a,b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
-                .slice(0, 3)
-                .map((item) => (
+              {(storeData.recentlyAdded || []).map((item) => (
                 <Link
-                  key={item._id}
+                  key={item._id || item.id}
                   href={`/product/${item.id_custom || item.id}`}
                   className="flex gap-4 group cursor-pointer"
                 >
@@ -287,8 +273,8 @@ export default function ShopContent({ products, categories }) {
               >
                 {/* Tag Badge */}
                 {prod.discount && (
-                  <span className="absolute top-0 left-0 text-white text-[10px] font-black px-4 py-1.5 rounded-tl-2xl rounded-br-2xl z-10 bg-[#f74b81] italic uppercase">
-                    Hot Deal
+                  <span className={`absolute top-0 left-0 text-white text-[10px] font-black px-4 py-1.5 rounded-tl-2xl rounded-br-2xl z-10 italic uppercase ${prod.tagColor || "bg-[#f74b81]"}`}>
+                    {prod.tag || "Hot Deal"}
                   </span>
                 )}
 

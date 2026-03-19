@@ -27,6 +27,7 @@ export const metadata = {
 
 import LocationGuard from "@/components/LocationGuard";
 import { fetchCategories } from "@/actions/dbactions";
+import { StoreProvider } from "@/context/StoreContext";
 
 export default async function RootLayout({ children }) {
   const categories = await fetchCategories();
@@ -37,20 +38,22 @@ export default async function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 min-h-screen font-sans`}
       >
         <SessionWrapper>
-          <CartProvider>
-            <WishlistProvider>
-              <LocationGuard>
-                <Navbar initialCategories={categories} />
-                {children}
-                <Footer />
-              </LocationGuard>
-              <ToastContainer
-                position="top-right"
-                autoClose={2000}
-                hideProgressBar={false}
-              />
-            </WishlistProvider>
-          </CartProvider>
+          <StoreProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <LocationGuard>
+                  <Navbar initialCategories={categories} />
+                  {children}
+                  <Footer />
+                </LocationGuard>
+                <ToastContainer
+                  position="top-right"
+                  autoClose={2000}
+                  hideProgressBar={false}
+                />
+              </WishlistProvider>
+            </CartProvider>
+          </StoreProvider>
         </SessionWrapper>
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"

@@ -10,7 +10,7 @@ const AboutPage = () => {
       <section className="relative h-[500px] flex items-center px-4 overflow-hidden">
         <div className="absolute inset-0">
           <img 
-            src="https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=2070" 
+            src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-3.jpg" 
             alt="Quickzy Background" 
             className="w-full h-full object-cover brightness-[0.4]"
           />

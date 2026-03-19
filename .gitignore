@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# temporary folders
+/tmp/
+/reseed_assets/
+
+# sync mapping and audit logs
+/cloudinary_audit.json
+/cloudinary_url_map.json
+/reseed_mapping.json
+/audit_results.json

@@ -137,7 +137,7 @@
       "vendor": "Mother Dairy",
       "category": "Dairy",
       "discount": "13%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062856/quickzy/products/mw4rdmlvqt18ec2bxagr.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773949972/quickzy/products/mother_dairy_curd_final.png",
       "__v": 0
     },
     {
@@ -319,7 +319,7 @@
       "vendor": "Real",
       "category": "Beverages",
       "discount": "12%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773766079/quickzy/products/wqafuxiloby3kg4c5epk.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773951487/quickzy/products/wqafuxiloby3kg4c5epk.png",
       "__v": 0
     },
     {
@@ -591,10 +591,10 @@
     {
       "_id": "6990464c80b7ff69f73cc347",
       "id_custom": 9,
-      "name": "Aashirvaad Atta (5KG)",
+      "name": "Aashirvaad Atta (10KG)",
       "price": 245,
-      "unit": "5 KG",
-      "description": "Aashirvaad Whole Wheat Atta is made from the finest quality wheat grains sourced from selected amber-colored wheat fields across India. The grains are cleaned using a 3-step mechanized process and ground using traditional stone-grinding technology to retain natural nutrition and fiber. This results in soft, fluffy, and delicious rotis that stay fresh for a longer time, providing a wholesome meal for your family every day. Our 'Purity through tradition' promise ensures that you get 100% pure atta with zero adulteration.",
+      "unit": "10 KG",
+      "description": "Aashirvaad Whole Wheat Atta (10KG) is made from the finest quality wheat grains sourced from selected amber-colored wheat fields across India. The grains are cleaned using a 3-step mechanized process and ground using traditional stone-grinding technology to retain natural nutrition and fiber. This results in soft, fluffy, and delicious rotis that stay fresh for a longer time, providing a wholesome meal for your family every day. Our 'Purity through tradition' promise ensures that you get 100% pure atta with zero adulteration.",
       "vendor": "ITC",
       "category": "Grocery",
       "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062884/quickzy/products/iywzdsijdvxhweyqjxr0.png",
@@ -684,7 +684,7 @@
       "description": "Red Label Natural Care Tea is a premium blend enriched with the goodness of five natural ingredients: Ginger, Tulsi, Cardamom, Ashwagandha, and Mulethi. These herbs are known to boost immunity and provide a rich, soothing flavor and aroma that characterizes a healthy morning cup. Perfect for daily consumption, it helps in maintaining overall health while offering a refreshing taste that your entire family will enjoy. The high-quality tea leaves ensure a consistent and deep color in every brew.",
       "vendor": "Brooke Bond",
       "category": "Tea & Coffee",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773766083/quickzy/products/ozzcctvknmcdgzweqlcg.png"
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773951469/quickzy/products/ozzcctvknmcdgzweqlcg.png"
     },
     {
       "id_custom": 102,
@@ -694,7 +694,7 @@
       "description": "Starbucks Caffe Verona is a full-bodied, multi-region blend with a rich, dark cocoa texture and a sweet, roasty finish. Named after a city known for romance, this coffee is well-loved for its deep and intense flavor profile that is perfect for espresso or brewing at home. Each pack is carefully roasted to the Starbucks Dark Roast standard to ensure you get the same premium quality experience in your own kitchen. Ideal for coffee enthusiasts who appreciate a sophisticated and complex cup of coffee.",
       "vendor": "Starbucks",
       "category": "Tea & Coffee",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773766082/quickzy/products/tbigq9sdnen4yemch6vz.png"
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773951479/quickzy/products/tbigq9sdnen4yemch6vz.png"
     },
     {
       "id_custom": 103,
@@ -706,7 +706,7 @@
       "vendor": "Tropicana",
       "category": "Beverages",
       "discount": "17%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773766081/quickzy/products/m2friyndasj5bq8xlpyw.png"
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773951464/quickzy/products/m2friyndasj5bq8xlpyw.png"
     }
   ]
 }

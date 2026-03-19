@@ -22,11 +22,12 @@ export default function ProductContent({ product, similarProducts }) {
   if (!product) return null;
 
   // Calculate pricing
+  const singlePrice = product.price;
+  const comboPrice = Math.round(product.price * 2 * 0.9);
+  
   const isDouble = selectedPack === "double";
-  const displayPrice = isDouble ? Math.round(product.price * 2 * 0.9) : product.price;
-  const displayOldPrice = isDouble ? product.oldPrice * 2 : product.oldPrice;
-  const doubleDiscount = Math.round(((displayOldPrice - displayPrice) / displayOldPrice) * 100);
-  const displayDiscountBadge = isDouble ? `${doubleDiscount}%` : product.discount;
+  const displayPrice = isDouble ? comboPrice : singlePrice;
+  const displayOldPrice = isDouble ? product.oldPrice * 2 || product.price * 2 : product.oldPrice;
 
   return (
     <div className="bg-white min-h-screen pb-20 font-sans">
@@ -68,7 +69,6 @@ export default function ProductContent({ product, similarProducts }) {
                   <FiHeart className={`text-2xl ${isInWishlist(product._id || product.id) ? "text-red-500 fill-red-500" : "text-gray-300"}`} />
                 </button>
               </div>
-              {/* Dummy Time/Speed Info */}
               <div className="flex items-center gap-2">
                  <div className="bg-[#DEF9EC] text-[#3BB77E] px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider">
                    10 MINS
@@ -78,23 +78,30 @@ export default function ProductContent({ product, similarProducts }) {
               </div>
             </div>
 
-            <div className="space-y-5">
-               <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Select Pack Size</p>
-               <div className="flex flex-wrap gap-4">
+            <div className="space-y-6">
+               <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest px-1">Select Pack Size</p>
+               <div className="flex gap-4">
                   <button 
                     onClick={() => setSelectedPack("single")}
-                    className={`flex-1 border-2 px-5 py-3.5 rounded-2xl text-sm font-black flex flex-col items-start transition-all ${selectedPack === "single" ? 'border-[#3BB77E] bg-[#DEF9EC] text-slate-800' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
+                    className={`flex-1 border-2 p-3 rounded-2xl font-black flex flex-col items-center justify-center transition-all relative h-20 ${selectedPack === "single" ? 'border-[#3BB77E] bg-[#DEF9EC] text-slate-800' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
                   >
-                     <span>{product.unit} (Single)</span>
-                     <span className={`text-[11px] ${selectedPack === "single" ? 'text-[#3BB77E]' : 'opacity-60'}`}>₹{product.price}</span>
+                     {product.discount && (
+                       <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF7F50] text-white text-[9px] px-2.5 py-1 rounded-lg font-black italic shadow-sm whitespace-nowrap">
+                         {product.discount} OFF
+                       </span>
+                     )}
+                     <span className="truncate text-sm opacity-70 mb-0.5">{product.unit} (Single)</span>
+                     <span className={`text-lg ${selectedPack === "single" ? 'text-[#3BB77E]' : 'text-slate-600'}`}>₹{singlePrice}</span>
                   </button>
                   <button 
                     onClick={() => setSelectedPack("double")}
-                    className={`flex-1 border-2 px-5 py-3.5 rounded-2xl text-sm font-black flex flex-col items-start transition-all relative ${selectedPack === "double" ? 'border-[#3BB77E] bg-[#DEF9EC] text-slate-800' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
+                    className={`flex-1 border-2 p-3 rounded-2xl font-black flex flex-col items-center justify-center transition-all relative h-20 ${selectedPack === "double" ? 'border-[#3BB77E] bg-[#DEF9EC] text-slate-800' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
                   >
-                     <span className="absolute -top-3 right-4 bg-orange-500 text-white text-[9px] px-2 py-0.5 rounded-full font-black">COMBO SAVINGS</span>
-                     <span>{parseInt(product.unit) * 2} {product.unit.replace(/[0-9]/g, '').trim()} (Double)</span>
-                     <span className={`text-[11px] ${selectedPack === "double" ? 'text-[#3BB77E]' : 'opacity-60'}`}>₹{displayPrice}</span>
+                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#7C3AED] text-white text-[9px] px-2.5 py-1 rounded-lg font-black italic shadow-sm whitespace-nowrap uppercase tracking-tighter">
+                       COMBO SAVING {parseInt(product.discount || 0) + 10}% OFF
+                     </span>
+                     <span className="truncate text-sm opacity-70 mb-0.5">2 x {product.unit} (Double)</span>
+                     <span className={`text-lg ${selectedPack === "double" ? 'text-[#3BB77E]' : 'text-slate-600'}`}>₹{comboPrice}</span>
                   </button>
                </div>
             </div>
@@ -108,7 +115,12 @@ export default function ProductContent({ product, similarProducts }) {
                        ₹{displayOldPrice}
                        <span className="absolute top-1/2 left-[-4px] w-[calc(100%+8px)] h-[2px] bg-[#888]"></span>
                      </span>
-                     <span className="text-[11px] bg-[#FF7F50] text-white px-2.5 py-1 rounded-lg font-black italic shadow-lg shadow-orange-100 uppercase">{displayDiscountBadge} OFF</span>
+                     <span className={`text-[11px] text-white px-2.5 py-1 rounded-lg font-black italic shadow-lg uppercase ${isDouble ? "bg-[#7C3AED]" : "bg-[#FF7F50]"}`}>
+                        {isDouble 
+                          ? `COMBO SAVING ${parseInt(product.discount || 0) + 10}% OFF` 
+                          : `${product.discount} OFF`
+                        }
+                     </span>
                    </>
                  )}
                </div>

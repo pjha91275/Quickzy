@@ -121,7 +121,7 @@ export default function HomeContent({ products, categories }) {
     {
       title: <>Fresh Grocery <br /><span className="text-[#3BB77E]">Within 15 Mins</span></>,
       subtitle: "Save up to 50% on your first order",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743306/quickzy/banners/hero-banner-1.jpg",
+      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944028/quickzy/banners/hero-banner-1.png",
       tag: "Quickzy: Fresh. Fast. Delivered.",
       bgColor: "bg-[#DEF9EC]",
       shopLink: "/shop",
@@ -129,7 +129,7 @@ export default function HomeContent({ products, categories }) {
     {
       title: <>Fresh Vegetables <br /><span className="text-[#3BB77E]">Straight from Farm</span></>,
       subtitle: "Get fresh onions, potatoes and more",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743308/quickzy/banners/hero-banner-3.jpg",
+      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-3.jpg",
       tag: "Quickzy: Farm Fresh",
       bgColor: "bg-[#fff3e0]",
       shopLink: "/shop?category=Vegetables",
@@ -137,7 +137,7 @@ export default function HomeContent({ products, categories }) {
     {
       title: <>Pure Dairy <br /><span className="text-[#3BB77E]">Morning Freshness</span></>,
       subtitle: "Get fresh milk and dairy delivered daily",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743307/quickzy/banners/hero-banner-2.png",
+      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944029/quickzy/banners/hero-banner-2.png",
       tag: "Quickzy: Fresh Dairy",
       bgColor: "bg-[#e3f2fd]",
       shopLink: `/shop?category=${encodeURIComponent("Milk & Dairy")}`,
@@ -145,7 +145,7 @@ export default function HomeContent({ products, categories }) {
     {
       title: <>Latest Gadgets <br /><span className="text-[#3BB77E]">& Wearables</span></>,
       subtitle: "Experience technology at your doorstep",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743310/quickzy/banners/hero-banner-4.png",
+      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944031/quickzy/banners/hero-banner-4.png",
       tag: "Quickzy: Electronics",
       bgColor: "bg-[#fce4ec]",
       shopLink: "/shop?category=Electronics",
@@ -153,7 +153,7 @@ export default function HomeContent({ products, categories }) {
     {
       title: <>Home Cleaners <br /><span className="text-[#3BB77E]">Shiny & Fresh</span></>,
       subtitle: "Everything you need for a sparkling home",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743311/quickzy/banners/hero-banner-5.png",
+      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944032/quickzy/banners/hero-banner-5.png",
       tag: "Quickzy: Household",
       bgColor: "bg-[#f3e5f5]",
       shopLink: `/shop?category=${encodeURIComponent("Household Essentials")}`,
@@ -498,7 +498,7 @@ export default function HomeContent({ products, categories }) {
       <section>
         <h2 className="text-3xl font-bold text-[#253D4E] mb-8">Daily Best Sells</h2>
         <div className="flex flex-col lg:flex-row gap-6">
-          <Link href="/shop?category=Vegetables" className="lg:w-1/4 h-[500px] bg-cover bg-center rounded-[40px] p-10 flex flex-col justify-start relative overflow-hidden shadow-md group border" style={{ backgroundImage: "url('https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743308/quickzy/banners/hero-banner-3.jpg')" }}>
+          <Link href="/shop?category=Vegetables" className="lg:w-1/4 h-[500px] bg-cover bg-center rounded-[40px] p-10 flex flex-col justify-start relative overflow-hidden shadow-md group border" style={{ backgroundImage: "url('https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-3.jpg')" }}>
             <div className="relative z-20">
               <h6 className="text-white/80 font-bold mb-2 uppercase tracking-widest text-xs">Recommended</h6>
               <h3 className="text-white text-[2.7rem] font-extrabold mb-8 leading-[1.1]">Premium and fresh Quality Products Guaranteed</h3>
@@ -598,12 +598,12 @@ export default function HomeContent({ products, categories }) {
       <div className="rounded-[40px] mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[300px] md:min-h-[400px]">
         {/* Extreme scale (2.8x) to crop out peripheral blurred pixels and guarantee top-to-bottom edge coverage */}
         <img 
-          src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1773743312/quickzy/banners/footer_banner.jpg" 
-          className="absolute inset-0 w-full h-full object-cover scale-[2.8] md:scale-100 object-center transition-transform duration-700" 
+          src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944026/quickzy/banners/footer_banner.jpg" 
+          className="absolute inset-0 w-full h-full object-cover scale-[2.8] md:scale-100 object-center transition-transform duration-700 md:brightness-110 italic" 
           alt="" 
         />
-        {/* Maximum brightness: No overlay on mobile for best clarity */}
-        <div className="absolute inset-0 bg-black/0 md:bg-black/25 transition-colors" />
+        {/* Maximum brightness: No overlay on mobile for best clarity, lighter on desktop */}
+        <div className="absolute inset-0 bg-black/0 md:bg-black/10 transition-colors" />
         {/* Mobile: stacked layout — text top-left, email at bottom */}
         <div className="relative z-10 flex flex-col justify-between h-full p-8 md:p-14 min-h-[300px] md:min-h-[400px]">
           <div className="max-w-[280px] md:max-w-lg">
