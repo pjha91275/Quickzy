@@ -4,7 +4,7 @@
       "_id": "6990462480b7ff69f73cc2e5",
       "name": "Milk & Dairy",
       "count": 5,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062845/quickzy/categories/vx5xtljdbtaynhucxfqc.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773948046/blitaqbp9czwk3nxpwvo_hijmxz.jpg",
       "bg": "bg-blue-50",
       "__v": 0
     },
@@ -12,7 +12,7 @@
       "_id": "6990462580b7ff69f73cc2e7",
       "name": "Fruits",
       "count": 5,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062845/quickzy/categories/eieyyisgi4gmtlv6dla5.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773947144/sphfsawzvfuqhdfh98uw_r4xnpp.jpg",
       "bg": "bg-orange-50",
       "__v": 0
     },
@@ -20,7 +20,7 @@
       "_id": "6990462680b7ff69f73cc2e9",
       "name": "Vegetables",
       "count": 5,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062846/quickzy/categories/cruglk734zdscpi0ttg3.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773989699/quickzy/categories/vegetables.png",
       "bg": "bg-green-50",
       "__v": 0
     },
@@ -28,7 +28,7 @@
       "_id": "6990462780b7ff69f73cc2eb",
       "name": "Tea & Coffee",
       "count": 3,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062847/quickzy/categories/yu5mjd6vitayoovg8kai.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773989699/quickzy/categories/tea___coffee.webp",
       "bg": "bg-amber-50",
       "__v": 0
     },
@@ -36,7 +36,7 @@
       "_id": "6990462880b7ff69f73cc2ed",
       "name": "Snacks",
       "count": 6,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062848/quickzy/categories/q4tjesjyat8eqqjc3wqr.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773989700/quickzy/categories/snacks.webp",
       "bg": "bg-yellow-50",
       "__v": 0
     },
@@ -44,7 +44,7 @@
       "_id": "6990462880b7ff69f73cc2ef",
       "name": "Personal Care",
       "count": 3,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062848/quickzy/categories/meum6gufkcoeydnn8az5.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773989701/quickzy/categories/personal_care.webp",
       "bg": "bg-pink-50",
       "__v": 0
     },
@@ -52,7 +52,7 @@
       "_id": "6990462980b7ff69f73cc2f1",
       "name": "Household Essentials",
       "count": 5,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062849/quickzy/categories/fqsm6tbudgiiw7qs4dv4.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/surf_excel_matic__1ltr_.jpg",
       "bg": "bg-purple-50",
       "__v": 0
     },
@@ -60,7 +60,7 @@
       "_id": "6990462a80b7ff69f73cc2f3",
       "name": "Beverages",
       "count": 4,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062850/quickzy/categories/qatf09qglfstp03sxmrx.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773989703/quickzy/categories/beverages.png",
       "bg": "bg-teal-50",
       "__v": 0
     },
@@ -68,7 +68,7 @@
       "_id": "6990462b80b7ff69f73cc2f5",
       "name": "Electronics",
       "count": 6,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062851/quickzy/categories/rmf8k2um0cq1xo6rameu.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773989703/quickzy/categories/electronics.webp",
       "bg": "bg-orange-100",
       "__v": 0
     },
@@ -76,14 +76,14 @@
       "_id": "6990462c80b7ff69f73cc2f7",
       "name": "Stationery",
       "count": 3,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062852/quickzy/categories/zzfhnpqjcxhzl7fk2hbs.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773989706/quickzy/categories/stationery.png",
       "bg": "bg-red-50",
       "__v": 0
     },
     {
       "name": "Grocery",
       "count": 4,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062884/quickzy/products/iywzdsijdvxhweyqjxr0.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773947153/jwrhx8w7w7rb2dal6cr5_vwxwff.jpg",
       "bg": "bg-yellow-100"
     }
   ],
@@ -99,7 +99,7 @@
       "vendor": "Amul",
       "category": "Dairy",
       "discount": "5%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062853/quickzy/products/y4lnucfkgicz817ooiny.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773947146/yi30wwu2h0k3c9g3jigs_abuhpz.webp",
       "__v": 0
     },
     {
@@ -111,7 +111,7 @@
       "description": "Heritage Toned Milk is a high-quality nutritional choice for families seeking fresh and healthy cow milk. It is processed with care to maintain the perfect balance of taste and nutrition while being light on the stomach. Ideal for daily tea, coffee, or as a healthy beverage for children, it provides essential calcium and vitamins for overall growth. This milk is pasteurized and packaged under hygienic conditions to ensure purity and long-lasting freshness.",
       "vendor": "Heritage",
       "category": "Dairy",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062854/quickzy/products/utlij3n2mezawklczp1t.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773948046/blitaqbp9czwk3nxpwvo_hijmxz.jpg",
       "__v": 0
     },
     {
@@ -123,7 +123,7 @@
       "description": "Amul Fresh Paneer is synonymous with purity and softness, making it a favorite for Indian curries and snacks. It is made from fresh milk and is packed using advanced technology to retain its texture and flavor for longer periods. Whether you are making Paneer Tikka, Palak Paneer, or a simple stir-fry, it absorbs flavors beautifully while remaining tender. It is a rich source of protein and calcium, making it an excellent addition to a balanced vegetarian diet.",
       "vendor": "Amul",
       "category": "Dairy",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062855/quickzy/products/fbrm71g3ltfrpjy91eav.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/amul_fresh_paneer__200gm_.jpg",
       "__v": 0
     },
     {
@@ -151,7 +151,7 @@
       "vendor": "Amul",
       "category": "Dairy",
       "discount": "6%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062857/quickzy/products/bzgktwhjmxiib8vybkxe.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/amul_cheese_slices__200gm_.jpg",
       "__v": 0
     },
     {
@@ -165,7 +165,7 @@
       "vendor": "Quickzy Fresh",
       "category": "Fruits",
       "discount": "25%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062857/quickzy/products/qf66arwpkptbrqigj69k.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fresh_banana__robusta_.jpg",
       "__v": 0
     },
     {
@@ -179,7 +179,7 @@
       "vendor": "Quickzy Fresh",
       "category": "Fruits",
       "discount": "18%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062858/quickzy/products/haml74twaz9gyqnbospu.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fresh_apple__royal_gala_.jpg",
       "__v": 0
     },
     {
@@ -193,7 +193,7 @@
       "vendor": "Quickzy Fresh",
       "category": "Fruits",
       "discount": "20%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062859/quickzy/products/t2nrdkadtzckghg5mbw9.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fresh_orange__imported_.jpg",
       "__v": 0
     },
     {
@@ -205,7 +205,7 @@
       "description": "Seedless Grapes are the perfect no-mess snack, known for their sweet, juicy interior and satisfying snap when you bite into them. These grapes are rich in natural sugars and vitamins, providing a healthy way to satisfy your sweet tooth throughout the day. They are ideal for packing in lunchboxes, serving at parties, or adding to a variety of sweet and savory dishes. We source these from farms that prioritize quality, ensuring you receive firm and fresh bunches every time.",
       "vendor": "Quickzy Fresh",
       "category": "Fruits",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062860/quickzy/products/twgtdt026u8kqdgc6ol3.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773947144/sphfsawzvfuqhdfh98uw_r4xnpp.jpg",
       "__v": 0
     },
     {
@@ -219,7 +219,7 @@
       "vendor": "Quickzy Fresh",
       "category": "Fruits",
       "discount": "20%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062860/quickzy/products/v6lbecbcbb7trckoorpv.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fresh_pomegranate.jpg",
       "__v": 0
     },
     {
@@ -231,7 +231,7 @@
       "description": "Our local tomatoes are farm-fresh, ensuring you get the authentic flavor and juiciness required for daily Indian cooking. They are harvested daily and delivered quickly to maintain their firmness and bright red color. Perfect for base gravies, tangy chutneys, or fresh salads, these tomatoes are a rich source of Vitamin C and Lycopene. We ensure only the best quality, undamaged tomatoes reach your kitchen for a healthy and tasty meal experience.",
       "vendor": "Quickzy Fresh",
       "category": "Vegetables",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062861/quickzy/products/qfgtygcrtqm30mbiurwf.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fresh_tomato__local_.jpg",
       "__v": 0
     },
     {
@@ -245,7 +245,7 @@
       "vendor": "Quickzy Fresh",
       "category": "Vegetables",
       "discount": "20%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062862/quickzy/products/shsrr9sg12yy8ktrzn44.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fresh_onion__nashik_.jpg",
       "__v": 0
     },
     {
@@ -257,7 +257,7 @@
       "description": "New Crop Potatoes are appreciated for their thin skin and creamy, versatile flesh that is perfect for a wide range of recipes. Sourced from nutrient-rich soils, these potatoes are ideal for boiling, roasting, or mashing, providing a comforting and filling addition to any meal. They are high in complex carbohydrates and potassium, offering sustained energy for your daily activities. We pick only uniform, sprout-free potatoes to ensure ease of preparation and consistent quality.",
       "vendor": "Quickzy Fresh",
       "category": "Vegetables",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062863/quickzy/products/w5z7urfyu4i8bwkqzknb.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fresh_potato__new_crop_.jpg",
       "__v": 0
     },
     {
@@ -269,7 +269,7 @@
       "description": "Our Cauliflower is known for its compact, snowy white curds and fresh, crunchy texture that stands up well to various cooking methods. It is a low-calorie alternative to grains and is incredibly rich in fiber and various essential vitamins. Whether you are roasting it with spices, making Gobi Manchurian, or using it in a traditional curry, it adds a delightful texture and mild flavor. We select heads that are heavy and free from spots, guaranteeing freshness and a long usage window.",
       "vendor": "Quickzy Fresh",
       "category": "Vegetables",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062864/quickzy/products/cof7fbyiwz1oqf0mvlu7.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fresh_cauliflower.jpg",
       "__v": 0
     },
     {
@@ -281,7 +281,7 @@
       "description": "Our Spinach leaves are tender, vibrant, and packed with vitamins A, C, and K, as well as a significant amount of iron. Collected from hydroponic or high-quality farms, these greens are perfect for healthy smoothies, sautéed sides, or traditional Palak Paneer. Spinach is known for its high nutritional density and its ability to cook down into a delicious, nutrient-rich addition to many dishes. We ensure that our spinach is kept cool and delivered fresh to maintain its crispness and healthy green color.",
       "vendor": "Quickzy Fresh",
       "category": "Vegetables",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062865/quickzy/products/h7zdudyhozjmelcanrjh.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fresh_spinach__palak_.jpg",
       "__v": 0
     },
     {
@@ -293,7 +293,7 @@
       "description": "Coca-Cola is the world's favorite sparkling beverage, offering a unique, refreshing taste that has remained classic for generations. This 1.25L bottle is perfect for sharing with friends and family during meals or gatherings, providing a crisp burst of flavor. Best served ice-cold, it is the ultimate thirst quencher and a perfect companion for spicy snacks and savory meals. Enjoy the familiar fizz and the iconic taste of Coke, delivered straight to your door for your convenience.",
       "vendor": "Coca Cola",
       "category": "Beverages",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062865/quickzy/products/vcvr3paxjsqudhgelmbn.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/coca_cola__1_25ltr_.jpg",
       "__v": 0
     },
     {
@@ -305,7 +305,7 @@
       "description": "Nescafe Gold is a premium, freeze-dried soluble coffee that offers a smooth and sophisticated taste with a rich aroma. Crafted with a blend of Arabica and Robusta beans, it is roasted to perfection to bring out a distinctive depth of flavor. Ideal for those who enjoy a cafe-quality experience at home, it dissolves instantly to create a consistently perfect cup of coffee. The elegant glass jar preserves the aroma and freshness, ensuring that every cup is as good as the first one.",
       "vendor": "Nescafe",
       "category": "Tea & Coffee",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062866/quickzy/products/retshbajfkwplrmywjug.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/nescafe_gold__50gm_.jpg",
       "__v": 0
     },
     {
@@ -319,7 +319,7 @@
       "vendor": "Real",
       "category": "Beverages",
       "discount": "12%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773951487/quickzy/products/wqafuxiloby3kg4c5epk.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/real_fruit_mixed__1ltr_.jpg",
       "__v": 0
     },
     {
@@ -333,7 +333,7 @@
       "vendor": "Hershey's",
       "category": "Beverages",
       "discount": "12%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062868/quickzy/products/oheocqcxb3gkam9pasl2.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/hershey_s_chocolate_syrup.jpg",
       "__v": 0
     },
     {
@@ -345,7 +345,7 @@
       "description": "Lay's Classic Salted Potato Chips are made from farm-grown potatoes, sliced thin and fried to a perfect golden crisp. They are seasoned with just the right amount of salt, allowing the natural flavor of the potato to shine through in every bite. This snack is perfect for solo munching or sharing during parties and movie nights, offering a satisfying crunch that everyone loves. Each bag is nitro-flushed to preserve freshness and ensure that the chips arrive at your home in perfect condition.",
       "vendor": "Lay's",
       "category": "Snacks",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062868/quickzy/products/p2zznegjhkejk444tvpg.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/lay_s_classic_salted.jpg",
       "__v": 0
     },
     {
@@ -357,7 +357,7 @@
       "description": "Lindt Excellence Dark Chocolate is a masterpiece of Swiss chocolate craftsmanship, offering a deep and satisfying cocoa experience. Known for its smooth texture and balanced flavor profile, it melts elegantly on the tongue to reveal layers of rich dark cocoa notes. This bar is ideal for true chocolate aficionados who appreciate high-quality ingredients and a refined, lingering finish. Perfect for sharing after a meal or enjoying as a sophisticated treat during a quiet moment of relaxation.",
       "vendor": "Lindt",
       "category": "Snacks",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062870/quickzy/products/dunkf25mbbvjkhomsoux.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/lindt_excellence_dark.jpg",
       "__v": 0
     },
     {
@@ -369,7 +369,7 @@
       "description": "Parle-G Gold is a premium version of India's favorite glucose biscuit, offering more milk and honey for a richer and heartier taste. These biscuits have been a trusted source of energy and nutrition for generations, loved by children and adults alike when paired with tea. They are baked to golden perfection, providing a light yet satisfying crunch that is consistently delicious across every pack. This 1kg family pack ensures you have enough to go around for daily snacking and quick energy boosters.",
       "vendor": "Parle",
       "category": "Snacks",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062870/quickzy/products/txlitblnyeoslnkfezpp.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773947154/qdz2fqtlmyflrynor4yk_t5r6r2.jpg",
       "__v": 0
     },
     {
@@ -383,7 +383,7 @@
       "vendor": "Britannia",
       "category": "Snacks",
       "discount": "16%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062871/quickzy/products/ufgwyl6fxddwrpvh3cva.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/britannia_cashew_cookies.jpg",
       "__v": 0
     },
     {
@@ -395,7 +395,7 @@
       "description": "Happilo Roasted and Salted Almonds are a healthy and delicious snack choice for health-conscious individuals seeking a boost of energy. These premium almonds are expertly roasted to enhance their natural nuttiness and lightly seasoned for a perfect savory finish. They are a rich source of Vitamin E, magnesium, and healthy fats, promoting heart health and improved cognitive function. Perfect for carrying in your gym bag, office drawer, or keeping at home for a quick, nutrient-dense snacking option.",
       "vendor": "Happilo",
       "category": "Snacks",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062872/quickzy/products/o45wqrvzsndb1y1w1wxa.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/happilo_roasted_almonds.jpg",
       "__v": 0
     },
     {
@@ -407,7 +407,7 @@
       "description": "Haldiram's Bhujia Sev is an iconic Indian snack made from spicy tepary bean and gram flour noodles, fried to a perfect crisp. Its unique blend of spices offers a savory and slightly tangy flavor profile that is addictive and satisfying at the same time. This bhujia is perfect as a standalone snack or can be used as a crunchy topping for chaats, salads, and traditional Indian meals. Made under stringent quality controls, it maintains its crunch and authentic taste for an extended period.",
       "vendor": "Haldiram",
       "category": "Snacks",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062872/quickzy/products/vrhd1cv2dkwlpfycgjg0.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/haldiram_s_bhujia__400gm_.jpg",
       "__v": 0
     },
     {
@@ -419,7 +419,7 @@
       "description": "The Apple Lightning to USB Cable is an essential accessory for charging and syncing all your compatible Apple devices with efficiency. This durable 1-meter cable is built to high standards, ensuring a stable connection and fast data transfer speeds when connected to a computer or power adapter. It features a reversible design for effortless use and is compact enough to carry in your travel bag or pocket. Genuine Apple construction guarantees compatibility and safety for your expensive electronic devices.",
       "vendor": "Apple",
       "category": "Electronics",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062873/quickzy/products/yodvyrmsyzlg32vwgay1.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/apple_lightning_cable.jpg",
       "__v": 0
     },
     {
@@ -431,7 +431,7 @@
       "description": "BoAt Bassheads 100 wired earphones feature a unique hawk-inspired design that is stylish and provides a comfortable in-ear fit for long hours. Equipped with 10mm dynamic drivers, they deliver clear sound with powerful, super extra bass that brings your music to life. The integrated microphone with a multi-function button allows for easy hands-free calling and music control on the go. Its durable, tangle-free cable ensures a hassle-free experience whether you are commuting, working, or exercising.",
       "vendor": "BoAt",
       "category": "Electronics",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062874/quickzy/products/mbl1udjbgc9fmzeqholp.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/boat_bassheads_100.jpg",
       "__v": 0
     },
     {
@@ -445,7 +445,7 @@
       "vendor": "Energizer",
       "category": "Electronics",
       "discount": "14%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062874/quickzy/products/l7bjmgbaphjyhil1jksp.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/energizer_max_aa__4pk_.jpg",
       "__v": 0
     },
     {
@@ -457,7 +457,7 @@
       "description": "The boAt Watch Storm is the perfect companion for your fitness transformation, featuring a clear 1.3-inch curved display that is both elegant and durable. Its daily activity tracker and 9 different sports modes help you monitor your heart rate and oxygen levels with precision. With its 5ATM water resistance, you can wear it through sweat and splashes without any concern during your intense workouts. Long battery life ensures that you stay connected to your health goals for days on a single charge.",
       "vendor": "BoAt",
       "category": "Electronics",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062875/quickzy/products/a6tltnlgwvxu3oloi876.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/boat_storm_smartwatch.jpg",
       "__v": 0
     },
     {
@@ -469,7 +469,7 @@
       "description": "The Logitech B170 is a reliable wireless mouse that provides the freedom of wireless connectivity with a 10-meter range through a small USB receiver. Its compact and ambidextrous design makes it comfortable for both right and left-handed users during long working hours. It features advanced optical tracking for precise cursor control on almost any surface, enhancing your productivity in the office or on the road. With a battery life of up to 12 months, it is a low-maintenance and dependable choice for your computer setup.",
       "vendor": "Logitech",
       "category": "Electronics",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062876/quickzy/products/qkpsbntql9zhdbrunzjv.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/logitech_b170_mouse.jpg",
       "__v": 0
     },
     {
@@ -483,7 +483,7 @@
       "vendor": "Sony",
       "category": "Electronics",
       "discount": "33%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062877/quickzy/products/wahedxjdohgveyoy0jxr.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/sony_wh_ch520_headphones.jpg",
       "__v": 0
     },
     {
@@ -495,7 +495,7 @@
       "description": "Nivea Men Dark Spot Reduction Face Wash effectively reduces dark spots and accumulated dullness for a brighter and cleaner look. Its effective formula with Vitamin C and Ginkgo helps to control oiliness and leaves your skin feeling refreshed and energized after every wash. Specially developed for male skin, it deeply cleanses pores without drying out the skin, making it suitable for daily use in your grooming routine. Experience visible clarity and a smoother skin texture with consistent use.",
       "vendor": "Nivea",
       "category": "Personal Care",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062878/quickzy/products/dkwoktpk1v7ggjvqf3x7.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/nivea_men_face_wash.jpg",
       "__v": 0
     },
     {
@@ -507,7 +507,7 @@
       "description": "Dove Intense Repair Shampoo is enriched with fiber actives that penetrate deep into the hair to nourish and help repair damaged strands from within. Designed for hair that is prone to breakage and split ends, it progressively strengthens your hair and makes it more resilient against daily damage. It leaves your hair feeling remarkably smooth, shiny, and manageable after every wash, making it ideal for daily hair care. Enjoy the classic and mild Dove scent that stays with you, giving a clean and fresh feeling all day.",
       "vendor": "Dove",
       "category": "Personal Care",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062879/quickzy/products/ta2tsopwbp9i2e9mw3bb.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/dove_intense_repair.jpg",
       "__v": 0
     },
     {
@@ -519,7 +519,7 @@
       "description": "Wild Stone Ultra Sensual Deodorant for men offers an irresistibly masculine fragrance that is perfect for office wear or special evenings. Its unique blend of spicy and aromatic notes provides long-lasting freshness and effectively neutralizes body odor throughout the day's activities. The spray bottle provides a fine mist that covers well and dries quickly, leaving a confident trail of scent behind you. Experience a boost of self-confidence with this premium fragrance that is crafted for the modern, active man.",
       "vendor": "Wild Stone",
       "category": "Personal Care",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062879/quickzy/products/igb4gel7wqzbxnqtzn9i.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/wild_stone_deodorant.jpg",
       "__v": 0
     },
     {
@@ -531,7 +531,7 @@
       "description": "Surf Excel Matic Liquid is specially formulated for front and top-loading washing machines, providing superior stain removal in only one wash. Its advanced liquid formula dissolves instantly in the wash cycle, ensuring no residue is left on your clothes or inside the machine. It is tough on stains but gentle on colors, maintaining the vibrancy of your favorite fabrics for a longer time. The concentrated liquid provides a pleasant fragrance to your laundry, leaving your clothes smelling clean and fresh for days.",
       "vendor": "Surf Excel",
       "category": "Household Essentials",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062880/quickzy/products/pcperidmlcz7toe51qwx.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/surf_excel_matic__1ltr_.jpg",
       "__v": 0
     },
     {
@@ -545,7 +545,7 @@
       "vendor": "Kitchen Essentials",
       "category": "Household Essentials",
       "discount": "11%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062881/quickzy/products/r0jtp7tunzbsdaxmzab9.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/kitchen_essentials_pan.jpg",
       "__v": 0
     },
     {
@@ -557,7 +557,7 @@
       "description": "Milton Pet Bottles offer a convenient and stylish way to carry your water and beverages, whether you are at the gym, office, or school. Made from high-quality, BPA-free food-grade plastic, they are safe for daily use and are designed to be durable and leak-proof. The 1-liter capacity is perfect for staying hydrated throughout the day, while the slender design fits comfortably in most car cup holders and bags. Available in vibrant colors, these bottles are easy to clean and maintain, providing a reliable hydration solution.",
       "vendor": "Milton",
       "category": "Household Essentials",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062882/quickzy/products/k2jsnv6wzjwjtjanzam1.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/milton_bottle__1ltr_.jpg",
       "__v": 0
     },
     {
@@ -571,7 +571,7 @@
       "vendor": "Milton",
       "category": "Household Essentials",
       "discount": "19%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062882/quickzy/products/rd65xwk4tjqp8jwa7tij.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/milton_thermosteel_flask.jpg",
       "__v": 0
     },
     {
@@ -585,7 +585,7 @@
       "vendor": "Lizol",
       "category": "Household Essentials",
       "discount": "12%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062883/quickzy/products/zjsanwxqu0cn3d5jvyiw.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/lizol_floor_cleaner__500ml_.jpg",
       "__v": 0
     },
     {
@@ -597,7 +597,7 @@
       "description": "Aashirvaad Whole Wheat Atta (10KG) is made from the finest quality wheat grains sourced from selected amber-colored wheat fields across India. The grains are cleaned using a 3-step mechanized process and ground using traditional stone-grinding technology to retain natural nutrition and fiber. This results in soft, fluffy, and delicious rotis that stay fresh for a longer time, providing a wholesome meal for your family every day. Our 'Purity through tradition' promise ensures that you get 100% pure atta with zero adulteration.",
       "vendor": "ITC",
       "category": "Grocery",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062884/quickzy/products/iywzdsijdvxhweyqjxr0.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/aashirvaad_atta__10kg_.jpg",
       "__v": 0
     },
     {
@@ -609,7 +609,7 @@
       "description": "Saffola Gold is a premium blended edible oil that contains the goodness of Rice Bran and Sunflower oil for a healthy heart journey. Equipped with Losorb technology, it ensures that your food absorbs significantly less oil, making your meals lighter and healthier for the whole family. It is rich in natural antioxidants and Oryzanol, which help in managing cholesterol levels effectively when part of a balanced diet. This 1-liter jar is a convenient and economical choice for households that prioritize both flavor and health.",
       "vendor": "Marico",
       "category": "Grocery",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062885/quickzy/products/uxjn0yaxb3uoyxca3nsd.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773947153/jwrhx8w7w7rb2dal6cr5_vwxwff.jpg",
       "__v": 0
     },
     {
@@ -623,7 +623,7 @@
       "vendor": "Tata Salt",
       "category": "Grocery",
       "discount": "10%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062886/quickzy/products/v0ni1kkni0dy0erwioen.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/tata_salt_lite.jpg",
       "__v": 0
     },
     {
@@ -635,7 +635,7 @@
       "description": "Fortune Kachi Ghani Mustard Oil is traditionally extracted from high-quality mustard seeds, offering a pungent aroma and a sharp flavor that is essential for authentic Indian cooking. Its high smoke point makes it perfect for deep-frying, sautéing, or as a pickling agent that adds a long-lasting preservative quality to your dishes. Rich in monounsaturated and polyunsaturated fats, it is considered one of the healthiest cooking oils for cold weather and traditional diets. Every drop is pure and maintains the natural nutrients of mustard.",
       "vendor": "Fortune",
       "category": "Grocery",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062887/quickzy/products/bmdowvurk1fpndarkwbt.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/fortune_mustard_oil__1ltr_.jpg",
       "__v": 0
     },
     {
@@ -647,7 +647,7 @@
       "description": "The Pilot V5 Hi-Tecpoint is a world-renowned liquid ink rollerball pen known for its precision needle point and ultra-smooth writing experience. Its unique ink controller system ensures a consistent flow of vibrant blue ink from the first stroke to the very last drop without any smudging. The durable metal pocket clip and comfortable grip make it a reliable choice for students, professionals, and anyone who values high-quality writing instruments. This pack of three ensures you always have a spare pen ready for your intensive writing tasks.",
       "vendor": "Pilot",
       "category": "Stationery",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062888/quickzy/products/j0euus8gayu7oy6epd1y.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/pilot_v5_blue__pack_of_3_.jpg",
       "__v": 0
     },
     {
@@ -659,7 +659,7 @@
       "description": "Classmate Notebooks feature high-quality, eco-friendly paper that is smooth to write on and prevents ink from bleeding through to the other side. Each notebook is designed with a durable cover and a firm binding to withstand daily use by students in schools and colleges. The pages include a dedicated section for dates and titles, helping you stay organized with your notes and schoolwork through the academic year. This pack of six provides a complete solution for various subjects, ensuring you are well-prepared for your classes.",
       "vendor": "ITC",
       "category": "Stationery",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062888/quickzy/products/pqd6k68umqfhzf0zc0lc.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/classmate_notebooks__6pk_.jpg",
       "__v": 0
     },
     {
@@ -673,7 +673,7 @@
       "vendor": "Cello",
       "category": "Stationery",
       "discount": "17%",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1771062889/quickzy/products/bixl2nsl6wp080rjftye.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/quickzy/products/cello_maxwriter_pen.jpg",
       "__v": 0
     },
     {

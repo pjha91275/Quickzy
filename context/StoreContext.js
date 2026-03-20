@@ -61,40 +61,38 @@ export const StoreProvider = ({ children }) => {
     setStoreData(prev => {
       if (!products?.length || prev.recentlyAdded?.length > 0) return prev;
 
-      // 1. Identification of the True Recents (Top 5 -> Top 3)
-      const allSortedByDate = [...products].sort((a,b) => {
+      // 1. Decorate ALL products first so discounts are consistent across Home and Shop
+      const decoratedAll = decoratePool(products);
+
+      // 2. Identification of the True Recents (Top 5 -> Shuffle -> Top 3)
+      const allSortedByDate = [...decoratedAll].sort((a,b) => {
         const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return dateB - dateA;
       });
       
       const top5Recents = allSortedByDate.slice(0, 5);
-      const recentlyAddedArr = top5Recents.slice(0, 3);
+      const recentlyAddedArr = shuffleArray(top5Recents).slice(0, 3);
       const recentIds = new Set(recentlyAddedArr.map(r => r._id || r.id));
 
-      // 2. Decorate ALL products first so discounts are consistent
-      const decoratedAll = decoratePool(products);
-      
-      // 3. Prepare the main pool excluding the 3 recents
+      // 3. Prepare the diminishing pool (exclude the 3 recents)
       let availablePool = shuffleArray(decoratedAll.filter(p => !recentIds.has(p._id || p.id)));
       
-      // 4. SEQUENTIAL FILLING (Unique products per section)
+      // 4. SEQUENTIAL UNIQUE FILLING
       
-      // A. Popular All (15 items)
-      // First: 1 per category
-      const popularSet = new Set();
+      // A. Popular All (Initial selection: 1 per category, random category order)
       const popularAll = [];
+      const shuffledCategories = shuffleArray(categories);
       
-      categories.forEach(cat => {
+      shuffledCategories.forEach(cat => {
         const itemIndex = availablePool.findIndex(p => p.category.toLowerCase() === cat.name.toLowerCase());
         if (itemIndex > -1) {
-          popularAll.push(availablePool[itemIndex]);
-          popularSet.add(availablePool[itemIndex]._id || availablePool[itemIndex].id);
+          popularAll.push({ ...availablePool[itemIndex], source: 'category-fill' });
           availablePool.splice(itemIndex, 1);
         }
       });
       
-      // Fill remaining to reach 15 (if needed)
+      // Fill remaining to reach 15 (as many sections expect ~10-15 popular items)
       while (popularAll.length < 15 && availablePool.length > 0) {
         popularAll.push(availablePool.shift());
       }
@@ -109,7 +107,7 @@ export const StoreProvider = ({ children }) => {
       // C. Deals (4)
       const deals = availablePool.splice(0, 4).map(p => ({ ...p, bg: "bg-gray-50" }));
       
-      // D. Footer sections (3 each)
+      // D. Sections (3 each)
       const topSelling = availablePool.splice(0, 3);
       const trending = availablePool.splice(0, 3);
       const topPicks = availablePool.splice(0, 3);
@@ -117,8 +115,8 @@ export const StoreProvider = ({ children }) => {
       return {
         ...prev,
         fullPool: decoratedAll,
-        shopShuffled: shuffleArray(decoratedAll),
-        recentlyAdded: decoratedAll.filter(p => recentIds.has(p._id || p.id)),
+        shopShuffled: shuffleArray(decoratedAll), // Global shop page uses the same decorated pool
+        recentlyAdded: recentlyAddedArr,
         popular_all: popularAll,
         dailyBest,
         deals,

@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "react-toastify";
+import { useStore } from "@/context/StoreContext";
 
 // Helper for shuffle
 const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
@@ -28,6 +29,7 @@ export default function HomeContent({ products, categories }) {
   const [activePopularFilter, setActivePopularFilter] = React.useState("All");
   const [bannerSearchTerm, setBannerSearchTerm] = React.useState("");
   const [footerEmail, setFooterEmail] = React.useState("");
+  const { storeData, initializeStore } = useStore();
   
   const [dataReady, setDataReady] = React.useState({
     popular: [],
@@ -119,9 +121,9 @@ export default function HomeContent({ products, categories }) {
 
   const banners = [
     {
-      title: <>Fresh Grocery <br /><span className="text-[#3BB77E]">Within 15 Mins</span></>,
+      title: <>Everyday Essentials <br /><span className="text-[#3BB77E]">Within 15 Mins</span></>,
       subtitle: "Save up to 50% on your first order",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944028/quickzy/banners/hero-banner-1.png",
+      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774004898/quickzy/banners/hero-banner-1-user-final.jpg",
       tag: "Quickzy: Fresh. Fast. Delivered.",
       bgColor: "bg-[#DEF9EC]",
       shopLink: "/shop",
@@ -165,85 +167,39 @@ export default function HomeContent({ products, categories }) {
     return () => clearInterval(timer);
   }, []);
 
-  // Calculate stable sections only once when products/categories load
-  const [stableSections, setStableSections] = React.useState({
-    dailyBest: [],
-    deals: [],
-    topSelling: [],
-    trending: [],
-    recentlyAdded: [],
-    topPicks: []
-  });
-
+  // 1. DATA INITIALIZATION: Trigger store setup if not already done
   React.useEffect(() => {
-    if (!products.length || !categories.length) return;
+    if (products?.length > 0 && categories?.length > 0) {
+      initializeStore(products, categories);
+    }
+  }, [products, categories, initializeStore]);
 
-    // Use a fixed seed for shuffling based on product count to keep it somewhat stable but random
-    const pool = shuffleArray(products);
-    const rawDailyBest = pool.slice(0, 4).map(p => ({
-      ...p,
-      sold: Math.floor(Math.random() * 100) + 50,
-      total: 200,
-    }));
-
-    setStableSections({
-      dailyBest: rawDailyBest,
-      deals: pool.slice(4, 8).map(p => ({ ...p, bg: "bg-gray-50" })),
-      topSelling: pool.slice(8, 11),
-      trending: pool.slice(11, 14),
-      recentlyAdded: pool.slice(14, 17),
-      topPicks: pool.slice(17, 20)
-    });
-  }, [products, categories]);
-
-  // Calculate popular items based on filter
+  // 2. DATA READY SYNC: Map store data to local ready state
   React.useEffect(() => {
-    if (!products.length || !categories.length) return;
+    if (!storeData.fullPool?.length) return;
 
-    const applyHotTag = (list) => list.map(p => p.discount ? { ...p, tag: "Hot Deal", tagColor: "bg-[#f74b81] italic uppercase" } : p);
-
+    // Filter logic for popular section (dynamic)
     let rawPopular = [];
     if (activePopularFilter === "All") {
-      // 1 per category logic (for 11 categories)
-      const itemPerCategory = categories.map(cat => {
-        const catProducts = products.filter(p => {
-          const pCat = p.category.toLowerCase();
-          const target = cat.name.toLowerCase();
-          return pCat === target || target.includes(pCat) || pCat.includes(target);
-        });
-        return shuffleArray(catProducts)[0];
-      }).filter(Boolean);
-
-      const seen = new Set();
-      const getUnique = (arr) => arr.filter(p => {
-        const id = p._id || p.id;
-        if (seen.has(id)) return false;
-        seen.add(id);
-        return true;
-      });
-
-      rawPopular = getUnique([...itemPerCategory, ...shuffleArray(products)]).slice(0, 15);
+      rawPopular = storeData.popular_all;
     } else {
-      // Filter by category
-      const filteredPool = products.filter(p => {
-        const pCat = p.category.toLowerCase();
-        const target = activePopularFilter.toLowerCase();
+      const target = activePopularFilter.toLowerCase();
+      rawPopular = storeData.fullPool.filter(p => {
+        const pCat = (p.category || "").toLowerCase();
         return pCat === target || target.includes(pCat) || pCat.includes(target);
-      });
-      rawPopular = shuffleArray(filteredPool).slice(0, 15);
+      }).slice(0, 15);
     }
 
-    setDataReady(prev => ({
-      ...prev,
-      popular: applyHotTag(rawPopular),
-      dailyBest: applyHotTag(stableSections.dailyBest),
-      deals: applyHotTag(stableSections.deals),
-      topSelling: applyHotTag(stableSections.topSelling),
-      trending: applyHotTag(stableSections.trending),
-      recentlyAdded: applyHotTag(stableSections.recentlyAdded),
-      topPicks: applyHotTag(stableSections.topPicks)
-    }));
-  }, [products, categories, activePopularFilter, stableSections]);
+    setDataReady({
+      popular: rawPopular,
+      dailyBest: storeData.dailyBest,
+      deals: storeData.deals,
+      topSelling: storeData.topSelling,
+      trending: storeData.trending,
+      recentlyAdded: storeData.recentlyAdded,
+      topPicks: storeData.topPicks
+    });
+  }, [storeData, activePopularFilter]);
 
   const handleBannerSearch = () => {
     const term = bannerSearchTerm.trim().toLowerCase();
@@ -599,11 +555,11 @@ export default function HomeContent({ products, categories }) {
         {/* Extreme scale (2.8x) to crop out peripheral blurred pixels and guarantee top-to-bottom edge coverage */}
         <img 
           src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944026/quickzy/banners/footer_banner.jpg" 
-          className="absolute inset-0 w-full h-full object-cover scale-[2.8] md:scale-100 object-center transition-transform duration-700 md:brightness-110 italic" 
+          className="absolute inset-0 w-full h-full object-cover scale-[2.8] md:scale-100 object-center transition-transform duration-700 md:brightness-150 italic" 
           alt="" 
         />
         {/* Maximum brightness: No overlay on mobile for best clarity, lighter on desktop */}
-        <div className="absolute inset-0 bg-black/0 md:bg-black/10 transition-colors" />
+        <div className="absolute inset-0 bg-black/0 md:bg-black/5 transition-colors" />
         {/* Mobile: stacked layout — text top-left, email at bottom */}
         <div className="relative z-10 flex flex-col justify-between h-full p-8 md:p-14 min-h-[300px] md:min-h-[400px]">
           <div className="max-w-[280px] md:max-w-lg">
