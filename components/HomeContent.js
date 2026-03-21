@@ -149,7 +149,7 @@ export default function HomeContent({ products, categories }) {
       subtitle: "Experience technology at your doorstep",
       image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944031/quickzy/banners/hero-banner-4.png",
       tag: "Quickzy: Electronics",
-      bgColor: "bg-[#fce4ec]",
+      bgColor: "bg-[#F0F5F9]",
       shopLink: "/shop?category=Electronics",
     },
     {
@@ -546,8 +546,8 @@ export default function HomeContent({ products, categories }) {
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <ProductList title="Top Selling" items={dataReady.topSelling} />
         <ProductList title="Trending" items={dataReady.trending} />
-        <ProductList title="Recently added" items={dataReady.recentlyAdded} />
         <ProductList title="Top Picks" items={dataReady.topPicks} />
+        <ProductList title="Recently added" items={dataReady.recentlyAdded} />
       </section>
 
       {/* Newsletter / Footer Top */}

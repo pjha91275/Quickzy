@@ -85,7 +85,9 @@ export const StoreProvider = ({ children }) => {
       const shuffledCategories = shuffleArray(categories);
       
       shuffledCategories.forEach(cat => {
-        const itemIndex = availablePool.findIndex(p => p.category.toLowerCase() === cat.name.toLowerCase());
+        const itemIndex = availablePool.findIndex(p => 
+          (p.category || "").toLowerCase() === (cat.name || "").toLowerCase()
+        );
         if (itemIndex > -1) {
           popularAll.push({ ...availablePool[itemIndex], source: 'category-fill' });
           availablePool.splice(itemIndex, 1);

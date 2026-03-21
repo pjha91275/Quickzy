@@ -58,8 +58,8 @@ export default function ShopContent({ products, categories }) {
     let pool = storeData.shopShuffled || [];
     if (selectedCategory !== "All") {
       pool = pool.filter((p) => {
-        const target = selectedCategory.toLowerCase();
-        const pCat = p.category.toLowerCase();
+        const target = (selectedCategory || "").toLowerCase();
+        const pCat = (p.category || "").toLowerCase();
         return (
           pCat === target ||
           target.includes(pCat) ||
@@ -70,11 +70,11 @@ export default function ShopContent({ products, categories }) {
 
     // 2. Second, apply Text Search Filter
     if (searchQuery) {
-      const term = searchQuery.toLowerCase();
+      const term = (searchQuery || "").toLowerCase();
       pool = pool.filter(
         (p) =>
-          p.name.toLowerCase().includes(term) ||
-          p.category.toLowerCase().includes(term),
+          (p.name || "").toLowerCase().includes(term) ||
+          (p.category || "").toLowerCase().includes(term),
       );
     }
 

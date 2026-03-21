@@ -85,5 +85,7 @@ next-env.d.ts
 /scripts/final_fixes.js
 /scripts/final_sync_cloudinary.js
 /scripts/update-product-images.js
-/scripts/
+# fetch scripts (private)
+scripts/fetch-cloudinary.cjs
+scripts/fetch-mongodb.cjs
 

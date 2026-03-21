@@ -99,15 +99,15 @@ const Navbar = ({ initialCategories = [] }) => {
 
     // Check Categories
     const matchedCategories = data.categories
-      .filter((c) => c.name.toLowerCase().includes(term))
+      .filter((c) => (c.name || "").toLowerCase().includes(term))
       .map((c) => ({ ...c, type: "category" }));
 
     // Check Products
     const matchedProducts = data.products
       .filter(
         (p) =>
-          p.name.toLowerCase().includes(term) ||
-          p.category.toLowerCase().includes(term),
+          (p.name || "").toLowerCase().includes(term) ||
+          (p.category || "").toLowerCase().includes(term),
       )
       .map((p) => ({ ...p, type: "product" }));
 
@@ -136,7 +136,7 @@ const Navbar = ({ initialCategories = [] }) => {
 
     // Fuzzy Category Matching (matches 'snack' to 'Snacks', 'milk' to 'Milk & Dairy', etc)
     const categoryMatch = data.categories.find((c) => {
-      const catName = c.name.toLowerCase();
+      const catName = (c.name || "").toLowerCase();
       return (
         catName === term || catName.includes(term) || term.includes(catName)
       );
@@ -150,7 +150,7 @@ const Navbar = ({ initialCategories = [] }) => {
 
     // Check if it's a specific product name (exact match)
     const exactProduct = data.products.find(
-      (p) => p.name.toLowerCase() === term,
+      (p) => (p.name || "").toLowerCase() === term,
     );
     if (exactProduct) {
       router.push(`/product/${exactProduct.id_custom || exactProduct._id}`);
