@@ -1,48 +1,11 @@
-"use client";
 import React from "react";
 import Link from "next/link";
-import { FiClock, FiUser, FiArrowRight, FiTag } from "react-icons/fi";
+import { FiClock, FiUser, FiArrowRight } from "react-icons/fi";
+import { fetchBlogPosts } from "@/actions/dbactions";
 
-const blogs = [
-  {
-    id: 1,
-    title: "How to Keep Your Leafy Greens Fresh for a Week",
-    category: "Fresh Produce",
-    author: "Chef Anita",
-    date: "March 12, 2026",
-    image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944036/quickzy/blogs/wtp9znloagecvv218pfu.jpg",
-    excerpt: "Learn the secret techniques to maintain that crisp crunch in your spinach and kale even days after delivery.",
-  },
-  {
-    id: 2,
-    title: "10-Minute Breakfast Ideas Using Quickzy Pantry Essentials",
-    category: "Quick Recipes",
-    author: "Rahul Varma",
-    date: "March 10, 2026",
-    image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944034/quickzy/blogs/d6vnmmjpkdv3urofx88a.jpg",
-    excerpt: "Mornings can be a rush. Here are 5 delicious and healthy breakfast recipes you can whip up using items from our app.",
-  },
-  {
-    id: 3,
-    title: "The Future of Quick Commerce: Why Speed Matters",
-    category: "Insider",
-    author: "Pranay J.",
-    date: "March 08, 2026",
-    image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944035/quickzy/blogs/skvhi4ucrsizayre2qqs.jpg",
-    excerpt: "Exploring how hyper-local delivery is changing the way we shop and the technology behind 10-minute deliveries.",
-  },
-  {
-    id: 4,
-    title: "Managing Home Care on a Budget: Pro Tips",
-    category: "Household",
-    author: "Sarah Mendis",
-    date: "March 05, 2026",
-    image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944038/quickzy/blogs/yukvukvrqasyhjxljkdh.jpg",
-    excerpt: "Save money and keep your home sparkling with these clever cleaning hacks using basic household supplies.",
-  },
-];
+export default async function BlogPage() {
+  const blogs = await fetchBlogPosts();
 
-const BlogPage = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -60,27 +23,31 @@ const BlogPage = () => {
       {/* Blog Grid */}
       <section className="py-16 container mx-auto px-4 max-w-6xl">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogs.map((blog) => (
-            <div key={blog.id} className="border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all group flex flex-col">
-              <div className="h-52 relative overflow-hidden">
-                <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
-                <span className="absolute top-4 left-4 bg-white/90 px-3 py-1 rounded-lg text-[10px] font-black text-[#3BB77E] uppercase shadow-sm">
-                  {blog.category}
-                </span>
-              </div>
-              <div className="p-6 flex flex-col grow">
-                <div className="flex gap-4 text-gray-400 text-[10px] font-black uppercase mb-3">
-                  <span className="flex items-center gap-1"><FiClock /> {blog.date}</span>
-                  <span className="flex items-center gap-1"><FiUser /> {blog.author}</span>
+          {blogs && blogs.length > 0 ? (
+            blogs.map((blog) => (
+              <div key={blog._id || blog.id} className="border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all group flex flex-col">
+                <div className="h-52 relative overflow-hidden">
+                  <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  <span className="absolute top-4 left-4 bg-white/90 px-3 py-1 rounded-lg text-[10px] font-black text-[#3BB77E] uppercase shadow-sm">
+                    {blog.category}
+                  </span>
                 </div>
-                <h3 className="text-xl font-black text-[#253D4E] mb-3 line-clamp-2 leading-tight">{blog.title}</h3>
-                <p className="text-gray-500 text-sm mb-5 line-clamp-2">{blog.excerpt}</p>
-                <Link href={`/blog/${blog.id}`} className="mt-auto text-[#3BB77E] text-xs font-black uppercase flex items-center gap-2">
-                  Read More <FiArrowRight />
-                </Link>
+                <div className="p-6 flex flex-col grow">
+                  <div className="flex gap-4 text-gray-400 text-[10px] font-black uppercase mb-3">
+                    <span className="flex items-center gap-1"><FiClock /> {blog.date}</span>
+                    <span className="flex items-center gap-1"><FiUser /> {blog.author}</span>
+                  </div>
+                  <h3 className="text-xl font-black text-[#253D4E] mb-3 line-clamp-2 leading-tight">{blog.title}</h3>
+                  <p className="text-gray-500 text-sm mb-5 line-clamp-2">{blog.excerpt}</p>
+                  <Link href={`/blog/${blog.id}`} className="mt-auto text-[#3BB77E] text-xs font-black uppercase flex items-center gap-2">
+                    Read More <FiArrowRight />
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+             <div className="col-span-full text-center py-20 text-gray-400 font-bold">No stories found yet.</div>
+          )}
         </div>
       </section>
 
@@ -97,6 +64,4 @@ const BlogPage = () => {
       </section>
     </div>
   );
-};
-
-export default BlogPage;
+}

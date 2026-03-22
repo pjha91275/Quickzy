@@ -2,6 +2,8 @@
 import connectDb from "@/db/connectDb";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
+import BlogPost from "@/models/BlogPost";
+import Banner from "@/models/Banner";
 
 export const fetchProdAndCat = async () => {
   await connectDb();
@@ -9,6 +11,34 @@ export const fetchProdAndCat = async () => {
   const categories = await Category.find({}).lean();
 
   return JSON.parse(JSON.stringify({ products, categories }));
+};
+
+export const fetchBlogPosts = async () => {
+  await connectDb();
+  const blogPosts = await BlogPost.find({}).lean();
+  return JSON.parse(JSON.stringify(blogPosts));
+};
+
+export const fetchBanners = async () => {
+  await connectDb();
+  const banners = await Banner.find({}).lean();
+  return JSON.parse(JSON.stringify(banners));
+};
+
+export const fetchAllData = async () => {
+  await connectDb();
+  const [products, categories, blogPosts, banners] = await Promise.all([
+    Product.find({}).lean(),
+    Category.find({}).lean(),
+    BlogPost.find({}).lean(),
+    Banner.find({}).lean()
+  ]);
+  return JSON.parse(JSON.stringify({
+    Product: products,
+    Category: categories,
+    BlogPost: blogPosts,
+    Banner: banners
+  }));
 };
 
 export const fetchCategories = async () => {
