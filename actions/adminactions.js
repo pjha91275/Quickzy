@@ -1,6 +1,7 @@
 "use server";
 import connectDb from "@/db/connectDb";
 import Product from "@/models/Product";
+import Order from "@/models/Order";
 import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -90,4 +91,28 @@ export async function saveProductAdmin(formData) {
     console.error("Error saving product:", error);
     return { success: false, error: error.message };
   }
+}
+
+export async function getOrdersAdmin() {
+  await connectDb();
+  // using .lean() helps serialize the data cleanly to JSON for Client components
+  const orders = await Order.find({}).sort({ createdAt: -1 }).lean();
+  return JSON.parse(JSON.stringify(orders));
+}
+
+export async function updateOrderStatusAdmin(formData) {
+  const id = formData.get("id");
+  const status = formData.get("status");
+
+  if (!id || !status) return { success: false };
+
+  await connectDb();
+  await Order.findByIdAndUpdate(id, { status });
+
+  // Update instantly everywhere
+  revalidatePath("/admin/orders");
+  revalidatePath("/orders");
+  revalidatePath("/profile");
+  
+  return { success: true };
 }
