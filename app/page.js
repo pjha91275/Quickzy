@@ -1,9 +1,10 @@
 import React, { Suspense } from "react";
-import { fetchProdAndCat } from "@/actions/dbactions";
+import { fetchAllData } from "@/actions/dbactions";
 import HomeContent from "@/components/HomeContent";
 
 export default async function Home() {
-  const { products, categories } = await fetchProdAndCat();
+  const data = await fetchAllData();
+  const { Product, Category, BlogPost, Banner } = data;
 
   return (
     <Suspense
@@ -20,7 +21,13 @@ export default async function Home() {
         </div>
       }
     >
-      <HomeContent products={products} categories={categories} />
+      <HomeContent 
+        products={Product} 
+        categories={Category} 
+        banners_db={Banner} 
+        blogPosts_db={BlogPost} 
+      />
     </Suspense>
   );
 }
+

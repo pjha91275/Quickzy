@@ -20,7 +20,13 @@ import { useStore } from "@/context/StoreContext";
 // Helper for shuffle
 const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
-export default function HomeContent({ products, categories }) {
+export default function HomeContent({ products, categories, banners_db }) {
+  // Separate hero and footer banners
+  const heroBanners = banners_db?.filter(b => b.type === "hero") || [];
+  const footerBanner = banners_db?.find(b => b.type === "footer");
+  
+  const banners = heroBanners; // For carousel logic
+
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [animatingHeart, setAnimatingHeart] = React.useState(null);
@@ -119,48 +125,7 @@ export default function HomeContent({ products, categories }) {
     </div>
   );
 
-  const banners = [
-    {
-      title: <>Everyday Essentials <br /><span className="text-[#3BB77E]">Within 15 Mins</span></>,
-      subtitle: "Save up to 50% on your first order",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774004898/quickzy/banners/hero-banner-1-user-final.jpg",
-      tag: "Quickzy: Fresh. Fast. Delivered.",
-      bgColor: "bg-[#DEF9EC]",
-      shopLink: "/shop",
-    },
-    {
-      title: <>Fresh Vegetables <br /><span className="text-[#3BB77E]">Straight from Farm</span></>,
-      subtitle: "Get fresh onions, potatoes and more",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-3.jpg",
-      tag: "Quickzy: Farm Fresh",
-      bgColor: "bg-[#fff3e0]",
-      shopLink: "/shop?category=Vegetables",
-    },
-    {
-      title: <>Pure Dairy <br /><span className="text-[#3BB77E]">Morning Freshness</span></>,
-      subtitle: "Get fresh milk and dairy delivered daily",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944029/quickzy/banners/hero-banner-2.png",
-      tag: "Quickzy: Fresh Dairy",
-      bgColor: "bg-[#e3f2fd]",
-      shopLink: `/shop?category=${encodeURIComponent("Milk & Dairy")}`,
-    },
-    {
-      title: <>Latest Gadgets <br /><span className="text-[#3BB77E]">& Wearables</span></>,
-      subtitle: "Experience technology at your doorstep",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944031/quickzy/banners/hero-banner-4.png",
-      tag: "Quickzy: Electronics",
-      bgColor: "bg-[#F0F5F9]",
-      shopLink: "/shop?category=Electronics",
-    },
-    {
-      title: <>Home Cleaners <br /><span className="text-[#3BB77E]">Shiny & Fresh</span></>,
-      subtitle: "Everything you need for a sparkling home",
-      image: "https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944032/quickzy/banners/hero-banner-5.png",
-      tag: "Quickzy: Household",
-      bgColor: "bg-[#f3e5f5]",
-      shopLink: `/shop?category=${encodeURIComponent("Household Essentials")}`,
-    },
-  ];
+  // Data fetched from Atlas via props
 
   React.useEffect(() => {
     const timer = setInterval(() => setCurrentSlide((prev) => (prev + 1) % banners.length), 5000);
@@ -307,15 +272,15 @@ export default function HomeContent({ products, categories }) {
           <img src={banners[currentSlide].image} className="absolute inset-0 w-full h-full object-cover" alt="" />
           {/* Specific overlays for brightness control: Hero 1 & 5 (2%), Hero 2-4 (1%) */}
           <div className={`absolute inset-0 transition-opacity duration-700 ${[1, 2, 3].includes(currentSlide) ? 'bg-black/[0.01]' : 'bg-black/[0.02]'}`} />
-          <div className={`relative z-20 h-full flex flex-col px-6 ${currentSlide === 0 ? 'justify-between pt-15 pb-9' : 'justify-start pt-6 pb-12'}`}>
-            <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-[#253D4E] px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm w-max shrink-0">
+          <div className={`relative z-20 h-full flex flex-col px-5 ${currentSlide === 0 ? 'justify-between pt-10 pb-9' : 'justify-start pt-6 pb-12'}`}>
+            <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-[#253D4E] px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm w-max shrink-0">
               <img src="/logo.png" className="w-3.5 h-3.5" alt="" />{banners[currentSlide].tag}
             </div>
             
             {/* 1st Banner: Minimal with spacing, Others: Balanced large text (reduced from 4xl to 1.95rem) */}
             {currentSlide !== 0 ? (
               <div className="mt-3 space-y-2">
-                <h1 className="text-[1.95rem] font-black text-white leading-tight text-shadow-strong pr-2 transition-all duration-500">{banners[currentSlide].title}</h1>
+                <h1 className="text-[1.95rem] font-black text-white leading-tight text-shadow-strong pr-2 transition-all duration-500" dangerouslySetInnerHTML={{ __html: banners[currentSlide].title }}></h1>
                 <p className="text-white font-bold text-base text-shadow-medium transition-all duration-500">{banners[currentSlide].subtitle}</p>
               </div>
             ) : (
@@ -340,14 +305,14 @@ export default function HomeContent({ products, categories }) {
             <div className="w-1/2" />
             <div className="w-1/2 relative">
               <img src={banners[currentSlide].image} className="w-full h-full object-cover object-left" alt="" />
-              <div className={`absolute inset-0 bg-gradient-to-r from-[${banners[currentSlide].bgColor.replace('bg-[', '').replace(']', '')}] via-transparent to-transparent`} />
+              <div className={`absolute inset-0 bg-gradient-to-r from-[${banners[currentSlide]?.bgColor?.replace('bg-[', '').replace(']', '') || '#DEF9EC'}] via-transparent to-transparent`} />
             </div>
           </div>
           <div className="relative z-20 w-1/2 space-y-6 animate-fadeIn pb-4">
             <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-sm">
               <img src="/logo.png" className="w-4 h-4" alt="" />{banners[currentSlide].tag}
             </div>
-            <h1 className="text-5xl lg:text-[3.8rem] font-black text-[#253D4E] leading-[1.05] transition-all duration-300">{banners[currentSlide].title}</h1>
+            <h1 className="text-5xl lg:text-[3.8rem] font-black text-[#253D4E] leading-[1.05] transition-all duration-300" dangerouslySetInnerHTML={{ __html: banners[currentSlide].title }}></h1>
             <p className="text-gray-500 font-bold text-xl">{banners[currentSlide].subtitle}</p>
             <div onClick={e => e.stopPropagation()} className="bg-white rounded-full p-2 flex max-w-md shadow-2xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50">
               <input type="text" placeholder="Search..." className="flex-1 px-4 outline-none text-gray-700 font-bold text-base w-full min-w-0" value={bannerSearchTerm} onChange={e => setBannerSearchTerm(e.target.value)} onKeyDown={e => e.key === "Enter" && handleBannerSearch()} />
@@ -454,7 +419,7 @@ export default function HomeContent({ products, categories }) {
       <section>
         <h2 className="text-3xl font-bold text-[#253D4E] mb-8">Daily Best Sells</h2>
         <div className="flex flex-col lg:flex-row gap-6">
-          <Link href="/shop?category=Vegetables" className="lg:w-1/4 h-[500px] bg-cover bg-center rounded-[40px] p-10 flex flex-col justify-start relative overflow-hidden shadow-md group border" style={{ backgroundImage: "url('https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-3.jpg')" }}>
+          <Link href="/shop?category=Vegetables" className="lg:w-1/4 h-[500px] bg-cover bg-center rounded-[40px] p-10 flex flex-col justify-start relative overflow-hidden shadow-md group border" style={{ backgroundImage: "url('https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-2.jpg')" }}>
             <div className="relative z-20">
               <h6 className="text-white/80 font-bold mb-2 uppercase tracking-widest text-xs">Recommended</h6>
               <h3 className="text-white text-[2.7rem] font-extrabold mb-8 leading-[1.1]">Premium and fresh Quality Products Guaranteed</h3>
@@ -550,16 +515,15 @@ export default function HomeContent({ products, categories }) {
         <ProductList title="Recently added" items={dataReady.recentlyAdded} />
       </section>
 
-      {/* Newsletter / Footer Top */}
       <div className="rounded-[40px] mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[300px] md:min-h-[400px]">
-        {/* Extreme scale (2.8x) to crop out peripheral blurred pixels and guarantee top-to-bottom edge coverage */}
+        {/* Dynamic Footer Image from Atlas */}
         <img 
-          src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944026/quickzy/banners/footer_banner.jpg" 
-          className="absolute inset-0 w-full h-full object-cover scale-[2.8] md:scale-100 object-center transition-transform duration-700 md:brightness-150 italic" 
+          src={footerBanner?.image || "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162639/quickzy/banners/footer-banner.jpg"} 
+          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 md:scale-100 scale-[2.2]" 
           alt="" 
         />
-        {/* Maximum brightness: No overlay on mobile for best clarity, lighter on desktop */}
-        <div className="absolute inset-0 bg-black/0 md:bg-black/5 transition-colors" />
+        {/* Clear overlay for text legibility */}
+        <div className="absolute inset-0 bg-black/0 md:bg-black/10 transition-colors" />
         {/* Mobile: stacked layout — text top-left, email at bottom */}
         <div className="relative z-10 flex flex-col justify-between h-full p-8 md:p-14 min-h-[300px] md:min-h-[400px]">
           <div className="max-w-[280px] md:max-w-lg">

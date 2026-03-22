@@ -10,7 +10,7 @@ const AboutPage = () => {
       <section className="relative h-[500px] flex items-center px-4 overflow-hidden">
         <div className="absolute inset-0">
           <img 
-            src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-3.jpg" 
+            src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-2.jpg" 
             alt="Quickzy Background" 
             className="w-full h-full object-cover brightness-[0.4]"
           />
@@ -24,7 +24,7 @@ const AboutPage = () => {
               Delivering <span className="text-[#3BB77E]">Happiness</span> <br />
               Within 15 Mins.
             </h1>
-            <p className="text-gray-300 text-lg font-medium leading-relaxed max-w-lg mb-8">
+            <p className="text-gray-300 text-lg font-medium leading-relaxed max-w-lg mb-5">
               At Quickzy, we are redefining the limits of quick commerce by bringing your neighborhood store directly to your doorstep with unmatched speed and care.
             </p>
             <div className="flex gap-4">
@@ -37,8 +37,8 @@ const AboutPage = () => {
       </section>
 
       {/* Stats - Clean Grid */}
-      <section className="relative -mt-16 container mx-auto px-4 z-20 max-w-6xl">
-        <div className="bg-white rounded-[40px] shadow-2xl shadow-gray-200/50 border border-gray-100 p-8 md:p-12 grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+      <section className="relative mt-4 container mx-auto px-4 z-20 max-w-6xl">
+        <div className="bg-white rounded-[40px] shadow-2xl shadow-gray-200/50 border border-gray-300 p-8 md:p-12 grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
             {[
               { val: "10M+", label: "Orders Monthly" },
               { val: "500+", label: "Dark Stores" },
@@ -54,7 +54,7 @@ const AboutPage = () => {
       </section>
 
       {/* Philosophy Section */}
-      <section className="py-24 container mx-auto px-4 max-w-6xl">
+      <section className="py-15 container mx-auto px-4 max-w-6xl">
         <div className="grid lg:grid-cols-2 gap-20 items-center">
            <div className="space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">
               <div className="inline-block bg-[#DEF9EC] text-[#3BB77E] px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest">
@@ -142,8 +142,8 @@ const AboutPage = () => {
                   color: "bg-[#3BB77E] group-hover:bg-[#253D4E]"
                 }
               ].map((val, i) => (
-                <div key={i} className="bg-white p-10 rounded-[40px] border border-transparent hover:border-[#DEF9EC] hover:shadow-2xl transition-all duration-500 group">
-                   <div className={`w-16 h-16 ${val.color} text-white rounded-2xl flex items-center justify-center mb-8 shadow-lg shadow-green-100 transition-all duration-300`}>
+                <div key={i} className="flex flex-col items-center text-center md:items-start md:text-left bg-white p-10 rounded-[40px] border border-transparent hover:border-[#DEF9EC] hover:shadow-2xl transition-all duration-500 group">
+                   <div className={`w-16 h-16 ${val.color} text-white rounded-2xl flex items-center justify-center mb-8 mx-auto md:mx-0 shadow-lg shadow-green-100 transition-all duration-300`}>
                       {React.cloneElement(val.icon, { size: 28 })}
                    </div>
                    <h4 className="text-xl font-black text-[#253D4E] mb-4 tracking-tight">{val.title}</h4>

@@ -94,7 +94,7 @@ const WishlistPage = () => {
                 </div>
 
                 {/* Action Column (Add to Cart) */}
-                <div className="md:col-span-1 flex items-center justify-end md:justify-center">
+                <div className="md:col-span-1 flex items-center justify-end flex-grow md:justify-center">
                   <button 
                     onClick={(e) => {
                       e.stopPropagation();

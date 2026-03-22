@@ -511,14 +511,14 @@ const Navbar = ({ initialCategories = [] }) => {
               {/* Browse All Categories Dropdown */}
               <div className="border-b border-gray-50 py-3">
                 <div 
-                  className="flex items-center justify-between cursor-pointer w-full text-left"
+                  className={`flex items-center justify-between cursor-pointer w-full text-left bg-[#3BB77E] text-white px-3 py-2.5 rounded-xl shadow-sm transition-all hover:bg-[#29A56C] ${isMobileCategoriesOpen ? 'ring-2 ring-green-100' : ''}`}
                   onClick={() => setIsMobileCategoriesOpen(!isMobileCategoriesOpen)}
                 >
-                  <div className={`flex items-center gap-2 transition-colors ${isMobileCategoriesOpen ? 'text-[#3BB77E]' : ''}`}>
-                    <FiGrid className="text-lg text-[#3BB77E]" />
-                    <span className="font-black text-[15px]">Browse All Categories</span>
+                  <div className="flex items-center gap-2">
+                    <FiGrid className="text-sm" />
+                    <span className="font-black text-[14px]">Browse All Categories</span>
                   </div>
-                  <IoIosArrowDown className={`text-gray-400 transition-transform duration-300 ${isMobileCategoriesOpen ? 'rotate-180 text-[#3BB77E]' : ''}`} />
+                  <IoIosArrowDown className={`text-white/80 transition-transform duration-300 ${isMobileCategoriesOpen ? 'rotate-180' : ''}`} />
                 </div>
                 
                 <div 
