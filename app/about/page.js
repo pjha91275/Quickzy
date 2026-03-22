@@ -92,19 +92,19 @@ const AboutPage = () => {
               <div className="absolute -inset-4 bg-[#DEF9EC] rounded-[60px] -rotate-3 z-0"></div>
               <div className="relative z-10 rounded-[60px] overflow-hidden shadow-2xl border-8 border-white group">
                  <img 
-                   src="https://images.unsplash.com/photo-1619566636858-adf3ef46400b?q=80&w=2070" 
+                   src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162641/quickzy/banners/hero-banner-1.png" 
                    alt="Quickzy Hub" 
                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
                  />
               </div>
               {/* Floating Badge */}
-              <div className="absolute -bottom-10 -left-10 bg-white p-6 rounded-[32px] shadow-2xl z-20 hidden md:flex items-center gap-4 animate-bounce duration-[3000ms]">
-                 <div className="w-16 h-16 bg-[#3BB77E] text-white rounded-2xl flex items-center justify-center shadow-lg shadow-green-200">
-                    <FiZap size={30} />
+              <div className="absolute -bottom-6 left-2 md:-bottom-10 md:-left-10 bg-white p-3 md:p-6 rounded-[24px] md:rounded-[32px] shadow-2xl z-20 flex items-center gap-3 md:gap-4 animate-bounce duration-[3000ms]">
+                 <div className="w-12 h-12 md:w-16 md:h-16 bg-[#3BB77E] text-white rounded-xl md:rounded-2xl flex items-center justify-center shadow-lg shadow-green-200">
+                    <FiZap className="w-6 h-6 md:w-8 md:h-8" />
                  </div>
                  <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Zap Delivery</p>
-                    <p className="text-xl font-black text-[#253D4E]">Avg. 9m 42s</p>
+                    <p className="text-[8px] md:text-[10px] font-black text-gray-400 uppercase tracking-widest">Zap Delivery</p>
+                    <p className="text-sm md:text-xl font-black text-[#253D4E]">Avg. 9m 42s</p>
                  </div>
               </div>
            </div>

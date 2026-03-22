@@ -335,6 +335,7 @@ const Navbar = ({ initialCategories = [] }) => {
                         src={session.user.image}
                         alt="User"
                         className="w-full h-full object-cover"
+                        referrerPolicy="no-referrer"
                       />
                     ) : (
                       userInitials

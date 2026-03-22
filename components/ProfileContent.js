@@ -82,6 +82,7 @@ export default function ProfileContent() {
                     src={avatar}
                     className="w-full h-full object-cover"
                     alt="Profile"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <FiUser size={40} />

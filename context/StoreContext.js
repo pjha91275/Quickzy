@@ -64,15 +64,15 @@ export const StoreProvider = ({ children }) => {
       // 1. Decorate ALL products first so discounts are consistent across Home and Shop
       const decoratedAll = decoratePool(products);
 
-      // 2. Identification of the True Recents (Top 5 -> Shuffle -> Top 3)
+      // 2. Identification of the True Recents (Top 3 --> shuffle)
       const allSortedByDate = [...decoratedAll].sort((a,b) => {
         const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
         const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
         return dateB - dateA;
       });
       
-      const top5Recents = allSortedByDate.slice(0, 5);
-      const recentlyAddedArr = shuffleArray(top5Recents).slice(0, 3);
+      const top3Recents = allSortedByDate.slice(0, 3);
+      const recentlyAddedArr = shuffleArray(top3Recents);
       const recentIds = new Set(recentlyAddedArr.map(r => r._id || r.id));
 
       // 3. Prepare the diminishing pool (exclude the 3 recents)

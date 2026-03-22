@@ -368,9 +368,9 @@ export default function HomeContent({ products, categories, banners_db }) {
       {/* Promo Banners */}
       <section className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
         {[
-          { color: "bg-amber-100", title: "Premium Fresh Quality Products", cat: "Fruits", imgClass: "w-72 h-72 -right-8 -bottom-20" },
-          { color: "bg-pink-100", title: "Latest Gadgets & Hearables", cat: "Electronics", imgClass: "w-48 h-48 -right-4 -bottom-4" },
-          { color: "bg-blue-100", title: "Daily Household Essentials", cat: "Household Essentials", imgClass: "w-48 h-48 -right-4 -bottom-4" }
+          { color: "bg-amber-100", title: "Premium Fresh Quality Products", cat: "Fruits", imgClass: "w-48 h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" },
+          { color: "bg-pink-100", title: "Latest Gadgets & Hearables", cat: "Electronics", imgClass: "w-48 h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" },
+          { color: "bg-blue-100", title: "Daily Household Essentials", cat: "Household Essentials", imgClass: "w-48 h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" }
         ].map(p => (
           <div key={p.cat} className={`${p.color} rounded-2xl p-8 relative overflow-hidden h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition`}>
             <div className="relative z-10 max-w-[180px]">
