@@ -93,6 +93,7 @@ export const authOptions = {
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.sub;
+        session.user.role = token.role;
 
         await connectDb();
         const dbUser = await User.findById(token.sub).lean();
@@ -100,6 +101,7 @@ export const authOptions = {
           session.user.name = dbUser.name;
           session.user.phone = dbUser.phone;
           session.user.address = dbUser.address;
+          session.user.role = dbUser.role || "user";
         }
       }
       return session;
@@ -107,6 +109,9 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.sub = user.id;
+        await connectDb();
+        const dbUser = await User.findById(user.id).lean();
+        token.role = dbUser?.role || "user";
       }
       return token;
     },

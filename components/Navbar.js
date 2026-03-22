@@ -372,6 +372,14 @@ const Navbar = ({ initialCategories = [] }) => {
                       >
                         <FiHeart className="text-lg" /> Order History
                       </Link>
+                      {session?.user?.role === "admin" && (
+                        <Link
+                          href="/admin"
+                          className="text-sm font-black text-[#3BB77E] hover:text-[#29A56C] flex items-center gap-2 transition-colors bg-[#DEF9EC] p-2 rounded-lg"
+                        >
+                          <FiGrid className="text-lg" /> Admin Panel
+                        </Link>
+                      )}
                       <button
                         onClick={() => signOut()}
                         className="text-sm font-bold text-red-500 hover:text-red-700 flex items-center gap-2 pt-2 border-t mt-1 transition-colors text-left"

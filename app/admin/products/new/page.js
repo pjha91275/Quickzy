@@ -1,0 +1,136 @@
+"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { saveProductAdmin } from "@/actions/adminactions";
+import { FiSave, FiImage, FiArrowLeft } from "react-icons/fi";
+import Link from "next/link";
+import { toast } from "react-toastify";
+
+export default function NewProductPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const formData = new FormData(e.target);
+    
+    try {
+      const res = await saveProductAdmin(formData);
+      if (res?.success) {
+        toast.success("Hooray! Product added successfully.");
+        router.push("/admin/products");
+      } else {
+        toast.error("Failed: " + (res?.error || "Unknown"));
+      }
+    } catch (err) {
+      toast.error("An error occurred during upload.");
+      console.error(err);
+    }
+    setLoading(false);
+  };
+
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setPreview(URL.createObjectURL(e.target.files[0]));
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="flex items-center gap-4 mb-8">
+        <Link href="/admin/products" className="w-10 h-10 bg-white border border-gray-200 text-gray-500 rounded-full flex items-center justify-center hover:bg-[#DEF9EC] hover:text-[#3BB77E] transition-all shadow-sm">
+          <FiArrowLeft className="text-xl" />
+        </Link>
+        <div>
+          <h1 className="text-2xl font-black text-[#253D4E]">Add New Product</h1>
+          <p className="text-sm text-gray-500 font-medium">Create a new item in your store's catalog</p>
+        </div>
+      </div>
+
+      {/* Main Single Form Structure - Best Practice for Next.js FormData payload */}
+      <form onSubmit={handleSubmit} className="bg-white rounded-[2rem] p-6 md:p-10 border border-gray-100 shadow-sm space-y-8">
+        
+        {/* Basic Info */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Product Name <span className="text-red-400">*</span></label>
+            <input required type="text" name="name" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30" placeholder="e.g. Fresh Mangoes (Alphonso)" />
+          </div>
+          
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Category <span className="text-red-400">*</span></label>
+            <select required name="category" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30">
+              <option value="">Select a Category</option>
+              <option value="Vegetables">Vegetables</option>
+              <option value="Fruits">Fruits</option>
+              <option value="Dairy & Bakery">Dairy & Bakery</option>
+              <option value="Snacks">Snacks</option>
+              <option value="Meat">Meat</option>
+              <option value="Cold Drinks">Cold Drinks</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Pricing & Units */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Sale Price (₹) <span className="text-red-400">*</span></label>
+            <input required type="number" name="price" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30" placeholder="0" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">MRP (₹)</label>
+            <input type="number" name="oldPrice" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30" placeholder="0" />
+          </div>
+          <div className="space-y-2">
+            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Quantity Unit <span className="text-red-400">*</span></label>
+            <input required type="text" name="unit" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30" placeholder="e.g. 1 kg, 500g, 1 Dozen" />
+          </div>
+        </div>
+
+        {/* Badges/Discount */}
+        <div className="space-y-2">
+            <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Discount Badge Text (Optional)</label>
+            <input type="text" name="discount" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30" placeholder="e.g. 10% OFF, BESTSELLER" />
+        </div>
+
+        {/* Secure Cloudinary Image Upload Section */}
+        <div className="space-y-3 pt-4 border-t border-gray-100">
+          <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Upload Visual Asset</label>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+             <div className="w-32 h-32 rounded-3xl bg-[#F4F6FA] border-2 border-dashed border-[#BCE3C9] flex items-center justify-center text-[#3BB77E] overflow-hidden relative shadow-inner">
+               {preview ? (
+                 <img src={preview} alt="Preview" className="w-[80%] h-[80%] object-contain" />
+               ) : (
+                 <FiImage className="text-4xl opacity-50" />
+               )}
+               {/* Note: This naturally maps into formData to be sent safely to the Next server */}
+               <input required type="file" name="image" accept="image/png, image/jpeg, image/webp" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
+             </div>
+             <div className="flex-1">
+               <p className="text-lg font-black text-[#253D4E] mb-1">Click the box to upload</p>
+               <p className="text-sm text-gray-400 font-bold leading-relaxed">
+                 Supports PNG, JPG, or WEBP. Max size 5MB. <br/>
+                 The image will be securely uploaded to Cloudinary.
+               </p>
+             </div>
+          </div>
+        </div>
+
+        {/* Global Submit */}
+        <div className="pt-6">
+          <button disabled={loading} type="submit" className="w-full bg-[#3BB77E] text-white py-5 rounded-2xl font-black text-xl hover:bg-[#29A56C] transition-all shadow-xl shadow-green-100 flex items-center justify-center gap-3 disabled:opacity-50 hover:-translate-y-1">
+            {loading ? (
+              <span className="animate-pulse">Uploading to Cloudinary...</span>
+            ) : (
+              <><FiSave /> Publish Product</>
+            )}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  );
+}

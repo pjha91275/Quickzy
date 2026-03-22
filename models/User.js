@@ -20,6 +20,7 @@ const UserSchema = new Schema({
   cart: { type: Array, default: [] },
   wishlist: { type: Array, default: [] },
   orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
+  role: { type: String, default: "user", enum: ["user", "admin"] },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
