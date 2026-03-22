@@ -23,8 +23,6 @@
 # misc
 .DS_Store
 *.pem
-
-# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -40,52 +38,18 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# temporary folders
+# temporary folders and audit logs
 /tmp/
-/reseed_assets/
-/catalog.html
+*.json
+!package.json
+!jsconfig.json
+!seed-data/**/*.json
+!data/*.json
 
-# sync mapping and audit logs
-/cloudinary_audit.json
-/cloudinary_url_map.json
-/reseed_mapping.json
-/audit_results.json
+# Scripts to keep PRIVATE (Fetch scripts)
+/scripts/fetch-cloudinary.cjs
+/scripts/fetch-mongodb.cjs
 
-# one-off maintenance scripts
-/scripts/fix_all_links.js
-/scripts/final_recovery_and_fix.js
-/scripts/final_cleanup.js
-/scripts/debug_match.js
-/scripts/test_write.js
-/scripts/recover_amazon.js
-/scripts/list_all_cloudinary.js
-/scripts/list_folders.js
-/scripts/export_cloudinary.js
-/scripts/find_recent.js
-/scripts/check_metadata.js
-/scripts/check_rosetta.js
-/scripts/gen_catalog.js
-/scripts/final_verify.js
-/scripts/list_cloudinary.js
-/scripts/test_basename.js
-/scripts/test_upload.js
-/scripts/re_sync.js
-/scripts/full_asset_sync.js
-/scripts/mongoose-seed.js
-/scripts/prep_reseed.js
-/scripts/emergency_recovery.js
-/scripts/update_dahi.js
-/scripts/audite_cloudinary.js
-/scripts/audit_cloudinary.js
-/scripts/audit_images.js
-/scripts/execute_reseed.js
-/scripts/add-new.js
-/scripts/audit_images.js
-/scripts/export-data.js
-/scripts/final_fixes.js
-/scripts/final_sync_cloudinary.js
-/scripts/update-product-images.js
-# fetch scripts (private)
-scripts/fetch-cloudinary.cjs
-scripts/fetch-mongodb.cjs
-
+# Keep seeding scripts trackable (allowed to be pushed)
+!/scripts/seed-cloudinary.cjs
+!/scripts/seed-db.cjs

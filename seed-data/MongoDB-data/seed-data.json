@@ -656,7 +656,7 @@
       "_id": "69bcf239210918896f3cdbcf",
       "name": "Tea & Coffee",
       "count": 3,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774123345/quickzy/products/product-21.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109256/quickzy/products/product-17.webp",
       "bg": "bg-amber-50",
       "__v": 0
     },
@@ -664,7 +664,7 @@
       "_id": "69bcf239210918896f3cdbd0",
       "name": "Snacks",
       "count": 6,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774123341/quickzy/products/product-16.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109260/quickzy/products/product-8.webp",
       "bg": "bg-yellow-50",
       "__v": 0
     },
@@ -696,7 +696,7 @@
       "_id": "69bcf239210918896f3cdbd4",
       "name": "Electronics",
       "count": 6,
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109267/quickzy/products/product-2.webp",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109265/quickzy/products/product-1.webp",
       "bg": "bg-orange-100",
       "__v": 0
     },
@@ -723,7 +723,7 @@
       "type": "hero",
       "title": "Everyday Essentials <br /><span class=\"text-[#3BB77E]\">Within 15 Mins</span>",
       "subtitle": "Save up to 50% on your first order",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109224/quickzy/banners/hero-banner-1.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162641/quickzy/banners/hero-banner-1.png",
       "tag": "Quickzy: Fresh. Fast. Delivered.",
       "bgColor": "bg-[#DEF9EC]",
       "shopLink": "/shop",
@@ -735,7 +735,7 @@
       "type": "hero",
       "title": "Fresh Vegetables <br /><span class=\"text-[#3BB77E]\">Straight from Farm</span>",
       "subtitle": "Get fresh onions, potatoes and more",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109225/quickzy/banners/hero-banner-2.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162642/quickzy/banners/hero-banner-2.jpg",
       "tag": "Quickzy: Farm Fresh",
       "bgColor": "bg-[#fff3e0]",
       "shopLink": "/shop?category=Vegetables",
@@ -747,7 +747,7 @@
       "type": "hero",
       "title": "Pure Dairy <br /><span class=\"text-[#3BB77E]\">Morning Freshness</span>",
       "subtitle": "Get fresh milk and dairy delivered daily",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109227/quickzy/banners/hero-banner-3.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162643/quickzy/banners/hero-banner-3.png",
       "tag": "Quickzy: Fresh Dairy",
       "bgColor": "bg-[#e3f2fd]",
       "shopLink": "/shop?category=Milk%20%26%20Dairy",
@@ -759,7 +759,7 @@
       "type": "hero",
       "title": "Latest Gadgets <br /><span class=\"text-[#3BB77E]\">& Wearables</span>",
       "subtitle": "Experience technology at your doorstep",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109228/quickzy/banners/hero-banner-4.png",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162645/quickzy/banners/hero-banner-4.png",
       "tag": "Quickzy: Electronics",
       "bgColor": "bg-[#fce4ec]",
       "shopLink": "/shop?category=Electronics",
@@ -796,7 +796,7 @@
       "category": "Fresh Produce",
       "author": "Chef Anita",
       "date": "March 12, 2026",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109232/quickzy/blogs/blog-post-1.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162635/quickzy/blog/blog-post-1.jpg",
       "excerpt": "Learn the secret techniques to maintain that crisp crunch in your spinach and kale even days after delivery.",
       "__v": 0
     },
@@ -807,7 +807,7 @@
       "category": "Quick Recipes",
       "author": "Rahul Varma",
       "date": "March 10, 2026",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109234/quickzy/blogs/blog-post-2.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162636/quickzy/blog/blog-post-2.jpg",
       "excerpt": "Mornings can be a rush. Here are 5 delicious and healthy breakfast recipes you can whip up using items from our app.",
       "__v": 0
     },
@@ -818,7 +818,7 @@
       "category": "Insider",
       "author": "Pranay J.",
       "date": "March 08, 2026",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109235/quickzy/blogs/blog-post-3.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162637/quickzy/blog/blog-post-3.jpg",
       "excerpt": "Exploring how hyper-local delivery is changing the way we shop and the technology behind 10-minute deliveries.",
       "__v": 0
     },
@@ -829,7 +829,7 @@
       "category": "Household",
       "author": "Sarah Mendis",
       "date": "March 05, 2026",
-      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774109237/quickzy/blogs/blog-post-4.jpg",
+      "image": "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162638/quickzy/blog/blog-post-4.jpg",
       "excerpt": "Save money and keep your home sparkling with these clever cleaning hacks using basic household supplies.",
       "__v": 0
     }
