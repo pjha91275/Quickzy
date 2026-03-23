@@ -116,3 +116,102 @@ export async function updateOrderStatusAdmin(formData) {
   
   return { success: true };
 }
+
+export async function getUsersAdmin() {
+  await connectDb();
+  const User = (await import("@/models/User")).default;
+  const users = await User.find({}).sort({ createdAt: -1 }).lean();
+  return JSON.parse(JSON.stringify(users));
+}
+
+export async function toggleUserRoleAdmin(formData) {
+  const id = formData.get("id");
+  const currentRole = formData.get("currentRole");
+  
+  if (!id) return { success: false };
+
+  await connectDb();
+  const User = (await import("@/models/User")).default;
+  
+  const newRole = currentRole === "admin" ? "user" : "admin";
+  await User.findByIdAndUpdate(id, { role: newRole });
+
+  revalidatePath("/admin/users");
+  return { success: true };
+}
+
+export async function getBannersAdmin() {
+  await connectDb();
+  const Banner = (await import("@/models/Banner")).default;
+  const banners = await Banner.find({}).sort({ createdAt: -1 }).lean();
+  return JSON.parse(JSON.stringify(banners));
+}
+
+export async function deleteBannerAdmin(formData) {
+  const id = formData.get("id");
+  if (!id) return { success: false };
+
+  await connectDb();
+  const Banner = (await import("@/models/Banner")).default;
+  await Banner.findByIdAndDelete(id);
+
+  revalidatePath("/admin/banners");
+  revalidatePath("/");
+  return { success: true };
+}
+
+export async function saveBannerAdmin(formData) {
+  try {
+    await connectDb();
+    const Banner = (await import("@/models/Banner")).default;
+    
+    // We expect the banner DB to mirror the schema used in initial seeding, which has:
+    // title (html string or react node on frontend, but saved as string in DB: titleHtml), subtitle, tag, bgColor, shopLink, image, type
+    const titleHtml = formData.get("title"); // It can accept plain text or HTML strings
+    const subtitle = formData.get("subtitle");
+    const tag = formData.get("tag");
+    const bgColor = formData.get("bgColor");
+    const shopLink = formData.get("shopLink");
+    const type = formData.get("type"); // "hero" or "footer"
+    const imageFile = formData.get("image");
+
+    let imageUrl = "";
+
+    // Upload securely via server directly to cloudinary
+    if (imageFile && imageFile.size > 0) {
+      const arrayBuffer = await imageFile.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      
+      imageUrl = await new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+          { folder: "quickzy/banners" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result.secure_url);
+          }
+        );
+        uploadStream.end(buffer);
+      });
+    }
+
+    const newBanner = new Banner({
+      title: titleHtml,
+      subtitle,
+      tag,
+      bgColor: bgColor || "bg-green-50",
+      shopLink,
+      type: type || "hero",
+      image: imageUrl, 
+    });
+
+    await newBanner.save();
+
+    revalidatePath("/admin/banners");
+    revalidatePath("/");
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving banner:", error);
+    return { success: false, error: error.message };
+  }
+}
