@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FiHome, FiBox, FiShoppingBag, FiUsers, FiImage } from "react-icons/fi";
+import { FiHome, FiBox, FiShoppingBag, FiUsers, FiImage, FiTag } from "react-icons/fi";
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
@@ -11,6 +11,7 @@ export default function AdminLayout({ children }) {
     { name: "Dashboard", href: "/admin", icon: <FiHome /> },
     { name: "Products", href: "/admin/products", icon: <FiBox /> },
     { name: "Orders", href: "/admin/orders", icon: <FiShoppingBag /> },
+    { name: "Coupons", href: "/admin/coupons", icon: <FiTag /> },
     { name: "Users", href: "/admin/users", icon: <FiUsers /> },
     { name: "Banners", href: "/admin/banners", icon: <FiImage /> },
   ];

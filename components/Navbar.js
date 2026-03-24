@@ -79,7 +79,7 @@ const Navbar = ({ initialCategories = [] }) => {
   const [suggestions, setSuggestions] = useState([]);
   const [data, setData] = useState({ products: [], categories: initialCategories });
 
-  // 1. DATA FETCHING: Get categories and products for search filter
+  // Fetch search data
   React.useEffect(() => {
     const loadSearchData = async () => {
       const result = await fetchProdAndCat();
@@ -88,7 +88,7 @@ const Navbar = ({ initialCategories = [] }) => {
     loadSearchData();
   }, []);
 
-  // 2. FILTER LOGIC: Updates suggestions as user types
+  // Update type-ahead suggestions
   React.useEffect(() => {
     if (searchTerm.length < 2) {
       setSuggestions([]);
@@ -114,7 +114,7 @@ const Navbar = ({ initialCategories = [] }) => {
     setSuggestions([...matchedCategories, ...matchedProducts].slice(0, 10));
   }, [searchTerm, data]);
 
-  // 3. SELECTION LOGIC (Part A): When a suggestion is clicked
+  // Handle clicking a suggestion
   const handleSuggestionClick = (item) => {
     setSearchTerm(item.name);
     setSuggestions([]); // Close dropdown
@@ -128,13 +128,13 @@ const Navbar = ({ initialCategories = [] }) => {
     }
   };
 
-  // 4. EXECUTION LOGIC (Part C): When Search button clicked or Enter pressed
+  // Handle search submit
   const handleSearchExecution = () => {
     if (!searchTerm.trim()) return;
 
     const term = searchTerm.toLowerCase();
 
-    // Fuzzy Category Matching (matches 'snack' to 'Snacks', 'milk' to 'Milk & Dairy', etc)
+    // Match categories
     const categoryMatch = data.categories.find((c) => {
       const catName = (c.name || "").toLowerCase();
       return (
@@ -158,7 +158,7 @@ const Navbar = ({ initialCategories = [] }) => {
       return;
     }
 
-    // Fallback: Show search results in Shop page (filtered by name)
+    // Show generic search results page
     router.push(`/shop?search=${encodeURIComponent(searchTerm)}`);
     setSuggestions([]);
   };

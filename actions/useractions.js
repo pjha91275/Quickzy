@@ -6,11 +6,9 @@ import User from "@/models/User";
 export const fetchCart = async (email) => {
   if (!email) return [];
   await connectDb();
-  // We use lowercase to be safe
   const user = await User.findOne({ email: email.toLowerCase() }).lean();
 
-  // CRITICAL FIX: Convert MongoDB complex objects (liike _id) to plain strings
-  // This solves the "Only plain objects can be passed to Client Components" error.
+  // Convert BSON to plain object
   if (user?.cart) {
     return JSON.parse(JSON.stringify(user.cart));
   }
@@ -69,4 +67,39 @@ export const saveCheckoutDetails = async (email, details) => {
     phone: details.phone,
     "address.text": details.address,
   });
+};
+
+// 5. Validate Coupon Code
+export const validateCoupon = async (code, cartSubtotal) => {
+  if (!code) return { success: false, message: "Please enter a code" };
+  
+  await connectDb();
+  const Coupon = (await import("@/models/Coupon")).default;
+  
+  const coupon = await Coupon.findOne({ code: code.trim().toUpperCase(), isActive: true });
+  
+  if (!coupon) {
+    return { success: false, message: "Invalid or expired coupon" };
+  }
+  
+  if (coupon.minOrderAmount > 0 && cartSubtotal < coupon.minOrderAmount) {
+    return { success: false, message: `Minimum order amount for this coupon is ₹${coupon.minOrderAmount}` };
+  }
+  
+  return { 
+    success: true, 
+    coupon: JSON.parse(JSON.stringify(coupon)) 
+  };
+};
+
+// 6. Fetch Active Coupons
+export const getActiveCoupons = async () => {
+  try {
+    await connectDb();
+    const Coupon = (await import("@/models/Coupon")).default;
+    const activeCoupons = await Coupon.find({ isActive: true }).sort({ createdAt: -1 }).lean();
+    return JSON.parse(JSON.stringify(activeCoupons));
+  } catch (error) {
+    return [];
+  }
 };

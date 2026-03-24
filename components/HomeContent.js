@@ -132,14 +132,14 @@ export default function HomeContent({ products, categories, banners_db }) {
     return () => clearInterval(timer);
   }, []);
 
-  // 1. DATA INITIALIZATION: Trigger store setup if not already done
+  // Trigger store setup on load
   React.useEffect(() => {
     if (products?.length > 0 && categories?.length > 0) {
       initializeStore(products, categories);
     }
   }, [products, categories, initializeStore]);
 
-  // 2. DATA READY SYNC: Map store data to local ready state
+  // Hydrate local data from store
   React.useEffect(() => {
     if (!storeData.fullPool?.length) return;
 

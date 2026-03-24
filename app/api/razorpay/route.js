@@ -5,10 +5,7 @@ import Razorpay from "razorpay";
 import connectDb from "@/db/connectDb";
 import User from "@/models/User";
 
-// --- QUICKZY RAZORPAY TODO ---
-// 1. Logic should use global process.env.RAZORPAY_SECRET for verification (not per-user secret).
-// 2. findOne({oid: ...}) is correct, but update done to true (boolean).
-// 3. Redirect to /orders?success=true or similar commerce-themed success page.
+
 
 export const POST = async (req) => {
   await connectDb();

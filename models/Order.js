@@ -12,6 +12,8 @@ const OrderSchema = new Schema({
     },
   ],
   totalAmount: { type: Number, required: true },
+  discount: { type: Number, default: 0 },
+  couponCode: { type: String, default: null },
   status: { type: String, default: "Processing" }, // Processing, Out for Delivery, Delivered
   paymentMethod: { type: String, required: true }, // COD or Online
   paymentStatus: { type: String, default: "Pending" },

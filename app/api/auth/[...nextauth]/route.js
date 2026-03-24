@@ -12,7 +12,7 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      allowDangerousEmailAccountLinking: true, // Merges Google and Email accounts automatically
+      allowDangerousEmailAccountLinking: true, // Merge accounts
     }),
     EmailProvider({
       async sendVerificationRequest({ identifier: email, url, provider }) {
@@ -27,7 +27,7 @@ export const authOptions = {
           body: JSON.stringify({
             sender: {
               name: "Quickzy",
-              email: "pjha91275@gmail.com", // Must be your verified Brevo email
+              email: "pjha91275@gmail.com", // Verified sender
             },
             to: [{ email }],
             subject: "Sign in to Quickzy",
@@ -117,11 +117,11 @@ export const authOptions = {
     },
   },
   pages: {
-    signIn: "/", // We use our modal on the home page
-    error: "/", // Redirect back to home on error
+    signIn: "/", // Use modal
+    error: "/", // Error redirect
   },
   events: {
-    // When a user is created via Google, mark their email as verified immediately
+    // Mark verified on creation
     async createUser({ user }) {
       await connectDb();
       await User.findByIdAndUpdate(user.id, { emailVerified: new Date() });

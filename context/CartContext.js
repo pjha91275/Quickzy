@@ -16,21 +16,20 @@ export const CartProvider = ({ children }) => {
   const { data: session, status } = useSession();
   const [cartItems, setCartItems] = useState([]);
 
-  // This "flag" ensures we don't save an empty cart to DB before we finish loading
+  // Prevent empty db sync on load
   const hasLoaded = useRef(false);
 
-  // 1. Initial Load (runs when login state is ready)
+  // Load initial cart
   useEffect(() => {
     const loadAppData = async () => {
-      // Step A: Load from browser memory first
+      // Get local cart
       const local = localStorage.getItem("quickzy-cart");
       let startingItems = local ? JSON.parse(local) : [];
 
-      // Step B: If logged in, fetch the "Cloud Cart"
+      // Get db cart if logged in
       if (status === "authenticated" && session?.user?.email) {
         try {
           const dbCart = await fetchCart(session.user.email);
-          // If DB has items, they are the most important
           if (dbCart && dbCart.length > 0) {
             startingItems = dbCart;
           }
@@ -39,7 +38,7 @@ export const CartProvider = ({ children }) => {
         }
       }
 
-      // Final sanitization to remove any "corrupted" items before state update
+      // Sanitize cart items
       const cleanItems = startingItems.filter(
         (item) =>
           item &&
@@ -48,9 +47,8 @@ export const CartProvider = ({ children }) => {
           (item.image || item.img),
       );
 
-      // Step C: Update UI and flip the "Ready" flag
+      // Update state
       setCartItems(cleanItems);
-      // Give a tiny moment for state to settle before allowing sync
       setTimeout(() => {
         hasLoaded.current = true;
       }, 150);
@@ -61,9 +59,9 @@ export const CartProvider = ({ children }) => {
     }
   }, [status, session?.user?.email]);
 
-  // 2. Permanent Sync (runs whenever cart changes)
+  // Sync cart changes
   useEffect(() => {
-    // PROTECTIVE GUARD: NEVER sync an empty cart to DB if we haven't finished loading yet
+    // Wait for load before sync
     if (!hasLoaded.current) return;
 
     // Save to browser
@@ -76,7 +74,7 @@ export const CartProvider = ({ children }) => {
   }, [cartItems, status, session?.user?.email]);
 
   const addToCart = (product) => {
-    // Sanitize product data locally before adding
+    // Format product for cart
     const sanitizedProduct = {
       _id: (product._id || product.id)?.toString(),
       name: product.name,
@@ -101,7 +99,7 @@ export const CartProvider = ({ children }) => {
       return [...prev, { ...sanitizedProduct, quantity: 1 }];
     });
 
-    // OPTIONAL: Prompt for location if missing
+    // Check location
     const hasLocation = localStorage.getItem("quickzy-guest-location") || session?.user?.address?.text;
     if (!hasLocation) {
       window.dispatchEvent(new CustomEvent("open-location", { detail: { compulsory: false } }));
@@ -131,7 +129,9 @@ export const CartProvider = ({ children }) => {
 
   const clearCart = () => {
     setCartItems([]);
+    setAppliedCoupon(null);
     localStorage.removeItem("quickzy-cart");
+    localStorage.removeItem("quickzy-coupon");
     if (session?.user?.email) syncCart(session.user.email, []);
   };
 
@@ -140,6 +140,54 @@ export const CartProvider = ({ children }) => {
     const qty = parseInt(item.quantity) || 1;
     return acc + price * qty;
   }, 0);
+
+  // Coupons
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+
+  // Load cached coupon
+  useEffect(() => {
+    const savedCoupon = localStorage.getItem("quickzy-coupon");
+    if (savedCoupon) {
+      setAppliedCoupon(JSON.parse(savedCoupon));
+    }
+  }, []);
+
+  const saveCoupon = (coupon) => {
+    setAppliedCoupon(coupon);
+    if (coupon) {
+      localStorage.setItem("quickzy-coupon", JSON.stringify(coupon));
+    } else {
+      localStorage.removeItem("quickzy-coupon");
+    }
+  };
+
+  let discountAmount = 0;
+  if (appliedCoupon) {
+    if (appliedCoupon.discountType === "percentage") {
+      discountAmount = subtotal * (appliedCoupon.discountValue / 100);
+    } else {
+      discountAmount = appliedCoupon.discountValue;
+    }
+    // Cap discount
+    if (discountAmount > subtotal) {
+      discountAmount = subtotal;
+    }
+  }
+
+  // Validate coupon against subtotal
+  useEffect(() => {
+    if (appliedCoupon && subtotal > 0 && appliedCoupon.minOrderAmount > 0) {
+      if (subtotal < appliedCoupon.minOrderAmount) {
+         toast.warning(`Coupon removed. Min order is ₹${appliedCoupon.minOrderAmount}`);
+         saveCoupon(null);
+      }
+    }
+    if (subtotal === 0 && appliedCoupon) {
+      saveCoupon(null);
+    }
+  }, [subtotal, appliedCoupon]);
+
+  const total = subtotal - discountAmount;
 
   return (
     <CartContext.Provider
@@ -150,6 +198,10 @@ export const CartProvider = ({ children }) => {
         updateQuantity,
         clearCart,
         subtotal,
+        total,
+        discountAmount,
+        appliedCoupon,
+        saveCoupon,
       }}
     >
       {children}

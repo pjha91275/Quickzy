@@ -6,11 +6,8 @@ const UserSchema = new Schema({
   email: { type: String, unique: true },
   emailVerified: { type: Date, default: null },
   image: { type: String },
-  phone: { type: String }, // Made optional to avoid initial dummy number clashes
-  // --- QUICKZY LOCATION SCHEMA INSTRUCTIONS ---
-  // text: Stores the human-readable address from LocationIQ (e.g. "Mumbai Central, Sector 2")
-  // lat/lng: Float values for precise delivery partner mapping
-  // zone: Optional field to group delivery areas (e.g. "Downtown", "Suburbs")
+  phone: { type: String },
+  // Location Data
   address: {
     text: { type: String, default: "" },
     lat: { type: Number, default: 0 },

@@ -32,7 +32,7 @@ export default function ProductContent({ product, similarProducts }) {
   return (
     <div className="bg-white min-h-screen pb-20 font-sans">
       <div className="container mx-auto px-4 py-6 max-w-6xl">
-        {/* Breadcrumb - Clean & Small */}
+        {/* Breadcrumb */}
         <nav className="flex items-center text-[11px] font-bold text-gray-400 gap-1.5 mb-8">
           <Link href="/" className="hover:text-[#3BB77E]">Home</Link>
           <span className="text-gray-300">/</span>
@@ -42,7 +42,7 @@ export default function ProductContent({ product, similarProducts }) {
         </nav>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 items-start">
-          {/* Left Side: Image Gallery */}
+          {/* Gallery */}
           <div className="bg-white border-2 border-slate-50 rounded-3xl p-8 flex items-center justify-center overflow-hidden h-[450px] lg:h-[500px]">
              <img
                src={product.image || product.img}
@@ -51,7 +51,7 @@ export default function ProductContent({ product, similarProducts }) {
              />
           </div>
 
-          {/* Right Side: Quick Buy Info */}
+          {/* Details */}
           <div className="space-y-8">
             <div className="space-y-2">
               <div className="flex justify-between items-start">
@@ -139,9 +139,9 @@ export default function ProductContent({ product, similarProducts }) {
           </div>
         </div>
 
-        {/* Details & Benefits Sync Grid */}
+        {/* Additional Info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-20 pt-16 border-t border-slate-100 mt-10">
-            {/* Product Details */}
+            {/* Description */}
             <div className="space-y-6">
                <h3 className="text-xl font-black text-[#253D4E] tracking-tight">Product Details</h3>
                <div className="space-y-4 text-sm font-medium text-gray-500 leading-relaxed">
@@ -156,7 +156,7 @@ export default function ProductContent({ product, similarProducts }) {
                </div>
             </div>
 
-            {/* Why Shop List */}
+            {/* Features */}
             <div className="space-y-8">
                <h4 className="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3">Benefits of Shopping from Quickzy</h4>
                 <div className="flex flex-col gap-5 md:gap-6 mt-4">

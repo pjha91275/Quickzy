@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 
 export default function CheckoutContent() {
   const { data: session, update, status } = useSession();
-  const { cartItems, subtotal, clearCart } = useCart();
+  const { cartItems, subtotal, total: cartTotal, discountAmount, appliedCoupon, clearCart } = useCart();
   const [paymentMethod, setPaymentMethod] = useState(""); // empty initially to force selection
   const [isPlacing, setIsPlacing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -50,7 +50,7 @@ export default function CheckoutContent() {
     }
   }, [session]);
 
-  const total = subtotal + 25;
+  const total = cartTotal + 25;
 
   const handleSaveDetails = async () => {
     if (status !== "authenticated") {
@@ -113,6 +113,8 @@ export default function CheckoutContent() {
       totalAmount: total,
       address: address,
       phoneNumber: phone,
+      discount: discountAmount || 0,
+      couponCode: appliedCoupon ? appliedCoupon.code : null,
     };
 
     // Online Payment Flow
@@ -314,8 +316,14 @@ export default function CheckoutContent() {
               <div className="border-t border-white/10 pt-4 space-y-3">
                 <div className="flex justify-between text-xs font-bold opacity-60">
                   <span>Subtotal</span>
-                  <span>₹{subtotal}</span>
+                  <span>₹{subtotal.toFixed(2)}</span>
                 </div>
+                {appliedCoupon && (
+                  <div className="flex justify-between text-xs font-bold text-[#3BB77E]">
+                    <span>Discount ({appliedCoupon.code})</span>
+                    <span>-₹{discountAmount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-xs font-bold opacity-60">
                   <span>Delivery Fee</span>
                   <span>₹25</span>
@@ -323,7 +331,7 @@ export default function CheckoutContent() {
                 <div className="flex justify-between items-center pt-2">
                   <span className="font-black">Grand Total</span>
                   <span className="text-2xl font-black text-[#3BB77E]">
-                    ₹{total}
+                    ₹{total.toFixed(2)}
                   </span>
                 </div>
               </div>

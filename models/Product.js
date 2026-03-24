@@ -11,7 +11,7 @@ const ProductSchema = new mongoose.Schema({
   vendor: String,
   category: String,
   discount: String,
-  image: String, // This will store your Cloudinary URL
+  image: String,
 });
 
 export default mongoose.models.Product || model("Product", ProductSchema);

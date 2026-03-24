@@ -5,7 +5,7 @@ import Order from "@/models/Order";
 import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
 
-// Standard Next.js server action cloudinary initialization
+// Cloudinary config
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -14,7 +14,7 @@ cloudinary.config({
 
 export async function getProductsAdmin() {
   await connectDb();
-  // using .lean() helps serialize the data cleanly to JSON for Client components
+  // Return plain objects to avoid serialization errors
   const products = await Product.find({}).sort({ _id: -1 }).lean();
   return JSON.parse(JSON.stringify(products));
 }
@@ -26,7 +26,7 @@ export async function deleteProductAdmin(formData) {
   await connectDb();
   await Product.findByIdAndDelete(id);
 
-  // Instantly invalidate caches so customers and admins see the change immediately
+  // Invalidate cache
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
@@ -48,7 +48,7 @@ export async function saveProductAdmin(formData) {
 
     let imageUrl = "";
 
-    // If an image was provided, upload securely via server directly to cloudinary
+    // Stream upload to Cloudinary directly
     if (imageFile && imageFile.size > 0) {
       const arrayBuffer = await imageFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
@@ -65,7 +65,7 @@ export async function saveProductAdmin(formData) {
       });
     }
 
-    // Auto-generate the custom ID the system requires
+    // Generate sequential custom ID
     const lastProduct = await Product.findOne().sort({ id_custom: -1 });
     const nextId = lastProduct && lastProduct.id_custom ? lastProduct.id_custom + 1 : 1000;
 
@@ -77,7 +77,7 @@ export async function saveProductAdmin(formData) {
       unit,
       category,
       discount,
-      image: imageUrl, // Save cloudinary URL locally
+      image: imageUrl,
     });
 
     await newProduct.save();
@@ -95,7 +95,7 @@ export async function saveProductAdmin(formData) {
 
 export async function getOrdersAdmin() {
   await connectDb();
-  // using .lean() helps serialize the data cleanly to JSON for Client components
+  // Return plain objects to avoid serialization errors
   const orders = await Order.find({}).sort({ createdAt: -1 }).lean();
   return JSON.parse(JSON.stringify(orders));
 }
@@ -109,7 +109,7 @@ export async function updateOrderStatusAdmin(formData) {
   await connectDb();
   await Order.findByIdAndUpdate(id, { status });
 
-  // Update instantly everywhere
+  // Invalidate cache
   revalidatePath("/admin/orders");
   revalidatePath("/orders");
   revalidatePath("/profile");
@@ -165,19 +165,17 @@ export async function saveBannerAdmin(formData) {
     await connectDb();
     const Banner = (await import("@/models/Banner")).default;
     
-    // We expect the banner DB to mirror the schema used in initial seeding, which has:
-    // title (html string or react node on frontend, but saved as string in DB: titleHtml), subtitle, tag, bgColor, shopLink, image, type
-    const titleHtml = formData.get("title"); // It can accept plain text or HTML strings
+    const titleHtml = formData.get("title");
     const subtitle = formData.get("subtitle");
     const tag = formData.get("tag");
     const bgColor = formData.get("bgColor");
     const shopLink = formData.get("shopLink");
-    const type = formData.get("type"); // "hero" or "footer"
+    const type = formData.get("type");
     const imageFile = formData.get("image");
 
     let imageUrl = "";
 
-    // Upload securely via server directly to cloudinary
+    // Handle Cloudinary upload
     if (imageFile && imageFile.size > 0) {
       const arrayBuffer = await imageFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
@@ -212,6 +210,80 @@ export async function saveBannerAdmin(formData) {
     return { success: true };
   } catch (error) {
     console.error("Error saving banner:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getCouponsAdmin() {
+  await connectDb();
+  const Coupon = (await import("@/models/Coupon")).default;
+  const coupons = await Coupon.find({}).sort({ createdAt: -1 }).lean();
+  return JSON.parse(JSON.stringify(coupons));
+}
+
+export async function deleteCouponAdmin(formData) {
+  const id = formData.get("id");
+  if (!id) return { success: false };
+
+  await connectDb();
+  const Coupon = (await import("@/models/Coupon")).default;
+  await Coupon.findByIdAndDelete(id);
+
+  revalidatePath("/admin/coupons");
+  return { success: true };
+}
+
+export async function toggleCouponStatusAdmin(formData) {
+  const id = formData.get("id");
+  const isActive = formData.get("isActive") === "true";
+
+  if (!id) return { success: false };
+
+  await connectDb();
+  const Coupon = (await import("@/models/Coupon")).default;
+  await Coupon.findByIdAndUpdate(id, { isActive: !isActive });
+
+  revalidatePath("/admin/coupons");
+  return { success: true };
+}
+
+export async function saveCouponAdmin(formData) {
+  try {
+    await connectDb();
+    const Coupon = (await import("@/models/Coupon")).default;
+    
+    let code = formData.get("code")?.trim().toUpperCase();
+    const discountType = formData.get("discountType");
+    let discountValue = Number(formData.get("discountValue"));
+    let minOrderAmount = Number(formData.get("minOrderAmount"));
+    
+    if (!code || !discountType || isNaN(discountValue)) {
+      return { success: false, error: "Missing required fields" };
+    }
+
+    if (discountType === "percentage" && discountValue > 100) {
+      discountValue = 100;
+    }
+
+    const existing = await Coupon.findOne({ code });
+    if (existing) {
+       return { success: false, error: "Coupon code already exists!" };
+    }
+
+    const newCoupon = new Coupon({
+      code,
+      discountType,
+      discountValue,
+      minOrderAmount: isNaN(minOrderAmount) ? 0 : minOrderAmount,
+      isActive: true,
+    });
+
+    await newCoupon.save();
+    revalidatePath("/admin/coupons");
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving coupon:", error);
     return { success: false, error: error.message };
   }
 }

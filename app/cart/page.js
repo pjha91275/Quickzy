@@ -15,12 +15,40 @@ import { useWishlist } from "@/context/WishlistContext";
 import { FiHeart } from "react-icons/fi";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
+import { validateCoupon, getActiveCoupons } from "@/actions/useractions";
 
 export default function Cart() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const { cartItems, updateQuantity, removeFromCart, subtotal } = useCart();
+  const { cartItems, updateQuantity, removeFromCart, subtotal, total, discountAmount, appliedCoupon, saveCoupon } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const [couponCode, setCouponCode] = useState("");
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+
+  React.useEffect(() => {
+    const fetchCoupons = async () => {
+      const list = await getActiveCoupons();
+      setAvailableCoupons(list);
+    };
+    fetchCoupons();
+  }, []);
+
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setCouponLoading(true);
+    const res = await validateCoupon(couponCode, subtotal);
+    if (res.success) {
+      saveCoupon(res.coupon);
+      toast.success("Coupon applied successfully!");
+      setCouponCode("");
+    } else {
+      toast.error(res.message);
+      setCouponCode("");
+    }
+    setCouponLoading(false);
+  };
 
   if (status === "loading") {
     return (
@@ -244,6 +272,12 @@ export default function Cart() {
                   ₹{subtotal.toFixed(2)}
                 </span>
               </div>
+              {appliedCoupon && (
+                 <div className="flex justify-between items-center border-t pt-4">
+                   <span className="font-bold text-[#3BB77E] flex items-center gap-1.5"><FiRefreshCw /> Code: {appliedCoupon.code}</span>
+                   <span className="font-black text-[#3BB77E]">-₹{discountAmount.toFixed(2)}</span>
+                 </div>
+              )}
               <div className="flex justify-between items-center border-t border-b py-4">
                 <span className="font-bold text-gray-500">Shipping</span>
                 <span className="font-black text-[#253D4E]">Free Shipping</span>
@@ -251,7 +285,7 @@ export default function Cart() {
               <div className="flex justify-between items-center bg-[#f7f8f9] p-4 rounded-lg">
                 <span className="font-black text-[#253D4E] text-lg">Total</span>
                 <span className="text-[#3BB77E] font-black text-3xl">
-                  ₹{subtotal.toFixed(2)}
+                  ₹{total.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -274,19 +308,79 @@ export default function Cart() {
 
           <div className="bg-white border rounded-2xl p-8 shadow-sm space-y-4">
             <h4 className="font-black text-[#253D4E] text-lg">Apply Coupon</h4>
-            <p className="text-sm text-gray-400 font-medium">
-              Using A Promo Code?
-            </p>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="Enter Coupon Code"
-                className="flex-1 border rounded-md px-4 outline-none focus:border-[#3BB77E]"
-              />
-              <button className="bg-[#253D4E] text-white px-4 py-2 rounded-md font-bold hover:bg-black transition">
-                Apply
-              </button>
-            </div>
+            {appliedCoupon ? (
+               <div className="bg-[#DEF9EC] p-4 rounded-xl border border-green-100 flex items-center justify-between">
+                 <div>
+                   <p className="text-[#3BB77E] font-black uppercase tracking-wider text-sm flex items-center gap-2">
+                     <FiRefreshCw className="animate-spin-slow" /> {appliedCoupon.code}
+                   </p>
+                   <p className="text-[#253D4E] text-xs font-bold mt-1">
+                     Saving you ₹{discountAmount.toFixed(2)}!
+                   </p>
+                 </div>
+                 <button onClick={() => saveCoupon(null)} className="text-red-500 font-bold hover:underline text-xs">
+                   Remove
+                 </button>
+               </div>
+            ) : (
+              <>
+                <p className="text-sm text-gray-400 font-medium">Using A Promo Code?</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="Enter Coupon Code"
+                    className="flex-1 border rounded-md px-4 outline-none focus:border-[#3BB77E] font-bold text-[#253D4E] uppercase"
+                  />
+                  <button 
+                    id="apply-btn"
+                    disabled={couponLoading}
+                    onClick={handleApplyCoupon}
+                    className="bg-[#253D4E] text-white px-4 py-2 rounded-md font-bold hover:bg-black transition disabled:opacity-70"
+                  >
+                    {couponLoading ? "..." : "Apply"}
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* List Available Coupons */}
+            {!appliedCoupon && availableCoupons.length > 0 && (
+              <div className="mt-6 pt-6 border-t border-gray-100">
+                <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Available Offers</p>
+                <div className="space-y-3">
+                  {availableCoupons.map((c) => {
+                    const isValidNow = subtotal >= c.minOrderAmount;
+                    return (
+                      <div 
+                        key={c._id} 
+                        onClick={() => {
+                          if (isValidNow) {
+                            setCouponCode(c.code);
+                            // auto trigger apply after small delay for react state to catch up
+                            setTimeout(() => document.getElementById("apply-btn")?.click(), 50);
+                          } else {
+                            toast.info(`Add ₹${(c.minOrderAmount - subtotal).toFixed(2)} more to unlock this coupon!`);
+                          }
+                        }}
+                        className={`border rounded-xl p-4 transition-all ${isValidNow ? "cursor-pointer hover:border-[#3BB77E] hover:bg-[#DEF9EC]/30 hover:shadow-sm" : "opacity-60 cursor-not-allowed bg-gray-50"}`}
+                      >
+                         <div className="flex justify-between items-start">
+                           <span className="font-black text-[#3BB77E] border border-green-200 border-dashed bg-green-50 px-2 py-0.5 rounded text-sm uppercase tracking-wider">{c.code}</span>
+                           <span className="text-xs font-bold text-[#253D4E]">
+                             {c.discountType === "percentage" ? `${c.discountValue}% OFF` : `₹${c.discountValue} FLAT`}
+                           </span>
+                         </div>
+                         <p className="text-[10px] text-gray-400 font-bold mt-2">
+                           {c.minOrderAmount > 0 ? `Valid on orders above ₹${c.minOrderAmount}` : "No minimum order value required"}
+                         </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
