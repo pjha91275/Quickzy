@@ -31,7 +31,7 @@ export default async function UsersPage() {
                 <th className="p-4 text-xs font-bold text-gray-500 uppercase">User & Contact</th>
                 <th className="p-4 text-xs font-bold text-gray-500 uppercase">Delivery Address</th>
                 <th className="p-4 text-xs font-bold text-gray-500 uppercase text-center">Status</th>
-                <th className="p-4 text-xs font-bold text-gray-500 uppercase text-right">Role</th>
+                <th className="p-4 text-xs font-bold text-gray-500 uppercase text-center">Role</th>
               </tr>
             </thead>
             <tbody className="divide-y">
@@ -81,7 +81,7 @@ export default async function UsersPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="p-4 align-top text-right">
+                    <td className="p-4 align-top text-center">
                       {user.role === "admin" && !isCurrentUser ? (
                          <span className="text-xs text-gray-400 uppercase">Restricted</span>
                       ) : (

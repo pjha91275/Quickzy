@@ -1,97 +1,122 @@
-# 🌿 Quickzy - Fast. Fresh. Delivered.
+# 🌿 Quickzy – Fast. Fresh. Delivered.
 
-Quickzy is a premium, high-performance quick-commerce e-commerce platform built with **Next.js 15**, **Tailwind CSS**, and **MongoDB**. Designed for speed and visual excellence, Quickzy offers an immersive shopping experience with lightning-fast delivery and a sleek, modern UI.
+Quickzy is a high-performance, boutique **Quick Commerce** (Q-Commerce) engine designed to blur the line between a concept study and a production-ready retail platform. Built with a "Sophomore Developer" philosophy—focusing on clean, readable, and functional code—Quickzy delivers a premium user experience while maintaining a robust administrative backbone.
 
-![Quickzy Banner](/custom-banner.png)
+> [!NOTE]
+> This project is a **high-level simulation** of a Q-Commerce business. While it implements near-production logic for payments, inventory, and location-based constraints, certain production-scale features (like real-time delivery tracking, auto-scaling clusters, or SMS-OTP gateways) are simulated or utilize simplified developer-tier integrations.
 
-## 🚀 Key Features
+---
 
-- **⚡ Instant Delivery**: Optimized for local quick-commerce logistics.
-- **📱 Unified Auth Modal**: Seamless Phone + OTP authentication flow that provides a friction-less experience.
-- **📍 Smart Location Selection**: Integrated Mapbox & Geolocation for precise delivery tracking.
-- **🛒 Dynamic Shopping**: Intelligent product card shuffling and categorized browsing for a fresh feel on every visit.
-- **💳 Secure Payments**: Integrated with Razorpay for a smooth checkout process.
-- **🎨 Premium UI/UX**: Built with custom animations, glassmorphism, and a vibrant, professional aesthetic.
-- **🛠️ Admin Panel**: Comprehensive dashboard for managing products, orders, and users.
-- **📝 About & Blog**: Dedicated sections for brand storytelling and community engagement.
+## 🚀 Premium Features & Experience
 
-## 🛠️ Technology Stack
+### 🛍️ End-User Experience
+- **⚡ Lightning UI**: Built on **React 19** and **Next.js 15/16**, the interface is optimized for split-second interactions and silky transitions.
+- **📍 Location-Aware Guard**: Mandatory location confirmation via **Leaflet & LocationIQ** ensures delivery feasibility before the user even starts shopping.
+- **🛒 Smart Shopping Cart**: A persistent, local-first cart system that synchronizes seamlessly with the visual UI.
+- **🏷️ Dynamic Coupon Engine**: Fully functional discount logic supporting Percentage and Flat-rate reductions with minimum order threshold validation.
+- **🔍 Intelligent Search & Filter**: Search by product name or browse through **11 specialized categories** (Milk/Dairy, Electronics, Fresh Veg, etc.).
+- **💳 Multi-Tier Payments**: Secure checkout flow integrated with **Razorpay**, supporting test-mode transactions and order status persistence.
 
-- **Frontend**: [Next.js](https://nextjs.org/), [React 19](https://react.dev/), [Tailwind CSS 4](https://tailwindcss.com/)
-- **Backend**: [Node.js](https://nodejs.org/) with Next.js Server Actions & API Routes, [NextAuth.js](https://next-auth.js.org/)
-- **Database**: [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) with [Mongoose](https://mongoosejs.com/)
-- **Icons**: [React Icons](https://react-icons.github.io/react-icons/)
-- **Payments**: [Razorpay](https://razorpay.com/)
-- **Maps**: [Mapbox Search API](https://www.mapbox.com/)
+### 🛠️ Administrative Power (Admin Panel)
+- **📊 Real-time Dashboard**: Live metrics for Total Sales, Orders, Products, and active Users using premium Remix Icons.
+- **🛡️ Genesis Admin Protection**: Hardcoded structural security preventing the modification or revocation of the primary developer account.
+- **📦 Inventory Lifecycle**: Direct control over Product seeding, creation, and deletion with automated **Cloudinary image cleanup** (Orphan storage protection).
+- **🎞️ Live Banner Management**: Editable homepage promotional sliders with support for HTML-in-JSON titles and subtitle hot-editing.
+- **🎫 Coupon Controls**: Creation, management, and real-time status toggling of promotional codes.
+- **👥 User & Role Audit**: View all registered customers and manage administrative privileges with a single click.
+
+---
+
+## 🛠️ Technical Architecture & Stack
+
+Quickzy follows a **Modern Monolithic** approach with a strong separation of concerns, utilizing Next.js as the full-stack bridge.
+
+### **The Tech Stack**
+| Layer | Technology |
+| :--- | :--- |
+| **Core Framework** | [Next.js 16.1.4](https://nextjs.org/) (App Router) |
+| **Frontend Library** | [React 19](https://react.dev/) |
+| **Styling** | [Tailwind CSS 4.0+](https://tailwindcss.com/) (Standardized Variables) |
+| **Database** | [MongoDB Atlas](https://www.mongodb.com/) (NoSQL) |
+| **ODM / DB Driver** | [Mongoose 9.x](https://mongoosejs.com/) |
+| **Authentication** | [NextAuth.js v4](https://next-auth.js.org/) |
+| **Payment Gateway** | [Razorpay SDK](https://razorpay.com/) |
+| **Image Hosting** | [Cloudinary API](https://cloudinary.com/) |
+| **Geocoding** | [LocationIQ](https://locationiq.com/) |
+
+### **Project Architecture**
+- **Architecture Style**: Next.js App Router (Hybrid SSR/CSR).
+- **State Management**: **React Context API** (Cart, Wishlist, Store, and Auth contexts) avoids the complexity of Redux while providing global availability.
+- **Backend Logic**: **Server Actions** are used for 90% of data mutations (Admin tasks, User updates), providing a type-safe and secure bridge without manual REST endpoints.
+- **Security Middleware**: Native Next.js `middleware.js` protects the `/admin` and `/profile` routes from unauthorized access.
+
+---
 
 ## 📂 Project Structure
 
 ```text
-├── actions/             # Server Actions (User profiles, Orders, Payments)
-├── app/                 # Next.js App Router (Pages & API Routes)
-│   ├── api/             # Backend API Endpoints (Auth, Razorpay Webhooks)
-│   ├── cart/            # Immersive Shopping Cart Experience
-│   ├── shop/            # Dynamic Product Catalog
-│   ├── about/           # Brand Story & Mission
-│   ├── blog/            # Updates & Articles
-│   ├── contact/         # Customer Support & Inquiries
-│   ├── wishlist/        # User-saved Favorites
-│   ├── admin/           # Comprehensive Admin Dashboard
-│   └── page.js          # High-Conversion Landing Page
-├── components/          # Reusable UI Components (Navbar, Footer, AuthModal)
-├── db/                  # MongoDB Connection Logic
-├── models/              # Mongoose Schemas (User, Payment, Product)
-└── public/              # Optimized Assets & Brand Identity
+├── actions/             # Secure Server Actions (Admin, DB, Payments)
+├── app/                 # Next.js App Router
+│   ├── admin/           # Fully-featured Admin Panel Modules
+│   ├── api/             # Webhook & API Route Handlers (Razorpay, Auth)
+│   ├── cart/            # Horizontal-layout Shopping Cart
+│   ├── shop/            # Category & Search focused catalog
+│   └── ...              # About, Blog, Contact, Wishlist, Checkout
+├── components/          # Reusable UI Atoms & Molecules
+├── context/             # Global State Providers (Store, Cart, Auth)
+├── db/                  # MongoDB Connection & Configuration
+├── models/              # Mongoose Schemas (User, Order, Product, Banner)
+├── public/              # Brand Assets & Optimized Media
+├── scripts/             # Database Seeding & Maintenance Utilities
+└── seed-data/           # JSON Source of Truth for Categories/Products
 ```
+
+---
+
+## 🔌 Third-Party Integrations
+
+Quickzy leverages industry-standard APIs to provide a "Near-Production" feel:
+- **Cloudinary**: Handles high-performance image delivery, resizing, and provides an API for automated asset destruction upon product deletion.
+- **Razorpay**: Integrated via a custom API route to handle order creation and client-side payment verification.
+- **LocationIQ**: Powers the reverse geocoding inside the `LocationModal` to provide human-readable addresses from coordinate data.
+- **NextAuth**: Powers the "User first" authentication experience with MongoDB session persistence.
+
+---
+
+## 🚧 Known Limitations (The "Dummy" Aspects)
+
+To keep this project focused on UI/UX and Core Logic, the following are intentionally simplified:
+1. **SMS/Phone Login**: Currently uses developer-tier simulated flows; production-scale SMS gateways are not active.
+2. **Order Lifecycle**: Order tracking stops at "Placed"/ "Processing". No real-time GPS courier tracking or logistics API is connected.
+3. **Scalability**: Designed for boutique/demo scale. Large-scale database sharding or edge caching are not implemented.
+4. **Maintenance**: While mostly dynamic, some UI elements utilize developer-friendly hardcoding for specific layout themes.
+
+---
 
 ## 🏁 Getting Started
 
 ### Prerequisites
-
 - Node.js 18+
-- MongoDB Instance (Atlas or Local)
-- Razorpay API Keys
-- Firebase/Mapbox Credentials
+- A MongoDB Atlas Cluster
+- Cloudinary & Razorpay Developer Accounts
 
 ### Installation
-
-1. **Clone the repository:**
-
-   ```bash
-   git clone https://github.com/pjha91275/Quickzy.git
-   cd Quickzy
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables:**
-   Create a `.env.local` file in the root directory:
-
+1. Clone the repo: `git clone https://github.com/pjha91275/Quickzy.git`
+2. Install deps: `npm install`
+3. Setup `.env.local`:
    ```env
-   MONGO_URI=your_mongodb_uri
-   NEXTAUTH_SECRET=your_nextauth_secret
-   NEXT_PUBLIC_RAZORPAY_KEY=your_razorpay_key
-   RAZORPAY_SECRET=your_razorpay_secret
-   NEXT_PUBLIC_MAPBOX_TOKEN=your_mapbox_token
-   NEXT_PUBLIC_URL=http://localhost:3000
+   MONGO_URI=...
+   CLOUDINARY_CLOUD_NAME=...
+   CLOUDINARY_API_KEY=...
+   CLOUDINARY_API_SECRET=...
+   NEXT_PUBLIC_RAZORPAY_KEY=...
+   RAZORPAY_SECRET=...
+   NEXT_PUBLIC_LOCATIONIQ_KEY=...
+   NEXTAUTH_SECRET=...
    ```
-
-4. **Run the development server:**
-
-   ```bash
-   npm run dev
-   ```
-
-5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-## 👨‍💻 Contributing
-
-Quickzy is currently under active development. Once the primary development phase is complete, the repository will be open for public contributions! Feel free to fork the project and submit pull requests to help make Quickzy the best quick-commerce platform.
+4. Seed the Database: `npm run seed`
+5. Launch: `npm run dev`
 
 ---
 
-_Made with ❤️ by the Prince Jha_
+*Made with ❤️ by Prince Jha*

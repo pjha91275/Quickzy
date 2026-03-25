@@ -1,10 +1,13 @@
 import React from "react";
 import Link from "next/link";
 import { getBannersAdmin, deleteBannerAdmin, updateBannerTextAdmin } from "@/actions/adminactions";
-import { FiPlus, FiTrash2, FiImage } from "react-icons/fi";
+import { FiPlus, FiTrash2, FiImage, FiLink } from "react-icons/fi";
 
 export default async function BannersPage() {
   const banners = await getBannersAdmin();
+
+  // Helper to remove HTML tags so admins only see plain text
+  const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, ' ') : '';
 
   return (
     <div>
@@ -49,27 +52,29 @@ export default async function BannersPage() {
                       )}
                     </div>
                   </td>
-                  <td className="p-5 min-w-[250px]">
-                    <form action={updateBannerTextAdmin} className="flex flex-col gap-2 relative group/edit">
+                  <td className="p-5 min-w-[300px] align-middle">
+                    <form action={updateBannerTextAdmin} className="flex flex-col gap-1 relative group/edit">
                       <input type="hidden" name="id" value={b._id} />
-                      {/* Using defaultValue to allow it to be edited by the user */}
-                      <textarea name="title" defaultValue={b.title || ""} className="font-black text-[#253D4E] text-[13px] border rounded hover:border-[#3BB77E]/50 focus:border-[#3BB77E] px-2 py-1 w-full outline-none focus:ring-2 focus:ring-[#3BB77E]/20 transition-all resize-none h-[40px]" placeholder="Title (HTML allowed)"></textarea>
-                      <input name="subtitle" defaultValue={b.subtitle || b.tag || ""} className="text-xs text-gray-400 font-bold border rounded hover:border-[#3BB77E]/50 focus:border-[#3BB77E] px-2 py-1 w-full outline-none focus:ring-2 focus:ring-[#3BB77E]/20 transition-all" placeholder="Subtitle / Tag" />
-                      <button type="submit" className="bg-[#DEF9EC] text-[#3BB77E] text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg w-fit hover:bg-[#3BB77E] hover:text-white transition-colors opacity-0 group-hover/edit:opacity-100 absolute -bottom-8 left-0 shadow-sm z-10">
-                        Save Edits
-                      </button>
+                      <textarea name="title" defaultValue={stripHtml(b.title).trim()} className="bg-transparent font-black text-[#253D4E] text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
+                      <input name="subtitle" defaultValue={b.subtitle || b.tag || ""} className="bg-transparent text-[11px] text-gray-400 font-bold border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all" placeholder="Subtitle / Tag" />
+                      
+                      <div className="absolute -bottom-7 right-2 opacity-0 group-hover/edit:opacity-100 transition-opacity z-10 pointer-events-none group-focus-within/edit:pointer-events-auto group-focus-within/edit:opacity-100">
+                        <button type="submit" className="bg-[#3BB77E] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded shadow-lg hover:bg-[#29a56c] pointer-events-auto">
+                          Save Edits
+                        </button>
+                      </div>
                     </form>
                   </td>
-                  <td className="p-5">
-                    <span className={`text-[10px] uppercase font-black tracking-widest px-3 py-1.5 rounded-full ${
-                      b.type === "hero" ? "bg-purple-50 text-purple-600" : "bg-blue-50 text-blue-600"
+                  <td className="p-5 align-middle">
+                    <span className={`text-[10px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg ${
+                      b.type === "hero" ? "bg-purple-50 text-purple-600 border border-purple-100" : "bg-blue-50 text-blue-600 border border-blue-100"
                     }`}>
                       {b.type === "hero" ? "Hero Slider" : "Footer Wide"}
                     </span>
                   </td>
-                  <td className="p-5">
-                    <span className="bg-gray-100 text-gray-500 font-bold text-[10px] px-3 py-1 rounded-md max-w-[150px] truncate block">
-                      {b.shopLink || "/shop"}
+                  <td className="p-5 align-middle">
+                    <span className="text-blue-500 font-bold text-[12px] flex items-center gap-1.5 max-w-[150px] truncate">
+                      <FiLink className="shrink-0" /> {b.shopLink || "/shop"}
                     </span>
                   </td>
                   <td className="p-5 text-right">

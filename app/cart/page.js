@@ -271,7 +271,7 @@ export default function Cart() {
                     const colorVariants = [
                       "border-green-200 bg-[#DEF9EC] text-[#3BB77E]", 
                       "border-blue-200 bg-blue-50 text-blue-600", 
-                      "border-orange-200 bg-orange-50 text-orange-600", 
+                      "border-indigo-200 bg-indigo-50 text-indigo-600", 
                       "border-purple-200 bg-purple-50 text-purple-600", 
                       "border-pink-200 bg-pink-50 text-pink-600", 
                     ];

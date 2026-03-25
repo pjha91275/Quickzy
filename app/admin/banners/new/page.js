@@ -71,7 +71,7 @@ export default function NewBannerPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Main Title <span className="text-red-400">*</span></label>
-            <textarea required name="title" rows={3} className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30 resize-none" placeholder="Everyday Essentials <br/><span class='text-green-500'>Within 15 Mins</span>" />
+            <textarea required name="title" rows={3} className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30 resize-none" placeholder="Everyday Essentials&#10;Within 15 Mins" />
           </div>
           
           <div className="flex flex-col gap-6">

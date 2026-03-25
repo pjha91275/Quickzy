@@ -42,7 +42,7 @@ export default async function CouponsPage() {
                 const colorVariants = [
                   "bg-[#DEF9EC] text-[#3BB77E] border-green-100", // Green
                   "bg-blue-50 text-blue-500 border-blue-100", // Blue
-                  "bg-orange-50 text-orange-500 border-orange-100", // Orange
+                  "bg-indigo-50 text-indigo-500 border-indigo-100", // Indigo instead of Orange
                   "bg-purple-50 text-purple-500 border-purple-100", // Purple
                   "bg-pink-50 text-pink-500 border-pink-100", // Pink
                 ];
@@ -84,7 +84,7 @@ export default async function CouponsPage() {
                   <td className="p-5 text-right align-middle">
                     <form action={deleteCouponAdmin} className="inline-block relative z-10">
                       <input type="hidden" name="id" value={c._id} />
-                      <button type="submit" className="p-3 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all cursor-pointer opacity-100 md:opacity-0 group-hover:opacity-100">
+                      <button type="submit" className="p-3 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer">
                         <FiTrash2 className="text-xl" />
                       </button>
                     </form>

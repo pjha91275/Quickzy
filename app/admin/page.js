@@ -1,5 +1,5 @@
 import React from "react";
-import { FiTrendingUp, FiShoppingBag, FiUsers, FiBox } from "react-icons/fi";
+import { RiMoneyRupeeCircleFill, RiShoppingBag3Fill, RiGroupFill, RiArchiveFill } from "react-icons/ri";
 import connectDb from "@/db/connectDb";
 import Order from "@/models/Order";
 import Product from "@/models/Product";
@@ -47,26 +47,26 @@ export default async function AdminDashboard() {
         <StatCard
           title="Total Sales"
           value={`₹${totalSales.toLocaleString()}`}
-          icon={<FiTrendingUp className="text-[#3BB77E]" strokeWidth={2.5} />}
-          colorClass="bg-[#DEF9EC]"
+          icon={<RiMoneyRupeeCircleFill className="text-[#3BB77E]" />}
+          colorClass="bg-[#DEF9EC] shadow-inner"
         />
         <StatCard
           title="Total Orders"
           value={totalOrders.toLocaleString()}
-          icon={<FiShoppingBag className="text-blue-500" strokeWidth={2.5} />}
-          colorClass="bg-blue-50"
+          icon={<RiShoppingBag3Fill className="text-blue-500" />}
+          colorClass="bg-blue-50 shadow-inner"
         />
         <StatCard
           title="Total Products"
           value={productCount.toLocaleString()}
-          icon={<FiBox className="text-purple-500" strokeWidth={2.5} />}
-          colorClass="bg-purple-50"
+          icon={<RiArchiveFill className="text-purple-500" />}
+          colorClass="bg-purple-50 shadow-inner"
         />
         <StatCard
           title="Total Users"
           value={userCount.toLocaleString()}
-          icon={<FiUsers className="text-orange-500" strokeWidth={2.5} />}
-          colorClass="bg-orange-50"
+          icon={<RiGroupFill className="text-indigo-500" />}
+          colorClass="bg-indigo-50 shadow-inner"
         />
       </div>
 
