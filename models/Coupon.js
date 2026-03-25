@@ -7,6 +7,10 @@ const CouponSchema = new Schema({
   discountValue: { type: Number, required: true },
   minOrderAmount: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true },
+  usageLimitPerUser: { type: Number, default: 1 },
+  totalUsageLimit: { type: Number, default: 100 },
+  totalUsedCount: { type: Number, default: 0 },
+  usedBy: [{ email: String, count: Number }],
   createdAt: { type: Date, default: Date.now },
 });
 

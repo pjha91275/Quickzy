@@ -38,7 +38,7 @@ export default function Cart() {
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
     setCouponLoading(true);
-    const res = await validateCoupon(couponCode, subtotal);
+    const res = await validateCoupon(couponCode, subtotal, session?.user?.email);
     if (res.success) {
       saveCoupon(res.coupon);
       toast.success("Coupon applied successfully!");
@@ -252,13 +252,61 @@ export default function Cart() {
             )}
           </div>
 
-          <div className="mt-12 flex flex-col md:flex-row justify-between items-center gap-6 border-t pt-8">
+          <div className="mt-12 flex flex-col justify-start items-start gap-6 border-t pt-8 w-full">
             <Link
               href="/"
-              className="bg-[#3BB77E] text-white px-8 py-4 rounded-xl font-black hover:bg-[#29A56C] transition shadow-lg flex items-center gap-2"
+              className="bg-[#3BB77E] text-white px-8 py-4 rounded-xl font-black hover:bg-[#29A56C] transition shadow-lg flex items-center gap-2 mb-2"
             >
               <FiArrowRight className="rotate-180" /> Continue Shopping
             </Link>
+
+            {/* List Available Coupons - HORIZONTAL FULL WIDTH */}
+            {!appliedCoupon && availableCoupons.length > 0 && (
+              <div className="w-full mt-4">
+                <p className="text-sm font-black text-[#253D4E] uppercase tracking-widest mb-4">Available Offers</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                  {availableCoupons.map((c, index) => {
+                    const isValidNow = subtotal >= c.minOrderAmount;
+                    
+                    const colorVariants = [
+                      "border-green-200 bg-[#DEF9EC] text-[#3BB77E]", 
+                      "border-blue-200 bg-blue-50 text-blue-600", 
+                      "border-orange-200 bg-orange-50 text-orange-600", 
+                      "border-purple-200 bg-purple-50 text-purple-600", 
+                      "border-pink-200 bg-pink-50 text-pink-600", 
+                    ];
+                    const themeObj = colorVariants[index % colorVariants.length];
+
+                    return (
+                      <div 
+                        key={c._id} 
+                        onClick={() => {
+                          if (isValidNow) {
+                            setCouponCode(c.code);
+                            setTimeout(() => document.getElementById("apply-btn")?.click(), 50);
+                          } else {
+                            toast.info(`Add ₹${(c.minOrderAmount - subtotal).toFixed(2)} more to unlock this coupon!`);
+                          }
+                        }}
+                        className={`border rounded-2xl p-5 transition-all ${isValidNow ? "cursor-pointer hover:shadow-md hover:-translate-y-1 bg-white hover:border-[#3BB77E]/50 border-gray-200" : "opacity-50 cursor-not-allowed bg-gray-50 border-gray-100"}`}
+                      >
+                         <div className="flex justify-between items-center mb-2">
+                           <span className={`font-black border border-dashed px-3 py-1 rounded-lg text-sm uppercase tracking-wider ${isValidNow ? themeObj : "bg-gray-200 text-gray-500 border-gray-300"}`}>
+                             {c.code}
+                           </span>
+                           <span className="text-sm font-black text-[#253D4E] bg-gray-50 px-2 py-1 rounded">
+                             {c.discountType === "percentage" ? `${c.discountValue}% OFF` : `₹${c.discountValue} FLAT`}
+                           </span>
+                         </div>
+                         <p className="text-[11px] text-gray-500 font-bold mt-3 border-t border-gray-100 pt-3">
+                           {c.minOrderAmount > 0 ? `Valid on orders above ₹${c.minOrderAmount}` : "No minimum order value required"}
+                         </p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -345,42 +393,6 @@ export default function Cart() {
               </>
             )}
 
-            {/* List Available Coupons */}
-            {!appliedCoupon && availableCoupons.length > 0 && (
-              <div className="mt-6 pt-6 border-t border-gray-100">
-                <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-4">Available Offers</p>
-                <div className="space-y-3">
-                  {availableCoupons.map((c) => {
-                    const isValidNow = subtotal >= c.minOrderAmount;
-                    return (
-                      <div 
-                        key={c._id} 
-                        onClick={() => {
-                          if (isValidNow) {
-                            setCouponCode(c.code);
-                            // auto trigger apply after small delay for react state to catch up
-                            setTimeout(() => document.getElementById("apply-btn")?.click(), 50);
-                          } else {
-                            toast.info(`Add ₹${(c.minOrderAmount - subtotal).toFixed(2)} more to unlock this coupon!`);
-                          }
-                        }}
-                        className={`border rounded-xl p-4 transition-all ${isValidNow ? "cursor-pointer hover:border-[#3BB77E] hover:bg-[#DEF9EC]/30 hover:shadow-sm" : "opacity-60 cursor-not-allowed bg-gray-50"}`}
-                      >
-                         <div className="flex justify-between items-start">
-                           <span className="font-black text-[#3BB77E] border border-green-200 border-dashed bg-green-50 px-2 py-0.5 rounded text-sm uppercase tracking-wider">{c.code}</span>
-                           <span className="text-xs font-bold text-[#253D4E]">
-                             {c.discountType === "percentage" ? `${c.discountValue}% OFF` : `₹${c.discountValue} FLAT`}
-                           </span>
-                         </div>
-                         <p className="text-[10px] text-gray-400 font-bold mt-2">
-                           {c.minOrderAmount > 0 ? `Valid on orders above ₹${c.minOrderAmount}` : "No minimum order value required"}
-                         </p>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>

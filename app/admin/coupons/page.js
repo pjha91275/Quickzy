@@ -38,11 +38,21 @@ export default async function CouponsPage() {
                   <td colSpan="5" className="p-10 text-center text-gray-400 font-black">No coupons created yet.</td>
                 </tr>
               ) : null}
-              {coupons.map((c) => (
-                <tr key={c._id} className="hover:bg-[#F2FBF6] transition-colors group">
+              {coupons.map((c, index) => {
+                const colorVariants = [
+                  "bg-[#DEF9EC] text-[#3BB77E] border-green-100", // Green
+                  "bg-blue-50 text-blue-500 border-blue-100", // Blue
+                  "bg-orange-50 text-orange-500 border-orange-100", // Orange
+                  "bg-purple-50 text-purple-500 border-purple-100", // Purple
+                  "bg-pink-50 text-pink-500 border-pink-100", // Pink
+                ];
+                const theme = colorVariants[index % colorVariants.length];
+                
+                return (
+                <tr key={c._id} className="hover:bg-gray-50/50 transition-colors group">
                   <td className="p-5 align-middle">
-                    <div className="inline-flex items-center gap-2 bg-[#DEF9EC] px-4 py-2 border border-green-100 rounded-xl relative overflow-hidden">
-                       <FiTag className="text-[#3BB77E] text-sm shrink-0" />
+                    <div className={`inline-flex items-center gap-2 px-4 py-2 border rounded-xl relative overflow-hidden ${theme}`}>
+                       <FiTag className="text-lg shrink-0" />
                        <span className="font-black text-[#253D4E] text-[15px] tabular-nums tracking-wider">{c.code}</span>
                        {!c.isActive && (
                          <div className="absolute inset-0 bg-white/60 backdrop-blur-[1px]"></div>
@@ -80,7 +90,7 @@ export default async function CouponsPage() {
                     </form>
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { getBannersAdmin, deleteBannerAdmin } from "@/actions/adminactions";
+import { getBannersAdmin, deleteBannerAdmin, updateBannerTextAdmin } from "@/actions/adminactions";
 import { FiPlus, FiTrash2, FiImage } from "react-icons/fi";
 
 export default async function BannersPage() {
@@ -49,9 +49,16 @@ export default async function BannersPage() {
                       )}
                     </div>
                   </td>
-                  <td className="p-5">
-                    <p className="font-black text-[#253D4E] text-[13px] line-clamp-2" dangerouslySetInnerHTML={{ __html: b.title || "No Title" }}></p>
-                    <p className="text-xs text-gray-400 font-bold mt-1 line-clamp-1">{b.subtitle || b.tag || "No Subtitle"}</p>
+                  <td className="p-5 min-w-[250px]">
+                    <form action={updateBannerTextAdmin} className="flex flex-col gap-2 relative group/edit">
+                      <input type="hidden" name="id" value={b._id} />
+                      {/* Using defaultValue to allow it to be edited by the user */}
+                      <textarea name="title" defaultValue={b.title || ""} className="font-black text-[#253D4E] text-[13px] border rounded hover:border-[#3BB77E]/50 focus:border-[#3BB77E] px-2 py-1 w-full outline-none focus:ring-2 focus:ring-[#3BB77E]/20 transition-all resize-none h-[40px]" placeholder="Title (HTML allowed)"></textarea>
+                      <input name="subtitle" defaultValue={b.subtitle || b.tag || ""} className="text-xs text-gray-400 font-bold border rounded hover:border-[#3BB77E]/50 focus:border-[#3BB77E] px-2 py-1 w-full outline-none focus:ring-2 focus:ring-[#3BB77E]/20 transition-all" placeholder="Subtitle / Tag" />
+                      <button type="submit" className="bg-[#DEF9EC] text-[#3BB77E] text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg w-fit hover:bg-[#3BB77E] hover:text-white transition-colors opacity-0 group-hover/edit:opacity-100 absolute -bottom-8 left-0 shadow-sm z-10">
+                        Save Edits
+                      </button>
+                    </form>
                   </td>
                   <td className="p-5">
                     <span className={`text-[10px] uppercase font-black tracking-widest px-3 py-1.5 rounded-full ${
@@ -66,9 +73,9 @@ export default async function BannersPage() {
                     </span>
                   </td>
                   <td className="p-5 text-right">
-                    <form action={deleteBannerAdmin} className="inline-block">
+                    <form action={deleteBannerAdmin} className="inline-block relative z-10">
                       <input type="hidden" name="id" value={b._id} />
-                      <button type="submit" className="p-3 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all cursor-pointer opacity-100 md:opacity-0 group-hover:opacity-100">
+                      <button type="submit" className="p-3 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer">
                         <FiTrash2 className="text-xl" />
                       </button>
                     </form>

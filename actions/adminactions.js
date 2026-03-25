@@ -24,7 +24,21 @@ export async function deleteProductAdmin(formData) {
   if (!id) return { success: false, error: "Missing Product ID" };
 
   await connectDb();
-  await Product.findByIdAndDelete(id);
+  const deleted = await Product.findByIdAndDelete(id);
+
+  if (deleted && deleted.image) {
+    try {
+      const fullPublicId = deleted.image.split("/upload/").pop().replace(/v\d+\//, "").split(".")[0];
+      const fallbackPublicId = deleted.image.split("/").pop().split(".")[0];
+      
+      await cloudinary.uploader.destroy(fullPublicId);
+      if (fullPublicId !== fallbackPublicId) {
+        await cloudinary.uploader.destroy(fallbackPublicId);
+      }
+    } catch (e) {
+      console.log("Could not delete image:", e);
+    }
+  }
 
   // Invalidate cache
   revalidatePath("/admin/products");
@@ -50,6 +64,14 @@ export async function saveProductAdmin(formData) {
 
     // Stream upload to Cloudinary directly
     if (imageFile && imageFile.size > 0) {
+      if (imageFile.size > 5 * 1024 * 1024) {
+        return { success: false, error: "Image exceeds 5MB limit." };
+      }
+      const validTypes = ["image/jpeg", "image/png", "image/webp"];
+      if (!validTypes.includes(imageFile.type)) {
+        return { success: false, error: "Only PNG, JPG, and WEBP formats are allowed." };
+      }
+
       const arrayBuffer = await imageFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       
@@ -133,6 +155,12 @@ export async function toggleUserRoleAdmin(formData) {
   await connectDb();
   const User = (await import("@/models/User")).default;
   
+  const targetUser = await User.findById(id);
+  if (targetUser && targetUser.email === "pjha91275@gmail.com") {
+    // Genesis Admin Protection
+    return { success: false, error: "Genesis Admin cannot be modified." };
+  }
+
   const newRole = currentRole === "admin" ? "user" : "admin";
   await User.findByIdAndUpdate(id, { role: newRole });
 
@@ -153,7 +181,37 @@ export async function deleteBannerAdmin(formData) {
 
   await connectDb();
   const Banner = (await import("@/models/Banner")).default;
-  await Banner.findByIdAndDelete(id);
+  const deleted = await Banner.findByIdAndDelete(id);
+
+  if (deleted && deleted.image) {
+    try {
+      const fullPublicId = deleted.image.split("/upload/").pop().replace(/v\d+\//, "").split(".")[0];
+      const fallbackPublicId = deleted.image.split("/").pop().split(".")[0];
+      
+      await cloudinary.uploader.destroy(fullPublicId);
+      if (fullPublicId !== fallbackPublicId) {
+        await cloudinary.uploader.destroy(fallbackPublicId);
+      }
+    } catch (e) {
+      console.log("Could not delete image:", e);
+    }
+  }
+
+  revalidatePath("/admin/banners");
+  revalidatePath("/");
+  return { success: true };
+}
+
+export async function updateBannerTextAdmin(formData) {
+  const id = formData.get("id");
+  const title = formData.get("title");
+  const subtitle = formData.get("subtitle");
+
+  if (!id) return { success: false };
+
+  await connectDb();
+  const Banner = (await import("@/models/Banner")).default;
+  await Banner.findByIdAndUpdate(id, { title, subtitle });
 
   revalidatePath("/admin/banners");
   revalidatePath("/");
@@ -177,6 +235,14 @@ export async function saveBannerAdmin(formData) {
 
     // Handle Cloudinary upload
     if (imageFile && imageFile.size > 0) {
+      if (imageFile.size > 5 * 1024 * 1024) {
+        return { success: false, error: "Image exceeds 5MB limit." };
+      }
+      const validTypes = ["image/jpeg", "image/png", "image/webp"];
+      if (!validTypes.includes(imageFile.type)) {
+        return { success: false, error: "Only PNG, JPG, and WEBP formats are allowed." };
+      }
+
       const arrayBuffer = await imageFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       
@@ -256,6 +322,8 @@ export async function saveCouponAdmin(formData) {
     const discountType = formData.get("discountType");
     let discountValue = Number(formData.get("discountValue"));
     let minOrderAmount = Number(formData.get("minOrderAmount"));
+    let usageLimitPerUser = Number(formData.get("usageLimitPerUser")) || 1;
+    let totalUsageLimit = Number(formData.get("totalUsageLimit")) || 100;
     
     if (!code || !discountType || isNaN(discountValue)) {
       return { success: false, error: "Missing required fields" };
@@ -275,6 +343,8 @@ export async function saveCouponAdmin(formData) {
       discountType,
       discountValue,
       minOrderAmount: isNaN(minOrderAmount) ? 0 : minOrderAmount,
+      usageLimitPerUser,
+      totalUsageLimit,
       isActive: true,
     });
 

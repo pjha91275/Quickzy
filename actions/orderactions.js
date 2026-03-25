@@ -38,6 +38,23 @@ export const createOrder = async (orderData) => {
       { $push: { orders: newOrder._id } },
     );
 
+    // Consume coupon limit if used
+    if (orderData.couponCode) {
+      const Coupon = (await import("@/models/Coupon")).default;
+      const coupon = await Coupon.findOne({ code: orderData.couponCode });
+      if (coupon) {
+        coupon.totalUsedCount = (coupon.totalUsedCount || 0) + 1;
+        const emailLower = orderData.userEmail.toLowerCase();
+        let userUsage = coupon.usedBy.find(u => u.email === emailLower);
+        if (userUsage) {
+          userUsage.count += 1;
+        } else {
+          coupon.usedBy.push({ email: emailLower, count: 1 });
+        }
+        await coupon.save();
+      }
+    }
+
     return { success: true, orderId: newOrder._id.toString() };
   } catch (err) {
     return { success: false };

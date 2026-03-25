@@ -70,7 +70,7 @@ export const saveCheckoutDetails = async (email, details) => {
 };
 
 // 5. Validate Coupon Code
-export const validateCoupon = async (code, cartSubtotal) => {
+export const validateCoupon = async (code, cartSubtotal, userEmail) => {
   if (!code) return { success: false, message: "Please enter a code" };
   
   await connectDb();
@@ -84,6 +84,19 @@ export const validateCoupon = async (code, cartSubtotal) => {
   
   if (coupon.minOrderAmount > 0 && cartSubtotal < coupon.minOrderAmount) {
     return { success: false, message: `Minimum order amount for this coupon is ₹${coupon.minOrderAmount}` };
+  }
+  
+  // Total usage limit check
+  if (coupon.totalUsedCount >= coupon.totalUsageLimit) {
+    return { success: false, message: "Coupon global usage limit reached" };
+  }
+
+  // Per user usage limit check
+  if (userEmail && coupon.usedBy) {
+    const userUsage = coupon.usedBy.find(u => u.email === userEmail.toLowerCase());
+    if (userUsage && userUsage.count >= coupon.usageLimitPerUser) {
+      return { success: false, message: `You have already used this coupon ${userUsage.count} time(s). Limit reached!` };
+    }
   }
   
   return { 

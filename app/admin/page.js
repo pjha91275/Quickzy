@@ -47,26 +47,26 @@ export default async function AdminDashboard() {
         <StatCard
           title="Total Sales"
           value={`₹${totalSales.toLocaleString()}`}
-          icon={<FiTrendingUp />}
-          colorClass="bg-[#DEF9EC] text-[#3BB77E]"
+          icon={<FiTrendingUp className="text-[#3BB77E]" strokeWidth={2.5} />}
+          colorClass="bg-[#DEF9EC]"
         />
         <StatCard
           title="Total Orders"
           value={totalOrders.toLocaleString()}
-          icon={<FiShoppingBag />}
-          colorClass="bg-blue-50 text-blue-500"
+          icon={<FiShoppingBag className="text-blue-500" strokeWidth={2.5} />}
+          colorClass="bg-blue-50"
         />
         <StatCard
           title="Total Products"
           value={productCount.toLocaleString()}
-          icon={<FiBox />}
-          colorClass="bg-purple-50 text-purple-500"
+          icon={<FiBox className="text-purple-500" strokeWidth={2.5} />}
+          colorClass="bg-purple-50"
         />
         <StatCard
           title="Total Users"
           value={userCount.toLocaleString()}
-          icon={<FiUsers />}
-          colorClass="bg-orange-50 text-orange-500"
+          icon={<FiUsers className="text-orange-500" strokeWidth={2.5} />}
+          colorClass="bg-orange-50"
         />
       </div>
 

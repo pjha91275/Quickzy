@@ -64,7 +64,7 @@ export default async function ProductsPage() {
                     {/* Server Action Form replacing Client AJAX logic to fit Next.js standard */}
                     <form action={deleteProductAdmin} className="inline-block">
                       <input type="hidden" name="id" value={p._id} />
-                      <button type="submit" className="p-3 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all cursor-pointer opacity-100 md:opacity-0 group-hover:opacity-100">
+                      <button type="submit" className="p-3 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer">
                         <FiTrash2 className="text-xl" />
                       </button>
                     </form>

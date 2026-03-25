@@ -33,7 +33,19 @@ export default function NewProductPage() {
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setPreview(URL.createObjectURL(e.target.files[0]));
+      const file = e.target.files[0];
+      const validTypes = ["image/jpeg", "image/png", "image/webp"];
+      if (!validTypes.includes(file.type)) {
+        toast.error("Only PNG, JPG, and WEBP formats are allowed.");
+        e.target.value = "";
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("Image size must be less than 5MB.");
+        e.target.value = "";
+        return;
+      }
+      setPreview(URL.createObjectURL(file));
     }
   };
 
@@ -63,13 +75,17 @@ export default function NewProductPage() {
             <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Category <span className="text-red-400">*</span></label>
             <select required name="category" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30">
               <option value="">Select a Category</option>
-              <option value="Vegetables">Vegetables</option>
+              <option value="Milk & Dairy">Milk & Dairy</option>
               <option value="Fruits">Fruits</option>
-              <option value="Dairy & Bakery">Dairy & Bakery</option>
+              <option value="Vegetables">Vegetables</option>
+              <option value="Tea & Coffee">Tea & Coffee</option>
               <option value="Snacks">Snacks</option>
-              <option value="Meat">Meat</option>
-              <option value="Cold Drinks">Cold Drinks</option>
-              <option value="Other">Other</option>
+              <option value="Personal Care">Personal Care</option>
+              <option value="Household Essentials">Household Essentials</option>
+              <option value="Beverages">Beverages</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Stationery">Stationery</option>
+              <option value="Grocery">Grocery</option>
             </select>
           </div>
         </div>
