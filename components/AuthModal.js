@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { ToastContainer, toast, Bounce } from "react-toastify";
+import { toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import {
   FiX,
@@ -34,17 +34,19 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
   const [coords, setCoords] = useState({ lat: null, lng: null });
   const [showMapModal, setShowMapModal] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
+  const [targetTimestamp, setTargetTimestamp] = useState(null);
 
-  // Timer for resend link
+  // Timer for resend link (Background Safe)
   React.useEffect(() => {
     let interval;
-    if (step === 2 && resendTimer > 0) {
+    if (step === 2 && targetTimestamp && Date.now() < targetTimestamp) {
       interval = setInterval(() => {
-        setResendTimer((prev) => prev - 1);
+        const remaining = Math.max(0, Math.ceil((targetTimestamp - Date.now()) / 1000));
+        setResendTimer(remaining);
       }, 1000);
     }
     return () => clearInterval(interval);
-  }, [step, resendTimer]);
+  }, [step, targetTimestamp]);
 
   // Sync step and pre-fill email if available
   React.useEffect(() => {
@@ -103,6 +105,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
       if (result?.ok) {
         setStep(2);
         setResendTimer(30);
+        setTargetTimestamp(Date.now() + 30 * 1000); // 30 seconds from now
         toast.success("Magic link sent! Check your inbox.");
       } else {
         toast.error("Failed to send magic link. Try again.");
@@ -227,11 +230,7 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
 
   return (
     <>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        transition={Bounce}
-      />
+
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"

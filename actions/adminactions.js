@@ -36,7 +36,7 @@ export async function deleteProductAdmin(formData) {
         await cloudinary.uploader.destroy(fallbackPublicId);
       }
     } catch (e) {
-      console.log("Could not delete image:", e);
+      console.error("Cloudinary: Could not delete product image:", e);
     }
   }
 
@@ -193,7 +193,7 @@ export async function deleteBannerAdmin(formData) {
         await cloudinary.uploader.destroy(fallbackPublicId);
       }
     } catch (e) {
-      console.log("Could not delete image:", e);
+      console.error("Cloudinary: Could not delete banner image:", e);
     }
   }
 

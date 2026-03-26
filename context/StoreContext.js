@@ -7,9 +7,21 @@ const StoreContext = createContext();
 const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
 const decoratePool = (pool) => {
-  // 35% get discounts
-  const discountCount = Math.floor(pool.length * 0.35);
-  const shuffledForDiscounts = shuffleArray(pool);
+  if (!pool || pool.length === 0) return [];
+  
+  // 1. Wipe all existing DB-level discounts/oldPrices first for consistency
+  const cleanPool = pool.map(p => {
+    const cleanProd = { ...p };
+    delete cleanProd.oldPrice;
+    delete cleanProd.discount;
+    delete cleanProd.tag;
+    delete cleanProd.tagColor;
+    return cleanProd;
+  });
+
+  // 2. Apply 35% rule
+  const discountCount = Math.floor(cleanPool.length * 0.35);
+  const shuffledForDiscounts = shuffleArray(cleanPool);
   
   // Pick first X for discounts
   const discountIds = new Set(shuffledForDiscounts.slice(0, discountCount).map(p => p._id || p.id));
@@ -17,7 +29,7 @@ const decoratePool = (pool) => {
   // Discount range 5% to 35%
   const getRandDiscount = () => Math.floor(Math.random() * (35 - 5 + 1)) + 5;
 
-  return pool.map(p => {
+  return cleanPool.map(p => {
     if (discountIds.has(p._id || p.id)) {
       const discPercent = getRandDiscount();
       const discValue = `${discPercent}%`;
@@ -33,12 +45,7 @@ const decoratePool = (pool) => {
         tagColor: "bg-[#f74b81] italic uppercase"
       };
     }
-    const cleanProd = { ...p };
-    delete cleanProd.oldPrice;
-    delete cleanProd.discount;
-    delete cleanProd.tag;
-    delete cleanProd.tagColor;
-    return cleanProd;
+    return p;
   });
 };
 
@@ -107,7 +114,7 @@ export const StoreProvider = ({ children }) => {
       }));
       
       // C. Deals (4)
-      const deals = availablePool.splice(0, 4).map(p => ({ ...p, bg: "bg-gray-50" }));
+      const deals = availablePool.splice(0, 4);
       
       // D. Sections (3 each)
       const topSelling = availablePool.splice(0, 3);

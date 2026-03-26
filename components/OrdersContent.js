@@ -19,6 +19,8 @@ export default function OrdersContent() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const [refresh, setRefresh] = useState(0);
+
   useEffect(() => {
     const getOrders = async () => {
       if (status === "authenticated" && session?.user?.email) {
@@ -35,6 +37,24 @@ export default function OrdersContent() {
     if (status !== "loading") {
       getOrders();
     }
+
+    // Live countdown refresh every 1 minute
+    const interval = setInterval(() => {
+      setRefresh(prev => prev + 1);
+    }, 60000);
+
+    // Instant refresh when user comes back to the tab
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        setRefresh(prev => prev + 1);
+      }
+    };
+    window.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [session, status]);
 
   if (loading)
@@ -76,21 +96,32 @@ export default function OrdersContent() {
 
         <div className="space-y-6">
           {orders.map((order) => {
-            const date = new Date(order.createdAt);
-            const timeStr = date.toLocaleTimeString([], {
+            const orderDate = new Date(order.createdAt);
+            const now = new Date();
+            
+            // Pseudo-random delivery time between 8 and 15 mins based on last 2 chars of Order ID
+            const orderSeed = parseInt(order._id.slice(-2), 16) || 0;
+            const deliveryMinutes = (orderSeed % (15 - 8 + 1)) + 8;
+            
+            const timeDiffMs = now - orderDate;
+            const timeDiffMins = Math.floor(timeDiffMs / 60000);
+            const remainingMins = deliveryMinutes - timeDiffMins;
+            const isDelivered = remainingMins <= 0;
+
+            const timeStr = orderDate.toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             });
-            const arrivalTime = new Date(date.getTime() + 10 * 60000).toLocaleTimeString([], {
+            const arrivalTime = new Date(orderDate.getTime() + deliveryMinutes * 60000).toLocaleTimeString([], {
               hour: "2-digit",
               minute: "2-digit",
             });
-            const dateStr = date.toDateString();
+            const dateStr = orderDate.toDateString();
 
             return (
               <div
                 key={order._id}
-                className="bg-white rounded-[32px] overflow-hidden border border-gray-100 shadow-xl shadow-gray-200/40 group"
+                className="bg-white rounded-[32px] overflow-hidden border border-gray-100 shadow-xl shadow-gray-200/40 group mb-6"
               >
                 {/* Order Header */}
                 <div className="bg-gray-50/50 p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
@@ -101,9 +132,16 @@ export default function OrdersContent() {
                       <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-100 text-[#253D4E]">
                          <FiCalendar className="text-[#3BB77E]" /> {dateStr}
                       </div>
-                      <div className="flex items-center gap-2 bg-[#DEF9EC] px-3 py-1.5 rounded-full border border-[#3BB77E]/20 text-[#3BB77E] animate-pulse">
-                         <FiTruck /> Arriving in 10 mins
-                      </div>
+                      
+                      {isDelivered ? (
+                        <div className="flex items-center gap-2 bg-[#3BB77E] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-white shadow-lg shadow-green-100">
+                           <FiCheckCircle /> Delivered Sucessfully
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 bg-[#DEF9EC] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-[#3BB77E] animate-pulse">
+                           <FiTruck /> Arriving in {remainingMins} mins
+                        </div>
+                      )}
                    </div>
                    <div className="text-[#253D4E] font-black text-xl">
                       Total: ₹{order.totalAmount}

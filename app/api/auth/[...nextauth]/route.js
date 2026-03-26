@@ -27,15 +27,15 @@ export const authOptions = {
           body: JSON.stringify({
             sender: {
               name: "Quickzy",
-              email: "pjha91275@gmail.com", // Verified sender
+              email: process.env.EMAIL_FROM.split("<")[1].replace(">", ""), // Extract email from "Name <email>" format
             },
             to: [{ email }],
             subject: "Sign in to Quickzy",
             htmlContent: `
               <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 20px; overflow: hidden; background-color: #ffffff; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
                 <!-- Hero Banner -->
-                <div style="background-color: #3BB77E; padding: 0; text-align: center;">
-                  <img src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162641/quickzy/banners/hero-banner-1.png" alt="Quickzy Banner" style="width: 100%; max-height: 200px; object-fit: cover;">
+                <div style="background-color: #3BB77E; text-align: center; line-height: 0;">
+                  <img src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162641/quickzy/banners/hero-banner-1.png" alt="Quickzy Banner" width="600" style="display: block; width: 100%; max-width: 600px; height: 350px; object-fit: cover; border: 0; outline: none; text-decoration: none;">
                 </div>
                 
                 <div style="padding: 40px 30px; text-align: center;">
@@ -79,9 +79,14 @@ export const authOptions = {
           }),
         });
 
+
+
         if (!res.ok) {
           const error = await res.json();
+
           throw new Error(JSON.stringify(error));
+        } else {
+
         }
       },
     }),

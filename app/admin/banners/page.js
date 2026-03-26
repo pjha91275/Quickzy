@@ -44,9 +44,9 @@ export default async function BannersPage() {
               {banners.map((b) => (
                 <tr key={b._id} className="hover:bg-[#F2FBF6] transition-colors group">
                   <td className="p-5">
-                    <div className={`w-32 h-20 rounded-2xl p-2 flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden ${b.bgColor || "bg-gray-50"}`}>
+                    <div className={`w-32 h-20 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden ${b.bgColor || "bg-gray-50"}`}>
                       {b.image ? (
-                        <img src={b.image} alt="Banner" className="w-full h-full object-contain" />
+                        <img src={b.image} alt="Banner" className="w-full h-full object-cover" />
                       ) : (
                         <FiImage className="text-gray-300 text-2xl" />
                       )}

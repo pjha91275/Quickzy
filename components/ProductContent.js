@@ -12,22 +12,35 @@ import {
 } from "react-icons/fi";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
+import { useStore } from "@/context/StoreContext";
 
-export default function ProductContent({ product, similarProducts }) {
+export default function ProductContent({ product: productFromDb, similarProducts }) {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { storeData } = useStore();
   const [selectedPack, setSelectedPack] = React.useState("single");
   const [animatingHeart, setAnimatingHeart] = React.useState(null);
+
+  // Sync with global store to get ephemeral discounts
+  const product = React.useMemo(() => {
+    if (!storeData.fullPool?.length) return productFromDb;
+    const synced = storeData.fullPool.find(p => (p.id_custom || p._id) === (productFromDb.id_custom || productFromDb._id));
+    return synced || productFromDb;
+  }, [storeData.fullPool, productFromDb]);
 
   if (!product) return null;
 
   // Calculate pricing
   const singlePrice = product.price;
+  const singleOldPrice = product.oldPrice || null;
   const comboPrice = Math.round(product.price * 2 * 0.9);
   
   const isDouble = selectedPack === "double";
   const displayPrice = isDouble ? comboPrice : singlePrice;
-  const displayOldPrice = isDouble ? product.oldPrice * 2 || product.price * 2 : product.oldPrice;
+  const displayOldPrice = isDouble ? (product.oldPrice ? product.oldPrice * 2 : product.price * 2) : singleOldPrice;
+  const displayDiscount = isDouble 
+    ? `SAVE ${parseInt(product.discount || 0) + 10}%` 
+    : (product.discount ? `SAVE ${product.discount}` : null);
 
   return (
     <div className="bg-white min-h-screen pb-20 font-sans">
@@ -86,8 +99,8 @@ export default function ProductContent({ product, similarProducts }) {
                     className={`flex-1 border-2 p-3 rounded-2xl font-black flex flex-col items-center justify-center transition-all relative h-20 ${selectedPack === "single" ? 'border-[#3BB77E] bg-[#DEF9EC] text-slate-800' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
                   >
                      {product.discount && (
-                       <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF7F50] text-white text-[9px] px-2.5 py-1 rounded-lg font-black italic shadow-sm whitespace-nowrap">
-                         {product.discount} OFF
+                       <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#FF7F50] text-white text-[9px] px-2.5 py-1 rounded-lg font-black italic shadow-sm whitespace-nowrap uppercase">
+                         SAVE {product.discount} OFF
                        </span>
                      )}
                      <span className="truncate text-sm opacity-70 mb-0.5">{product.unit} (Single)</span>
@@ -97,7 +110,7 @@ export default function ProductContent({ product, similarProducts }) {
                     onClick={() => setSelectedPack("double")}
                     className={`flex-1 border-2 p-3 rounded-2xl font-black flex flex-col items-center justify-center transition-all relative h-20 ${selectedPack === "double" ? 'border-[#3BB77E] bg-[#DEF9EC] text-slate-800' : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200'}`}
                   >
-                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#7C3AED] text-white text-[9px] px-2.5 py-1 rounded-lg font-black italic shadow-sm whitespace-nowrap uppercase tracking-tighter">
+                     <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#7C3AED] text-white text-[10.5px] px-3 py-1.5 rounded-lg font-black italic shadow-sm whitespace-nowrap uppercase tracking-tighter">
                        COMBO SAVING {parseInt(product.discount || 0) + 10}% OFF
                      </span>
                      <span className="truncate text-sm opacity-70 mb-0.5">2 x {product.unit} (Double)</span>
@@ -106,24 +119,23 @@ export default function ProductContent({ product, similarProducts }) {
                </div>
             </div>
 
-            <div className="flex flex-col gap-1.5 p-6 bg-slate-50 rounded-[32px] border border-slate-100/50">
-               <div className="flex items-baseline gap-3">
-                 <span className="text-4xl font-black text-slate-800 tracking-tight">₹{displayPrice}</span>
-                 {displayOldPrice && displayOldPrice > displayPrice && (
-                   <>
-                     <span className="text-lg text-[#adadad] font-bold whitespace-nowrap relative">
-                       ₹{displayOldPrice}
-                       <span className="absolute top-1/2 left-[-4px] w-[calc(100%+8px)] h-[2px] bg-[#888]"></span>
-                     </span>
-                     <span className={`text-[11px] text-white px-2.5 py-1 rounded-lg font-black italic shadow-lg uppercase ${isDouble ? "bg-[#7C3AED]" : "bg-[#FF7F50]"}`}>
-                        {isDouble 
-                          ? `COMBO SAVING ${parseInt(product.discount || 0) + 10}% OFF` 
-                          : `${product.discount} OFF`
-                        }
-                     </span>
-                   </>
-                 )}
-               </div>
+            <div className="flex flex-col gap-1 p-4 bg-slate-50 rounded-[30px] border border-slate-100/50">
+                <div className="flex items-end gap-4">
+                  <span className="text-4xl font-black text-slate-800 tracking-tight transform translate-y-1.5">₹{displayPrice}</span>
+                  {displayOldPrice && displayOldPrice > displayPrice && (
+                    <>
+                      <div className="flex flex-col items-start pt-1">
+                        <span className={`text-[11px] font-black text-white px-2.5 py-1 rounded-lg uppercase italic mb-1.5 shadow-md ${isDouble ? 'bg-[#7C3AED]' : 'bg-[#FF7F50]'}`}>
+                           {isDouble ? `COMBO SAVING ${parseInt(product.discount || 0) + 10}% OFF` : `${displayDiscount} OFF`}
+                        </span>
+                        <span className="text-lg text-[#adadad] font-bold relative inline-block px-1">
+                          ₹{displayOldPrice}
+                          <span className="absolute top-1/2 left-0 right-0 h-[2px] bg-[#888]"></span>
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </div>
                <p className="text-[11px] text-slate-400 font-bold tracking-wide italic">Price inclusive of all taxes</p>
             </div>
 
