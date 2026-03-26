@@ -28,7 +28,7 @@ async function seedCloudinary() {
         const fileName = path.parse(file).name;
         
         let publicId = `quickzy/${folder}/${fileName}`;
-        if (folder === 'logo_without_name') publicId = `quickzy/${fileName}`;
+        if (folder === 'logo_without_name') publicId = `quickzy/brand/${fileName}`;
 
         console.log(`📤 Uploading [${file}] to ${publicId}...`);
         await cloudinary.uploader.upload(filePath, {

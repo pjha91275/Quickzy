@@ -41,7 +41,7 @@ export const authOptions = {
                 <div style="padding: 40px 30px; text-align: center;">
                   <!-- Logo & Branding -->
                   <div style="margin-bottom: 25px;">
-                    <img src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1774149230/quickzy/logo_without_name.png" alt="Quickzy Logo Without Name" style="width: 60px; height: 60px; margin-bottom: 10px; background-color:#DEF9EC; border-radius:50%; padding:10px; object-fit:contain;">
+                    <img src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1774149230/quickzy/brand/logo_without_name.png" alt="Quickzy Logo Without Name" style="width: 60px; height: 60px; margin-bottom: 10px; background-color:#DEF9EC; border-radius:50%; padding:10px; object-fit:contain;">
                     <h1 style="color: #253D4E; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -1px;">Quickzy</h1>
                     <p style="color: #7E7E7E; margin: 5px 0 0 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Fast. Fresh. Delivered in a Zap.</p>
                   </div>

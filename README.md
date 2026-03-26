@@ -81,8 +81,6 @@ Quickzy leverages industry-standard APIs to provide a "Near-Production" feel:
 - **LocationIQ**: Powers the reverse geocoding inside the `LocationModal` to provide human-readable addresses from coordinate data.
 - **NextAuth**: Powers the "User first" authentication experience with MongoDB session persistence.
 
----
-
 ## 🚧 Known Limitations (The "Dummy" Aspects)
 
 To keep this project focused on UI/UX and Core Logic, the following are intentionally simplified:
