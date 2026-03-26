@@ -300,12 +300,12 @@ export default function HomeContent({ products, categories, banners_db }) {
         </div>
 
         {/* Desktop: Original two-column layout */}
-        <div className={`hidden md:flex ${banners[currentSlide].bgColor} h-[350px] md:h-[450px] items-center px-16 relative`}>
+        <div className={`hidden md:flex ${currentSlide === 3 ? 'bg-[#E5E7EB]' : banners[currentSlide].bgColor} h-[350px] md:h-[450px] items-center px-16 relative`}>
           <div className="absolute inset-0 flex transition-opacity duration-700">
             <div className="w-1/2" />
             <div className="w-1/2 relative">
               <img src={banners[currentSlide].image} className="w-full h-full object-cover object-left" alt="" />
-              <div className={`absolute inset-0 bg-gradient-to-r from-[${banners[currentSlide]?.bgColor?.replace('bg-[', '').replace(']', '') || '#DEF9EC'}] via-transparent to-transparent`} />
+              <div className={`absolute inset-0 bg-gradient-to-r from-[${currentSlide === 3 ? '#E5E7EB' : (banners[currentSlide]?.bgColor?.replace('bg-[', '').replace(']', '') || '#DEF9EC')}] via-transparent to-transparent`} />
             </div>
           </div>
           <div className="relative z-20 w-1/2 space-y-6 animate-fadeIn pb-4">

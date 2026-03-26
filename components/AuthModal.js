@@ -60,6 +60,19 @@ const AuthModal = ({ isOpen, onClose, onLoginSuccess, initialStep = 1 }) => {
     }
   }, [isOpen, initialStep]);
 
+  // Sync login status across tabs (Background Check)
+  React.useEffect(() => {
+    let syncInterval;
+    if (isOpen && step === 2 && status === "unauthenticated") {
+      syncInterval = setInterval(() => {
+        // Trigger NextAuth's internal storage sweep to catch cross-tab login
+        const event = new Event("visibilitychange");
+        window.dispatchEvent(event);
+      }, 2500);
+    }
+    return () => clearInterval(syncInterval);
+  }, [isOpen, step, status]);
+
   // Lock scroll when modal is open
   React.useEffect(() => {
     if (isOpen) {

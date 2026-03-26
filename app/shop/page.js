@@ -1,4 +1,5 @@
 import React from "react";
+export const dynamic = 'force-dynamic';
 import { Suspense } from "react";
 import ShopContent from "@/components/ShopContent.js";
 import { fetchProdAndCat } from "@/actions/dbactions";

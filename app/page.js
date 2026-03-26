@@ -1,4 +1,5 @@
 import React, { Suspense } from "react";
+export const dynamic = 'force-dynamic';
 import { fetchAllData } from "@/actions/dbactions";
 import HomeContent from "@/components/HomeContent";
 

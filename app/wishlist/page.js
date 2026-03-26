@@ -60,7 +60,7 @@ const WishlistPage = () => {
               <div className="w-full md:col-span-3 flex items-center gap-4 md:gap-6">
                 <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-gray-100">
                   <img 
-                    src={item.image || item.img} 
+                    src={item.image || item.img || "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774149230/quickzy/brand/logo_without_name.png"} 
                     alt={item.name} 
                     className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform" 
                   />

@@ -103,9 +103,9 @@ export default function OrdersContent() {
             const orderSeed = parseInt(order._id.slice(-2), 16) || 0;
             const deliveryMinutes = (orderSeed % (15 - 8 + 1)) + 8;
             
-            const timeDiffMs = now - orderDate;
+            const timeDiffMs = Math.max(0, now - orderDate); // Guard against future server clock
             const timeDiffMins = Math.floor(timeDiffMs / 60000);
-            const remainingMins = deliveryMinutes - timeDiffMins;
+            const remainingMins = Math.max(0, deliveryMinutes - timeDiffMins);
             const isDelivered = remainingMins <= 0;
 
             const timeStr = orderDate.toLocaleTimeString([], {

@@ -19,11 +19,22 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 const MapContent = ({ onConfirm, onClose, initialCoords }) => {
-  const [position, setPosition] = useState(
-    initialCoords.lat
-      ? [initialCoords.lat, initialCoords.lng]
-      : [28.6139, 77.209], // Default New Delhi
-  );
+  const [position, setPosition] = useState(() => {
+    if (initialCoords?.lat) return [initialCoords.lat, initialCoords.lng];
+    
+    // Fallback: Check localStorage for previously saved coords
+    if (typeof window !== "undefined") {
+      const savedCoords = localStorage.getItem("quickzy-guest-coords");
+      if (savedCoords) {
+        try {
+          const parsed = JSON.parse(savedCoords);
+          if (parsed.lat && parsed.lng) return [parsed.lat, parsed.lng];
+        } catch (e) {}
+      }
+    }
+    
+    return [28.6139, 77.209]; // Ultimate Fallback: New Delhi
+  });
   const [address, setAddress] = useState("Drag the marker to your location");
   const [isLoading, setIsLoading] = useState(false);
 
