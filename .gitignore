@@ -43,6 +43,7 @@ next-env.d.ts
 /tmp/
 *.json
 !package.json
+!package-lock.json
 !jsconfig.json
 !seed-data/**/*.json
 !data/*.json
