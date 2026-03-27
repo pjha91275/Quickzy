@@ -297,9 +297,9 @@ const Navbar = ({ initialCategories = [] }) => {
               </span>
             </Link>
             {cartItems.length === 0 ? (
-              <div className="flex items-center justify-center min-w-[110px] sm:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 bg-slate-50 rounded-xl text-slate-400 cursor-not-allowed border border-slate-100 shadow-inner group/cart">
+              <div className="flex items-center justify-center min-w-[110px] sm:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 bg-slate-50 rounded-xl text-slate-400 cursor-not-allowed border border-slate-100 shadow-inner group/cart whitespace-nowrap">
                 <FiShoppingCart className="text-xl sm:text-2xl group-hover/cart:rotate-12 transition-transform" />
-                <span className="text-xs sm:text-sm font-black tracking-tight uppercase">My Cart</span>
+                <span className="text-xs sm:text-sm font-black tracking-tighter whitespace-nowrap">MY CART</span>
               </div>
             ) : (
               <Link

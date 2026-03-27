@@ -107,9 +107,19 @@ export default function CheckoutContent() {
 
     setIsPlacing(true);
 
+    const normalizeImg = (p) => {
+      const img = p.image || p.img || "";
+      if (img.startsWith("http")) return img;
+      return `https://res.cloudinary.com/dnafzpa8x/image/upload/${img.startsWith("/") ? img.slice(1) : img || "v1774149230/quickzy/brand/logo_without_name.png"}`;
+    };
+
     const baseData = {
       userEmail: session.user.email,
-      items: cartItems,
+      items: cartItems.map(item => ({ 
+        ...item, 
+        image: normalizeImg(item),
+        productId: (item.id_custom || item._id || item.id)?.toString()
+      })),
       totalAmount: total,
       address: address,
       phoneNumber: phone,

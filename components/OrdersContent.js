@@ -9,6 +9,10 @@ import {
   FiClock,
   FiShoppingBag,
   FiUser,
+  FiFileText,
+  FiPrinter,
+  FiX,
+  FiShield,
 } from "react-icons/fi";
 import { useSession } from "next-auth/react";
 import { fetchUserOrders } from "@/actions/orderactions";
@@ -18,6 +22,7 @@ export default function OrdersContent() {
   const { data: session, status } = useSession();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
 
   const [refresh, setRefresh] = useState(0);
 
@@ -38,12 +43,10 @@ export default function OrdersContent() {
       getOrders();
     }
 
-    // Live countdown refresh every 1 minute
     const interval = setInterval(() => {
       setRefresh(prev => prev + 1);
     }, 60000);
 
-    // Instant refresh when user comes back to the tab
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
         setRefresh(prev => prev + 1);
@@ -99,11 +102,10 @@ export default function OrdersContent() {
             const orderDate = new Date(order.createdAt);
             const now = new Date();
             
-            // Pseudo-random delivery time between 8 and 15 mins based on last 2 chars of Order ID
             const orderSeed = parseInt(order._id.slice(-2), 16) || 0;
             const deliveryMinutes = (orderSeed % (15 - 8 + 1)) + 8;
             
-            const timeDiffMs = Math.max(0, now - orderDate); // Guard against future server clock
+            const timeDiffMs = Math.max(0, now - orderDate);
             const timeDiffMins = Math.floor(timeDiffMs / 60000);
             const remainingMins = Math.max(0, deliveryMinutes - timeDiffMins);
             const isDelivered = remainingMins <= 0;
@@ -143,8 +145,16 @@ export default function OrdersContent() {
                         </div>
                       )}
                    </div>
-                   <div className="text-[#253D4E] font-black text-xl">
-                      Total: ₹{order.totalAmount}
+                   <div className="flex items-center gap-6">
+                      <div className="text-[#253D4E] font-black text-xl">
+                        ₹{order.totalAmount}
+                      </div>
+                      <button 
+                        onClick={() => setSelectedInvoice(order)}
+                        className="flex items-center gap-2 bg-white border-2 border-slate-100 hover:border-[#3BB77E] hover:text-[#3BB77E] transition-all px-4 py-2 rounded-xl text-xs font-black uppercase"
+                      >
+                         <FiFileText /> Invoice
+                      </button>
                    </div>
                 </div>
 
@@ -153,15 +163,21 @@ export default function OrdersContent() {
                    {order.items.map((item, idx) => (
                       <div key={idx} className="flex gap-4 items-center bg-gray-50/30 p-4 rounded-2xl border border-transparent hover:border-[#DEF9EC] transition-all">
                          <div className="w-16 h-16 bg-white rounded-xl border border-gray-100 p-2 flex-shrink-0">
-                            <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
+                            <img 
+                              src={(item.image || "").startsWith("http") ? item.image : `https://res.cloudinary.com/dnafzpa8x/image/upload/${(item.image || "").startsWith("/") ? item.image.slice(1) : item.image || "v1774149230/quickzy/brand/logo_without_name.png"}`} 
+                              alt={item.name} 
+                              className="w-full h-full object-contain" 
+                            />
                          </div>
                          <div className="flex-1">
-                            <h4 className="font-bold text-[#253D4E] text-sm leading-tight">{item.name}</h4>
+                            <Link href={`/product/${item.productId || (item._id || item.id)}`} className="hover:text-[#3BB77E] transition-colors">
+                              <h4 className="font-bold text-[#253D4E] text-sm leading-tight">{item.name}</h4>
+                            </Link>
                             <p className="text-[10px] text-gray-400 font-bold uppercase mt-0.5">{item.category} • {item.unit || "Single Unit"}</p>
                          </div>
                          <div className="text-right">
                             <p className="font-black text-[#253D4E]">₹{item.price}</p>
-                            <p className="text-[10px] text-gray-400 font-bold">Qty: 1</p>
+                            <p className="text-[10px] text-gray-400 font-bold">Qty: {item.quantity || 1}</p>
                          </div>
                       </div>
                    ))}
@@ -201,6 +217,124 @@ export default function OrdersContent() {
           </div>
         )}
       </div>
+
+      {/* Invoice Modal */}
+      {selectedInvoice && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+           <div className="absolute inset-0 bg-[#253D4E]/60 backdrop-blur-md" onClick={() => setSelectedInvoice(null)}></div>
+           <div className="bg-white w-full max-w-2xl rounded-[40px] relative z-10 overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+              {/* Controls */}
+              <div className="flex justify-between items-center p-6 border-b bg-gray-50/50">
+                 <div className="flex items-center gap-3">
+                    <img src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1774149230/quickzy/brand/logo_without_name.png" className="w-8 h-8 object-contain" alt="Quickzy" />
+                    <span className="font-black text-slate-800 tracking-tight">TAX INVOICE</span>
+                 </div>
+                 <div className="flex items-center gap-2">
+                    <button 
+                      onClick={() => window.print()}
+                      className="p-3 bg-white border border-slate-200 rounded-2xl hover:bg-slate-50 transition-all text-[#3BB77E]"
+                    >
+                      <FiPrinter />
+                    </button>
+                    <button 
+                      onClick={() => setSelectedInvoice(null)}
+                      className="p-3 bg-red-50 border border-red-100 rounded-2xl hover:bg-red-100 transition-all text-red-500"
+                    >
+                      <FiX />
+                    </button>
+                 </div>
+              </div>
+
+              {/* Invoice Content */}
+              <div className="p-8 md:p-12 overflow-y-auto" id="printable-invoice">
+                 <div className="flex justify-between mb-10">
+                    <div>
+                       <h2 className="text-3xl font-black text-[#253D4E] mb-2">Order Summary</h2>
+                       <p className="text-sm font-bold text-gray-400">Order ID: #{selectedInvoice._id.slice(-10)}</p>
+                       <p className="text-sm font-bold text-gray-400">Date: {new Date(selectedInvoice.createdAt).toDateString()}</p>
+                    </div>
+                    <div className="text-right">
+                       <p className="text-xs font-black text-[#3BB77E] uppercase tracking-widest mb-1">Delivered To</p>
+                       <p className="text-sm font-bold text-[#253D4E] max-w-[200px] leading-tight">{selectedInvoice.address}</p>
+                       <p className="text-sm font-bold text-gray-400 mt-1">{selectedInvoice.phoneNumber}</p>
+                    </div>
+                 </div>
+
+                 <div className="border-2 border-slate-50 rounded-3xl overflow-hidden mb-8">
+                    <table className="w-full text-left">
+                       <thead className="bg-slate-50">
+                          <tr>
+                             <th className="p-4 text-[10px] font-black uppercase text-slate-400 tracking-widest">Description</th>
+                             <th className="p-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-center">Qty</th>
+                             <th className="p-4 text-[10px] font-black uppercase text-slate-400 tracking-widest text-right">Amount</th>
+                          </tr>
+                       </thead>
+                       <tbody className="divide-y divide-slate-50">
+                          {selectedInvoice.items.map((item, i) => (
+                            <tr key={i}>
+                               <td className="p-4">
+                                  <p className="font-bold text-[#253D4E] text-sm">{item.name}</p>
+                                  <p className="text-[10px] text-gray-400 font-bold">{item.category}</p>
+                               </td>
+                               <td className="p-4 text-center font-bold text-sm">{item.quantity || 1}</td>
+                               <td className="p-4 text-right font-black text-sm">₹{item.price}</td>
+                            </tr>
+                          ))}
+                       </tbody>
+                    </table>
+                 </div>
+
+                 <div className="flex flex-col items-end space-y-3">
+                    <div className="flex justify-between w-full max-w-[200px] text-xs font-bold text-gray-400">
+                       <span>Subtotal</span>
+                       <span>₹{(selectedInvoice.totalAmount - 25 + (selectedInvoice.discount || 0)).toFixed(2)}</span>
+                    </div>
+                    {selectedInvoice.discount > 0 && (
+                      <div className="flex justify-between w-full max-w-[200px] text-xs font-bold text-[#3BB77E]">
+                         <span>Discount</span>
+                         <span>-₹{selectedInvoice.discount}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between w-full max-w-[200px] text-xs font-bold text-gray-400">
+                       <span>Delivery</span>
+                       <span>₹25.00</span>
+                    </div>
+                    <div className="flex justify-between w-full max-w-[240px] pt-4 border-t border-slate-100">
+                       <span className="font-black text-[#253D4E]">Total Paid</span>
+                       <span className="text-2xl font-black text-[#3BB77E]">₹{selectedInvoice.totalAmount}</span>
+                    </div>
+                    <p className="text-right text-[10px] font-black text-slate-300 uppercase italic">Paid via {selectedInvoice.paymentMethod}</p>
+                 </div>
+
+                 {/* Important Footer */}
+                 <div className="mt-12 pt-8 border-t border-dashed border-slate-200 text-center">
+                    <div className="inline-flex items-center gap-2 bg-yellow-50 text-yellow-600 px-4 py-2 rounded-full text-[10px] font-black uppercase mb-4">
+                       <FiShield /> Sample Document
+                    </div>
+                    <p className="text-[11px] text-slate-400 font-bold leading-relaxed max-w-sm mx-auto italic">
+                       This is a project demonstration only and not an actual commercial invoice. No business transaction or legal liability is implied.
+                    </p>
+                 </div>
+              </div>
+           </div>
+        </div>
+      )}
+
+      {/* Tailwind Print Override */}
+      <style jsx global>{`
+        @media print {
+          body * { visibility: hidden; }
+          #printable-invoice, #printable-invoice * { visibility: visible; }
+          #printable-invoice {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            padding: 2rem !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
+

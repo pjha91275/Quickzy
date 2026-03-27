@@ -50,11 +50,15 @@ export const fetchCategories = async () => {
 export const fetchProductById = async (id) => {
   await connectDb();
 
-  // Try custom numeric ID first
-  let product = await Product.findOne({ id_custom: id }).lean();
+  let product = null;
 
-  // If not found, try MongoDB ObjectID (simple 24-char check to avoid crash)
-  if (!product && id?.length === 24) {
+  // Try custom numeric ID first (Only if id is a valid number string)
+  if (!isNaN(id) && !isNaN(parseFloat(id)) && !id.startsWith("0x")) {
+    product = await Product.findOne({ id_custom: Number(id) }).lean();
+  }
+
+  // If not found, try MongoDB ObjectID (if it's a valid 24-character hex)
+  if (!product && /^[0-9a-fA-F]{24}$/.test(id)) {
     product = await Product.findById(id).lean();
   }
 

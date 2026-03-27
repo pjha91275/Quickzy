@@ -60,7 +60,7 @@ const WishlistPage = () => {
               <div className="w-full md:col-span-3 flex items-center gap-4 md:gap-6">
                 <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-gray-100">
                   <img 
-                    src={item.image || item.img || "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774149230/quickzy/brand/logo_without_name.png"} 
+                    src={(item.image || item.img || "").startsWith("http") ? (item.image || item.img) : `https://res.cloudinary.com/dnafzpa8x/image/upload/${(item.image || item.img || "").startsWith("/") ? (item.image || item.img).slice(1) : (item.image || item.img) || "v1774149230/quickzy/brand/logo_without_name.png"}`} 
                     alt={item.name} 
                     className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform" 
                   />
@@ -70,7 +70,6 @@ const WishlistPage = () => {
                   <p className="text-[#3BB77E] font-bold text-xs md:text-sm tracking-tight">{item.unit}</p>
                 </div>
               </div>
-
               {/* Price & Actions Container for Mobile */}
               <div className="w-full flex md:contents items-center justify-between gap-2">
                 {/* Price */}

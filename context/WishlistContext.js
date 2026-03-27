@@ -72,7 +72,7 @@ export const WishlistProvider = ({ children }) => {
         price: product.price,
         oldPrice: product.oldPrice,
         discount: product.discount,
-        image: product.image || product.img,
+        image: (product.image || product.img || "").startsWith("http") ? (product.image || product.img) : `https://res.cloudinary.com/dnafzpa8x/image/upload/${(product.image || product.img || "").startsWith("/") ? (product.image || product.img).slice(1) : (product.image || product.img) || "v1774149230/quickzy/brand/logo_without_name.png"}`,
         unit: product.unit || product.weight,
       };
       setWishlistItems(prev => [...prev, sanitized]);
