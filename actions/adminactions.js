@@ -50,28 +50,55 @@ export async function deleteProductAdmin(formData) {
 export async function saveProductAdmin(formData) {
   try {
     await connectDb();
+    const Category = (await import("@/models/Category")).default;
     
     // Extract everything from the HTML form data
     const name = formData.get("name");
     const price = formData.get("price");
     const oldPrice = formData.get("oldPrice");
     const unit = formData.get("unit");
-    const category = formData.get("category");
+    let category = formData.get("category");
     const discount = formData.get("discount");
     const imageFile = formData.get("image");
 
+    // New Category Logic
+    const isNewCategory = category === "NEW_CATEGORY_TRIGGER";
+    if (isNewCategory) {
+      const newCatName = formData.get("newCategoryName");
+      const newCatImageFile = formData.get("newCategoryImage");
+      
+      if (!newCatName || !newCatImageFile) {
+         return { success: false, error: "New Category name and image are required." };
+      }
+
+      // Upload Category Image
+      const catBuf = Buffer.from(await newCatImageFile.arrayBuffer());
+      const catImageUrl = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          { folder: "quickzy/categories" },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result.secure_url);
+          }
+        );
+        stream.end(catBuf);
+      });
+
+      // Save new Category to DB
+      const newCatDoc = new Category({
+        name: newCatName,
+        image: catImageUrl,
+        count: 1, // Will be updated by store context or triggers
+        bg: "bg-green-50" // Default light bg
+      });
+      await newCatDoc.save();
+      category = newCatName; // Switch product category to the new name
+    }
+
     let imageUrl = "";
 
-    // Stream upload to Cloudinary directly
+    // Stream upload to Cloudinary directly for Product
     if (imageFile && imageFile.size > 0) {
-      if (imageFile.size > 5 * 1024 * 1024) {
-        return { success: false, error: "Image exceeds 5MB limit." };
-      }
-      const validTypes = ["image/jpeg", "image/png", "image/webp"];
-      if (!validTypes.includes(imageFile.type)) {
-        return { success: false, error: "Only PNG, JPG, and WEBP formats are allowed." };
-      }
-
       const arrayBuffer = await imageFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
       

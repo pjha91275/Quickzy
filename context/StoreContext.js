@@ -12,8 +12,8 @@ const getAbsoluteUrl = (path) => {
   return `https://res.cloudinary.com/dnafzpa8x/image/upload/${path}`;
 };
 
-// 1. Cleaner: Removes all previous discount/tag data and normalizes URLs
-const preparePool = (pool) => {
+// Normalizes image URLs from various sources and provides a default fallback
+const normalizeProductData = (pool) => {
   if (!pool || pool.length === 0) return [];
   return pool.map(p => {
     const rawImg = p.image || p.img;
@@ -31,8 +31,8 @@ const preparePool = (pool) => {
   });
 };
 
-// 2. Strict Discounter: Applied to a specific set of items (Home subset or Shop total)
-const applyStrictDiscounts = (items, targetPercent) => {
+// Applies strict percentage-based discounts to a subset of products
+const applyDynamicPricing = (items, targetPercent) => {
   if (!items || items.length === 0) return [];
   
   const discountCount = Math.floor(items.length * (targetPercent / 100));
@@ -77,21 +77,25 @@ export const StoreProvider = ({ children }) => {
     setStoreData(prev => {
       if (!products?.length || prev.recentlyAdded?.length > 0) return prev;
 
-      // STEP 1: Get a clean, normalized pool
-      const cleanPool = preparePool(products);
+      // Initialize normalized data pool
+      const cleanPool = normalizeProductData(products);
 
-      // STEP 2: Find "The True Top 3" recently added
-      const sortedByDate = [...cleanPool].sort((a,b) => {
+      // Apply dynamic discount engine across the entire catalog
+      // Ensures pricing consistency across product detail and grid views
+      const globalDiscountedPool = applyDynamicPricing(cleanPool, 35);
+      const poolMap = new Map(globalDiscountedPool.map(p => [p._id || p.id, p]));
+
+      // Extract recently added items (Top 3 by timestamp)
+      const sortedByDate = [...globalDiscountedPool].sort((a,b) => {
         return (new Date(b.createdAt || 0)).getTime() - (new Date(a.createdAt || 0)).getTime();
       });
       const top3RecentItems = shuffleArray(sortedByDate.slice(0, 3));
       const recentIds = new Set(top3RecentItems.map(r => r._id || r.id));
 
-      // STEP 3: Create the Home Page Assembly Pool (remaining items)
-      let availableForHome = shuffleArray(cleanPool.filter(p => !recentIds.has(p._id || p.id)));
+      // Assemble Home Page collection from remaining inventory
+      let availableForHome = shuffleArray(globalDiscountedPool.filter(p => !recentIds.has(p._id || p.id)));
 
-      // Assemble Home Sections (Target: ~35 distinct items)
-      // A. Popular (1 from each category)
+      // Select popular items (One from each category where available)
       const popularSet = [];
       const catsForHome = shuffleArray(categories || []);
       catsForHome.forEach(cat => {
@@ -104,12 +108,11 @@ export const StoreProvider = ({ children }) => {
         }
       });
       
-      // Pad popular to 15 if needed
       while (popularSet.length < 15 && availableForHome.length > 0) {
         popularSet.push(availableForHome.shift());
       }
 
-      // B. Sequential Section Fills
+      // Populate feature sections
       const dailyBest = availableForHome.splice(0, 4).map(p => ({
         ...p, sold: Math.floor(Math.random() * 100) + 50, total: 200
       }));
@@ -118,43 +121,17 @@ export const StoreProvider = ({ children }) => {
       const trending = availableForHome.splice(0, 3);
       const topPicks = availableForHome.splice(0, 3);
 
-      // STEP 4: Apply 35% Discount Rule specifically to the Home Page subset
-      // We take ALL distinct products chosen for Home Page
-      const allHomeItemsRaw = [
-        ...top3RecentItems,
-        ...popularSet,
-        ...dailyBest,
-        ...deals,
-        ...topSelling,
-        ...trending,
-        ...topPicks
-      ];
-
-      // Deeply unique the set just in case (though logic above should ensure uniqueness)
-      const homeIdMap = new Map(allHomeItemsRaw.map(p => [p._id || p.id, p]));
-      const homeSubsetRaw = Array.from(homeIdMap.values());
-      const homeSubsetDecorated = applyStrictDiscounts(homeSubsetRaw, 35);
-      
-      // Remap the decorated items back to their sections
-      const getHomeDec = (rawArr) => {
-        const decMap = new Map(homeSubsetDecorated.map(p => [p._id || p.id, p]));
-        return rawArr.map(p => decMap.get(p._id || p.id) || p);
-      };
-
-      // STEP 5: Apply 35% Discount Rule specifically to the SHOP Page pool (Whole catalog)
-      const shopPoolDecorated = applyStrictDiscounts([...cleanPool], 35);
-
       return {
         ...prev,
-        fullPool: cleanPool,
-        shopShuffled: shuffleArray(shopPoolDecorated),
-        recentlyAdded: getHomeDec(top3RecentItems),
-        popular_all: getHomeDec(popularSet),
-        dailyBest: getHomeDec(dailyBest),
-        deals: getHomeDec(deals),
-        topSelling: getHomeDec(topSelling),
-        trending: getHomeDec(trending),
-        topPicks: getHomeDec(topPicks),
+        fullPool: globalDiscountedPool,
+        shopShuffled: shuffleArray(globalDiscountedPool),
+        recentlyAdded: top3RecentItems,
+        popular_all: popularSet,
+        dailyBest: dailyBest,
+        deals: deals,
+        topSelling: topSelling,
+        trending: trending,
+        topPicks: topPicks,
         categories
       };
     });

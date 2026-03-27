@@ -89,7 +89,7 @@ export default function OrdersContent() {
 
   return (
     <div className="min-h-screen bg-[#F4F6FA] py-10 font-sans">
-      <div className="container mx-auto px-4 max-w-4xl">
+      <div id="orders-page-content" className="container mx-auto px-4 max-w-4xl print:hidden">
         <div className="mb-8 font-sans">
           <h1 className="text-3xl font-black text-[#253D4E]">My Orders</h1>
           <p className="text-sm text-gray-400 font-bold mt-1">
@@ -220,11 +220,11 @@ export default function OrdersContent() {
 
       {/* Invoice Modal */}
       {selectedInvoice && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-           <div className="absolute inset-0 bg-[#253D4E]/60 backdrop-blur-md" onClick={() => setSelectedInvoice(null)}></div>
-           <div className="bg-white w-full max-w-2xl rounded-[40px] relative z-10 overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 print:static print:p-0 print:block">
+           <div className="absolute inset-0 bg-[#253D4E]/60 backdrop-blur-md print:hidden" onClick={() => setSelectedInvoice(null)}></div>
+           <div className="bg-white w-full max-w-2xl rounded-[40px] relative z-10 overflow-hidden shadow-2xl flex flex-col max-h-[90vh] print:max-h-none print:rounded-none print:shadow-none">
               {/* Controls */}
-              <div className="flex justify-between items-center p-6 border-b bg-gray-50/50">
+              <div className="flex justify-between items-center p-6 border-b bg-gray-50/50 print:hidden">
                  <div className="flex items-center gap-3">
                     <img src="https://res.cloudinary.com/dnafzpa8x/image/upload/v1774149230/quickzy/brand/logo_without_name.png" className="w-8 h-8 object-contain" alt="Quickzy" />
                     <span className="font-black text-slate-800 tracking-tight">TAX INVOICE</span>
@@ -246,8 +246,8 @@ export default function OrdersContent() {
               </div>
 
               {/* Invoice Content */}
-              <div className="p-8 md:p-12 overflow-y-auto" id="printable-invoice">
-                 <div className="flex justify-between mb-10">
+              <div className="p-8 md:p-12 overflow-y-auto print:p-0 print:overflow-visible" id="printable-invoice">
+                 <div className="flex justify-between mb-10 print:mt-10">
                     <div>
                        <h2 className="text-3xl font-black text-[#253D4E] mb-2">Order Summary</h2>
                        <p className="text-sm font-bold text-gray-400">Order ID: #{selectedInvoice._id.slice(-10)}</p>
@@ -320,18 +320,36 @@ export default function OrdersContent() {
         </div>
       )}
 
-      {/* Tailwind Print Override */}
+      {/* Global CSS Overrides for Physical Media Generation */}
       <style jsx global>{`
         @media print {
-          body * { visibility: hidden; }
-          #printable-invoice, #printable-invoice * { visibility: visible; }
-          #printable-invoice {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            padding: 2rem !important;
+          /* Hide active application layer to isolate printable document */
+          #orders-page-content, header, nav, footer, button, .print-hidden { 
+             display: none !important; 
           }
+          
+          /* Normalize document container for A4/Standard physical layout */
+          body { 
+            background: white !important; 
+            margin: 0 !important; 
+            padding: 0 !important;
+          }
+
+          /* Elevate composite invoice to primary document flow */
+          #printable-invoice {
+            visibility: visible !important;
+            display: block !important;
+            position: static !important;
+            width: 100% !important;
+            height: auto !important;
+            padding: 40px !important;
+            margin: 0 !important;
+            background: white !important;
+            overflow: visible !important;
+          }
+          
+          /* Configure standardized page margins for clean physical output */
+          @page { size: auto; margin: 1.5cm; }
         }
       `}</style>
     </div>
