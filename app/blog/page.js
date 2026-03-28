@@ -39,7 +39,7 @@ export default async function BlogPage() {
                   </div>
                   <h3 className="text-xl font-black text-[#253D4E] mb-3 line-clamp-2 leading-tight">{blog.title}</h3>
                   <p className="text-gray-500 text-sm mb-5 line-clamp-2">{blog.excerpt}</p>
-                  <Link href={`/blog/${blog._id}`} className="mt-auto text-[#3BB77E] text-xs font-black uppercase flex items-center gap-2">
+                  <Link href={`/blog/${blog.id}`} className="mt-auto text-[#3BB77E] text-xs font-black uppercase flex items-center gap-2">
                     Read More <FiArrowRight />
                   </Link>
                 </div>

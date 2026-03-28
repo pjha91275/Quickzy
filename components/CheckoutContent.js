@@ -82,7 +82,6 @@ export default function CheckoutContent() {
     if (cartItems.length === 0) return toast.error("Your cart is empty!");
 
     if (!name) {
-      toast.error("Please provide your delivery name!");
       return setValidationModal({ 
         isOpen: true, 
         field: "name", 
@@ -90,7 +89,6 @@ export default function CheckoutContent() {
       });
     }
     if (!phone) {
-      toast.error("Contact number is required for delivery!");
       return setValidationModal({ 
         isOpen: true, 
         field: "phone", 
@@ -98,7 +96,6 @@ export default function CheckoutContent() {
       });
     }
     if (!address) {
-      toast.error("Please provide a specific delivery address!");
       return setValidationModal({ 
         isOpen: true, 
         field: "address", 

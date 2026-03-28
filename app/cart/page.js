@@ -145,12 +145,17 @@ export default function Cart() {
                     >
                       <td className="py-6 px-6">
                         <div className="flex items-center gap-6">
-                          <div className="w-24 h-24 border rounded-xl overflow-hidden bg-gray-50 flex-shrink-0">
+                          <div className="w-24 h-24 border rounded-xl overflow-hidden bg-gray-50 flex-shrink-0 relative">
                             <img
                               src={item.image || item.img}
                               alt={item.name}
                               className="w-full h-full object-contain p-2"
                             />
+                            {item.discount && (
+                              <span className="absolute top-0 right-0 bg-[#FF7F50] text-white text-[8px] font-black px-1.5 py-0.5 rounded-bl-lg shadow-sm italic uppercase z-10">
+                                {item.discount} OFF
+                              </span>
+                            )}
                           </div>
                           <div>
                             <h4 className="font-black text-[#253D4E] text-lg group-hover:text-[#3BB77E] transition-colors leading-tight mb-2 flex items-center justify-between gap-4">
