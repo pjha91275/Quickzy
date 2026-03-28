@@ -2,14 +2,14 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FiHeart, FiShoppingCart, FiTrash2, FiArrowRight } from "react-icons/fi";
+import { FiHeart, FiShoppingCart, FiPlus, FiMinus, FiTrash2, FiArrowRight } from "react-icons/fi";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
 
 const WishlistPage = () => {
   const router = useRouter();
   const { wishlistItems, toggleWishlist } = useWishlist();
-  const { addToCart } = useCart();
+  const { addToCart, cartItems, updateQuantity } = useCart();
   const [animatingHeart, setAnimatingHeart] = React.useState(null);
 
   if (wishlistItems.length === 0) {
@@ -58,12 +58,17 @@ const WishlistPage = () => {
             >
               {/* Product Info */}
               <div className="w-full md:col-span-3 flex items-center gap-4 md:gap-6">
-                <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-gray-100">
+                <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-100 rounded-xl md:rounded-2xl overflow-hidden shrink-0 border border-gray-100 relative">
                   <img 
                     src={(item.image || item.img || "").startsWith("http") ? (item.image || item.img) : `https://res.cloudinary.com/dnafzpa8x/image/upload/${(item.image || item.img || "").startsWith("/") ? (item.image || item.img).slice(1) : (item.image || item.img) || "v1774149230/quickzy/brand/logo_without_name.png"}`} 
                     alt={item.name} 
                     className="w-full h-full object-contain p-2 group-hover:scale-110 transition-transform" 
                   />
+                  {item.discount && (
+                    <span className="absolute top-0 left-0 bg-pink-500 text-white text-[8px] font-black px-2 py-0.5 rounded-br-xl rounded-tl-xl shadow-sm italic uppercase z-10 leading-none">
+                      Hot Deal
+                    </span>
+                  )}
                 </div>
                 <div className="flex-grow">
                   <h3 className="font-black text-[#253D4E] text-base md:text-lg leading-tight mb-1 group-hover:text-[#3BB77E] transition-colors line-clamp-2">{item.name}</h3>
@@ -94,16 +99,43 @@ const WishlistPage = () => {
 
                 {/* Action Column (Add to Cart) */}
                 <div className="md:col-span-1 flex items-center justify-end flex-grow md:justify-center">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addToCart(item);
-                    }}
-                    className="bg-[#DEF9EC] text-[#3BB77E] px-5 py-2.5 rounded-xl font-black hover:bg-[#3BB77E] hover:text-white transition-all inline-flex items-center gap-2 group/cart text-xs md:text-sm whitespace-nowrap shadow-sm"
-                  >
-                    <FiShoppingCart className="shrink-0 group-hover/cart:animate-bounce" />
-                    <span>Add</span>
-                  </button>
+                  {(() => {
+                    const itemInCart = cartItems.find((i) => (i._id || i.id) === (item._id || item.id));
+                    return itemInCart ? (
+                      <div className="flex items-center justify-between bg-[#3BB77E] text-white rounded-xl px-3 py-2.5 shadow-sm relative z-20 min-w-[90px] md:min-w-[100px]">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(item._id || item.id, -1);
+                          }}
+                          className="hover:scale-110 transition-transform flex items-center justify-center p-0.5"
+                        >
+                          <FiMinus size={14} strokeWidth={3} />
+                        </button>
+                        <span className="font-black text-sm md:text-base px-1">{itemInCart.quantity}</span>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(item._id || item.id, 1);
+                          }}
+                          className="hover:scale-110 transition-transform flex items-center justify-center p-0.5"
+                        >
+                          <FiPlus size={14} strokeWidth={3} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(item);
+                        }}
+                        className="bg-[#DEF9EC] text-[#3BB77E] px-5 py-2.5 rounded-xl font-black hover:bg-[#3BB77E] hover:text-white transition-all inline-flex items-center gap-2 group/cart text-xs md:text-sm whitespace-nowrap shadow-sm"
+                      >
+                        <FiShoppingCart className="shrink-0 group-hover/cart:animate-bounce" />
+                        <span>Add</span>
+                      </button>
+                    );
+                  })()}
                 </div>
 
                 {/* Remove Column (Heart Button) */}

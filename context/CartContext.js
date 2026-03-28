@@ -5,126 +5,174 @@ import React, {
   useState,
   useEffect,
   useRef,
+  useCallback,
 } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { syncCart, fetchCart } from "@/actions/useractions";
+import { useStore } from "./StoreContext";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const { data: session, status } = useSession();
   const [cartItems, setCartItems] = useState([]);
-
-  // Prevent empty db sync on load
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const { storeData } = useStore();
+  
   const hasLoaded = useRef(false);
+  const lastSyncRef = useRef(""); // To prevent infinite sync loops
+  const lastToastRef = useRef(0);
 
-  // Load initial cart
+  // Initial load from local storage or database
   useEffect(() => {
     const loadAppData = async () => {
-      // Get local cart
       const local = localStorage.getItem("quickzy-cart");
       let startingItems = local ? JSON.parse(local) : [];
 
-      // Get db cart if logged in
       if (status === "authenticated" && session?.user?.email) {
         try {
           const dbCart = await fetchCart(session.user.email);
-          if (dbCart && dbCart.length > 0) {
-            startingItems = dbCart;
-          }
+          if (dbCart?.length > 0) startingItems = dbCart;
         } catch (error) {
-          console.error("Cart loading failed:", error);
+          console.error("Cart sync failed:", error);
         }
       }
 
-      // Sanitize cart items
-      const cleanItems = startingItems.filter(
-        (item) =>
-          item &&
-          item.name &&
-          !isNaN(parseFloat(item.price)) &&
-          (item.image || item.img),
+      const cleanItems = (startingItems || []).filter(item => 
+        item?.name && !isNaN(parseFloat(item.price)) && (item.image || item.img)
       );
 
-      // Update state
+      const localCoupon = localStorage.getItem("quickzy-coupon");
+      if (localCoupon) setAppliedCoupon(JSON.parse(localCoupon));
+
       setCartItems(cleanItems);
-      setTimeout(() => {
-        hasLoaded.current = true;
-      }, 150);
+      hasLoaded.current = true;
     };
 
-    if (status !== "loading") {
-      loadAppData();
-    }
+    if (status !== "loading") loadAppData();
   }, [status, session?.user?.email]);
 
-  // Sync cart changes
-  useEffect(() => {
-    // Wait for load before sync
-    if (!hasLoaded.current) return;
+  // Handle price and discount reconciliation
+  const performSync = useCallback((currentCart, pool) => {
+    if (!pool?.length || !currentCart?.length) return;
 
-    // Save to browser
+    const productMap = new Map();
+    pool.forEach(p => {
+      const idStr = (p._id || p.id)?.toString();
+      if (idStr) productMap.set(idStr, p);
+    });
+
+    let updatesFound = 0;
+    const syncedItems = currentCart.map(item => {
+      const liveProd = productMap.get((item._id || item.id)?.toString());
+      if (!liveProd) return item;
+
+      const livePrice = parseFloat(liveProd.price);
+      const priceMismatch = Math.abs((item.price || 0) - livePrice) > 0.1;
+      const discountMismatch = item.discount !== liveProd.discount;
+
+      if (priceMismatch || discountMismatch) {
+        updatesFound++;
+        return { 
+          ...item, 
+          price: livePrice, 
+          oldPrice: liveProd.oldPrice, 
+          discount: liveProd.discount 
+        };
+      }
+      return item;
+    });
+
+    if (updatesFound > 0) {
+      // Create a unique fingerprint of the current prices to avoid double-syncing
+      const syncFingerprint = syncedItems.map(i => `${i._id}-${i.price}-${i.discount}`).join("|");
+      if (syncFingerprint === lastSyncRef.current) return;
+      
+      lastSyncRef.current = syncFingerprint;
+      setCartItems(syncedItems);
+      
+      const now = Date.now();
+      if (now - lastToastRef.current > 3000) {
+        toast.info("Prices in your cart have been refined based on current offers!", {
+          className: "bg-[#253D4E] text-[#3BB77E] font-black",
+          autoClose: 4000
+        });
+        lastToastRef.current = now;
+      }
+    }
+  }, []);
+
+  // Effect to watch pool changes and visibility transitions
+  useEffect(() => {
+    if (!hasLoaded.current || !storeData.fullPool?.length) return;
+    
+    // Immediate check whenever pool or cart items change
+    performSync(cartItems, storeData.fullPool);
+
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        performSync(cartItems, storeData.fullPool);
+      }
+    };
+    
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => document.removeEventListener("visibilitychange", handleVisibility);
+  }, [storeData.fullPool, cartItems, performSync]);
+
+  // Save changes to storage
+  useEffect(() => {
+    if (!hasLoaded.current) return;
     localStorage.setItem("quickzy-cart", JSON.stringify(cartItems));
 
-    // Save to Atlas DB
     if (status === "authenticated" && session?.user?.email) {
       syncCart(session.user.email, cartItems);
     }
   }, [cartItems, status, session?.user?.email]);
 
   const addToCart = (product) => {
-    // Format product for cart
     const sanitizedProduct = {
       _id: (product._id || product.id)?.toString(),
       name: product.name,
       price: parseFloat(product.price),
       oldPrice: product.oldPrice,
       discount: product.discount,
-      image: (product.image || product.img || "").startsWith("http") ? (product.image || product.img) : `https://res.cloudinary.com/dnafzpa8x/image/upload/${(product.image || product.img || "").startsWith("/") ? (product.image || product.img).slice(1) : (product.image || product.img) || "v1774149230/quickzy/brand/logo_without_name.png"}`,
+      image: (product.image || product.img || "").startsWith("http") 
+        ? (product.image || product.img) 
+        : `https://res.cloudinary.com/dnafzpa8x/image/upload/${(product.image || product.img || "").startsWith("/") ? (product.image || product.img).slice(1) : (product.image || product.img) || "v1774149230/quickzy/brand/logo_without_name.png"}`,
       unit: product.unit || product.weight,
     };
 
-    setCartItems((prev) => {
-      const existing = prev.find(
-        (item) => (item._id || item.id) === sanitizedProduct._id,
-      );
+    setCartItems(prev => {
+      const existing = prev.find(i => (i._id || i.id) === sanitizedProduct._id);
       if (existing) {
-        return prev.map((item) =>
-          (item._id || item.id) === sanitizedProduct._id
-            ? { ...item, quantity: (item.quantity || 1) + 1 }
-            : item,
-        );
+        return prev.map(i => (i._id || i.id) === sanitizedProduct._id 
+          ? { ...i, quantity: (i.quantity || 1) + 1 } 
+          : i);
       }
-      return [...prev, { ...sanitizedProduct, quantity: 1 }];
+      return [{ ...sanitizedProduct, quantity: 1 }, ...prev];
     });
 
-    // Check location
     const hasLocation = localStorage.getItem("quickzy-guest-location") || session?.user?.address?.text;
     if (!hasLocation) {
       window.dispatchEvent(new CustomEvent("open-location", { detail: { compulsory: false } }));
     }
-
     toast.success("Added to cart!", { autoClose: 1000 });
   };
 
   const removeFromCart = (productId) => {
-    setCartItems((prev) =>
-      prev.filter((item) => (item._id || item.id) !== productId),
-    );
+    setCartItems(prev => prev.filter(i => (i._id || i.id) !== productId));
     toast.info("Removed from cart");
   };
 
   const updateQuantity = (productId, amount) => {
-    setCartItems((prev) =>
-      prev.map((item) => {
-        if ((item._id || item.id) === productId) {
-          const q = (item.quantity || 1) + amount;
-          return q > 0 ? { ...item, quantity: q } : item;
-        }
-        return item;
-      }),
-    );
+    setCartItems(prev => prev.map(item => {
+      if ((item._id || item.id) === productId) {
+        const q = (item.quantity || 1) + amount;
+        return q > 0 ? { ...item, quantity: q } : item;
+      }
+      return item;
+    }));
   };
 
   const clearCart = () => {
@@ -135,23 +183,6 @@ export const CartProvider = ({ children }) => {
     if (session?.user?.email) syncCart(session.user.email, []);
   };
 
-  const subtotal = cartItems.reduce((acc, item) => {
-    const price = parseFloat(item.price) || 0;
-    const qty = parseInt(item.quantity) || 1;
-    return acc + price * qty;
-  }, 0);
-
-  // Coupons
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
-
-  // Load cached coupon
-  useEffect(() => {
-    const savedCoupon = localStorage.getItem("quickzy-coupon");
-    if (savedCoupon) {
-      setAppliedCoupon(JSON.parse(savedCoupon));
-    }
-  }, []);
-
   const saveCoupon = (coupon) => {
     setAppliedCoupon(coupon);
     if (coupon) {
@@ -161,33 +192,75 @@ export const CartProvider = ({ children }) => {
     }
   };
 
+  const getProductPrices = (item) => {
+    const qty = parseInt(item.quantity) || 1;
+    const currentPriceBase = parseFloat(item.price) || 0;
+    const mrp = parseFloat(item.oldPrice) || currentPriceBase;
+    const originalDiscountPercent = item.discount 
+      ? parseFloat(String(item.discount).replace("%", "")) 
+      : (mrp > currentPriceBase ? ((mrp - currentPriceBase) / mrp * 100) : 0);
+    
+    const comboDiscountPercent = qty >= 2 ? 10 : 0;
+    const totalDiscountPercent = originalDiscountPercent + comboDiscountPercent;
+    const finalPricePerUnit = mrp * (1 - totalDiscountPercent / 100);
+    
+    return {
+      itemTotalCurrent: finalPricePerUnit * qty,
+      itemTotalOld: mrp * qty,
+      hasDiscount: totalDiscountPercent > 0,
+      originalDiscount: originalDiscountPercent,
+      comboDiscount: comboDiscountPercent,
+      totalDiscount: totalDiscountPercent,
+      isCombo: qty >= 2,
+      mrp: mrp,
+      unitPriceCurrent: finalPricePerUnit
+    };
+  };
+
+  const itemTotalCurrent = cartItems.reduce((acc, item) => acc + getProductPrices(item).itemTotalCurrent, 0);
+  const itemTotalOld = cartItems.reduce((acc, item) => acc + getProductPrices(item).itemTotalOld, 0);
+  const hasCartDiscount = itemTotalOld > itemTotalCurrent;
+
+  const baseHandlingFee = Math.min(30, Math.max(2, itemTotalCurrent * 0.02));
+  const baseDeliveryFee = Math.min(300, Math.max(20, itemTotalCurrent * 0.20));
+  const handlingFeeOld = Math.min(30 * 1.5, baseHandlingFee * 1.5);
+  const deliveryFeeOld = Math.min(300 * 1.5, baseDeliveryFee * 1.5);
+
+  const isFreeFees = appliedCoupon && (
+    appliedCoupon.code.toLowerCase().includes("first") || 
+    appliedCoupon.code.toLowerCase().includes("free") || 
+    appliedCoupon.freeDelivery === true
+  );
+
+  const handlingFeeCurrent = isFreeFees ? 0 : baseHandlingFee;
+  const deliveryFeeCurrent = isFreeFees ? 0 : baseDeliveryFee;
+
   let discountAmount = 0;
   if (appliedCoupon) {
     if (appliedCoupon.discountType === "percentage") {
-      discountAmount = subtotal * (appliedCoupon.discountValue / 100);
+      discountAmount = itemTotalCurrent * (appliedCoupon.discountValue / 100);
     } else {
       discountAmount = appliedCoupon.discountValue;
     }
-    // Cap discount
-    if (discountAmount > subtotal) {
-      discountAmount = subtotal;
-    }
+    if (isFreeFees) discountAmount += (baseHandlingFee + baseDeliveryFee);
+    const maxDiscount = itemTotalCurrent + (isFreeFees ? (baseHandlingFee + baseDeliveryFee) : 0);
+    if (discountAmount > maxDiscount) discountAmount = maxDiscount;
   }
 
-  // Validate coupon against subtotal
   useEffect(() => {
-    if (appliedCoupon && subtotal > 0 && appliedCoupon.minOrderAmount > 0) {
-      if (subtotal < appliedCoupon.minOrderAmount) {
+    if (!hasLoaded.current) return;
+    if (appliedCoupon && itemTotalCurrent > 0 && appliedCoupon.minOrderAmount > 0) {
+      if (itemTotalCurrent < appliedCoupon.minOrderAmount) {
          toast.warning(`Coupon removed. Min order is ₹${appliedCoupon.minOrderAmount}`);
          saveCoupon(null);
       }
     }
-    if (subtotal === 0 && appliedCoupon) {
+    if (hasLoaded.current && itemTotalCurrent === 0 && appliedCoupon) {
       saveCoupon(null);
     }
-  }, [subtotal, appliedCoupon]);
+  }, [itemTotalCurrent, appliedCoupon]);
 
-  const total = subtotal - discountAmount;
+  const grandTotal = Math.max(0, itemTotalCurrent + baseHandlingFee + baseDeliveryFee - discountAmount);
 
   return (
     <CartContext.Provider
@@ -197,11 +270,20 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         clearCart,
-        subtotal,
-        total,
+        subtotal: itemTotalCurrent,
+        itemTotalCurrent,
+        itemTotalOld,
+        hasCartDiscount,
+        handlingFeeCurrent,
+        handlingFeeOld,
+        deliveryFeeCurrent,
+        deliveryFeeOld,
+        isFreeFees,
+        total: grandTotal,
         discountAmount,
         appliedCoupon,
         saveCoupon,
+        getProductPrices
       }}
     >
       {children}

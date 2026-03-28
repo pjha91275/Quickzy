@@ -12,6 +12,8 @@ import {
   FiChevronRight,
   FiX,
   FiStar,
+  FiPlus,
+  FiMinus,
 } from "react-icons/fi";
 
 import { useCart } from "@/context/CartContext";
@@ -20,7 +22,7 @@ import { useStore } from "@/context/StoreContext";
 import { FiHeart } from "react-icons/fi";
 
 export default function ShopContent({ products, categories }) {
-  const { addToCart } = useCart();
+  const { addToCart, cartItems, updateQuantity } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [animatingHeart, setAnimatingHeart] = React.useState(null);
   const searchParams = useSearchParams();
@@ -191,7 +193,7 @@ export default function ShopContent({ products, categories }) {
                   To: <strong className="text-[#3BB77E]">₹{sliderPrice}</strong>
                 </span>
               </div>
-              <button 
+              <button
                 onClick={() => setFilterPrice(sliderPrice)}
                 className="w-full bg-[#3BB77E] text-white py-3 rounded-lg font-black text-sm hover:bg-[#29A56C] transition-colors shadow-lg flex items-center justify-center gap-2"
               >
@@ -342,23 +344,52 @@ export default function ShopContent({ products, categories }) {
                           </div>
                         )}
                       </div>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          addToCart(prod);
-                        }}
-                        className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white p-2.5 rounded-lg transition-all shadow-sm relative z-20"
-                      >
-                        <FiShoppingCart />
-                      </button>
+                      {(() => {
+                        const itemInCart = cartItems.find((i) => (i._id || i.id) === (prod._id || prod.id));
+                        return itemInCart ? (
+                          <div className="flex items-center justify-between bg-[#3BB77E] text-white rounded-lg px-3 py-1.5 shadow-sm relative z-20 min-w-[85px]">
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                updateQuantity(prod._id || prod.id, -1);
+                              }}
+                              className="hover:scale-110 transition-transform flex items-center justify-center p-0.5"
+                            >
+                              <FiMinus size={14} strokeWidth={4} />
+                            </button>
+                            <span className="font-black text-sm px-1.5">{itemInCart.quantity}</span>
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                updateQuantity(prod._id || prod.id, 1);
+                              }}
+                              className="hover:scale-110 transition-transform flex items-center justify-center p-0.5"
+                            >
+                              <FiPlus size={14} strokeWidth={4} />
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              addToCart(prod);
+                            }}
+                            className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white p-2.5 rounded-lg transition-all shadow-sm relative z-20"
+                          >
+                            <FiShoppingCart />
+                          </button>
+                        );
+                      })()}
                     </div>
                   </>
                 ) : (
-  <>
-    {/* List View Layout */}
+                  <>
+                    {/* List View Layout */}
 
-    {/* Image: smaller on mobile, larger on desktop */}
+                    {/* Image: smaller on mobile, larger on desktop */}
                     <div className="w-24 h-24 md:w-48 md:h-48 flex-shrink-0 flex items-center justify-center p-2 md:p-4 border rounded-xl md:rounded-2xl bg-gray-50 overflow-hidden group-hover:bg-white transition-colors self-start md:self-center">
                       <img
                         src={prod.image || prod.img}
@@ -410,16 +441,45 @@ export default function ShopContent({ products, categories }) {
                             )}
                           </div>
                           <div className="flex items-center gap-2">
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                addToCart(prod);
-                              }}
-                              className="bg-[#3BB77E] text-white py-2 px-4 rounded-xl font-black text-xs hover:bg-[#29A56C] transition-all flex items-center gap-1.5 relative z-20"
-                            >
-                              <FiShoppingCart size={14} /> Add
-                            </button>
+                            {(() => {
+                              const itemInCart = cartItems.find((i) => (i._id || i.id) === (prod._id || prod.id));
+                              return itemInCart ? (
+                                <div className="bg-[#3BB77E] text-white py-2.5 px-6 rounded-xl flex items-center justify-between shadow-sm relative z-20 min-w-[100px]">
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      updateQuantity(prod._id || prod.id, -1);
+                                    }}
+                                    className="hover:scale-110 transition-transform p-0.5"
+                                  >
+                                    <FiMinus size={14} strokeWidth={4} />
+                                  </button>
+                                  <span className="font-black text-base">{itemInCart.quantity}</span>
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      updateQuantity(prod._id || prod.id, 1);
+                                    }}
+                                    className="hover:scale-110 transition-transform p-0.5"
+                                  >
+                                    <FiPlus size={14} strokeWidth={4} />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    addToCart(prod);
+                                  }}
+                                  className="bg-[#3BB77E] text-white py-2 px-4 rounded-xl font-black text-xs hover:bg-[#29A56C] transition-all flex items-center gap-1.5 relative z-20"
+                                >
+                                  <FiShoppingCart size={14} /> Add
+                                </button>
+                              );
+                            })()}
                             <button
                               onClick={(e) => {
                                 e.preventDefault();
@@ -455,17 +515,46 @@ export default function ShopContent({ products, categories }) {
                         </div>
 
                         <div className="flex items-center gap-2 mt-2">
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              addToCart(prod);
-                            }}
-                            className="flex-grow bg-[#3BB77E] text-white py-3 px-4 rounded-xl font-black text-sm hover:bg-[#29A56C] transition-all shadow-lg shadow-green-100 flex items-center justify-center gap-2 group/btn relative z-20"
-                          >
-                            <FiShoppingCart className="group-hover/btn:scale-125 transition-transform" />{" "}
-                            Add
-                          </button>
+                          {(() => {
+                            const itemInCart = cartItems.find((i) => (i._id || i.id) === (prod._id || prod.id));
+                            return itemInCart ? (
+                              <div className="flex-grow bg-[#3BB77E] text-white py-4 px-8 rounded-xl flex items-center justify-between shadow-lg shadow-green-100 relative z-20 min-w-[150px]">
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    updateQuantity(prod._id || prod.id, -1);
+                                  }}
+                                  className="hover:scale-110 transition-transform p-1"
+                                >
+                                  <FiMinus size={20} strokeWidth={4} />
+                                </button>
+                                <span className="font-black text-2xl">{itemInCart.quantity}</span>
+                                <button
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    updateQuantity(prod._id || prod.id, 1);
+                                  }}
+                                  className="hover:scale-110 transition-transform p-1"
+                                >
+                                  <FiPlus size={20} strokeWidth={4} />
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  addToCart(prod);
+                                }}
+                                className="flex-grow bg-[#3BB77E] text-white py-3 px-4 rounded-xl font-black text-sm hover:bg-[#29A56C] transition-all shadow-lg shadow-green-100 flex items-center justify-center gap-2 group/btn relative z-20"
+                              >
+                                <FiShoppingCart className="group-hover/btn:scale-125 transition-transform" />{" "}
+                                Add
+                              </button>
+                            );
+                          })()}
                           <button
                             onClick={(e) => {
                               e.preventDefault();

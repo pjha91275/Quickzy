@@ -9,11 +9,11 @@ async function seedDb() {
   try {
     const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
     await mongoose.connect(MONGO_URI);
-    console.log('✅ Connected to MongoDB Atlas');
+    console.log('Connected to MongoDB Atlas');
 
     const dataPath = path.join(__dirname, '../seed-data/MongoDB-data/seed-data.json');
     if (!fs.existsSync(dataPath)) {
-        throw new Error('❌ seed-data.json not found in seed-data/MongoDB-data/');
+        throw new Error('seed-data.json not found in seed-data/MongoDB-data/');
     }
 
     const exportData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
@@ -22,18 +22,18 @@ async function seedDb() {
     for (const modelName of collectionsList) {
       if (!exportData[modelName]) continue;
 
-      console.log(`🧹 Clearing ${modelName} collection...`);
+      console.log(`Clearing ${modelName} collection...`);
       const model = mongoose.models[modelName] || mongoose.model(modelName, new mongoose.Schema({}, { strict: false }));
       await model.deleteMany({});
 
-      console.log(`🌱 Seeding ${exportData[modelName].length} items into ${modelName}...`);
+      console.log(`Seeding ${exportData[modelName].length} items into ${modelName}...`);
       await model.insertMany(exportData[modelName]);
     }
 
-    console.log('\n✅ Database Seeding Complete!');
+    console.log('\nDatabase Seeding Complete!');
 
   } catch (err) {
-    console.error('❌ Seeding failed:', err);
+    console.error('Seeding failed:', err);
   } finally {
     await mongoose.disconnect();
   }

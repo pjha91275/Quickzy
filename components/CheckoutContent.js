@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 
 export default function CheckoutContent() {
   const { data: session, update, status } = useSession();
-  const { cartItems, subtotal, total: cartTotal, discountAmount, appliedCoupon, clearCart } = useCart();
+  const { cartItems, total, discountAmount, appliedCoupon, clearCart, itemTotalCurrent, itemTotalOld, hasCartDiscount, handlingFeeCurrent, handlingFeeOld, deliveryFeeCurrent, deliveryFeeOld, isFreeFees, getProductPrices } = useCart();
   const [paymentMethod, setPaymentMethod] = useState(""); // empty initially to force selection
   const [isPlacing, setIsPlacing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -50,7 +50,6 @@ export default function CheckoutContent() {
     }
   }, [session]);
 
-  const total = cartTotal + 25;
 
   const handleSaveDetails = async () => {
     if (status !== "authenticated") {
@@ -82,24 +81,27 @@ export default function CheckoutContent() {
     if (cartItems.length === 0) return toast.error("Your cart is empty!");
 
     if (!name) {
-      return setValidationModal({ 
-        isOpen: true, 
-        field: "name", 
-        defaultValue: session.user.name || "" 
+      toast.warn("Please enter the receiver's name to proceed!");
+      return setValidationModal({
+        isOpen: true,
+        field: "receiver's name",
+        defaultValue: session.user.name || ""
       });
     }
     if (!phone) {
-      return setValidationModal({ 
-        isOpen: true, 
-        field: "phone", 
-        defaultValue: session.user.phone || "" 
+      toast.warn("Please enter the phone number to proceed!");
+      return setValidationModal({
+        isOpen: true,
+        field: "phone",
+        defaultValue: session.user.phone || ""
       });
     }
     if (!address) {
-      return setValidationModal({ 
-        isOpen: true, 
-        field: "address", 
-        defaultValue: session.user.address?.text || "" 
+      toast.warn("Please enter the address to proceed!");
+      return setValidationModal({
+        isOpen: true,
+        field: "address",
+        defaultValue: session.user.address?.text || ""
       });
     }
 
@@ -115,8 +117,8 @@ export default function CheckoutContent() {
 
     const baseData = {
       userEmail: session.user.email,
-      items: cartItems.map(item => ({ 
-        ...item, 
+      items: cartItems.map(item => ({
+        ...item,
         image: normalizeImg(item),
         productId: (item.id_custom || item._id || item.id)?.toString()
       })),
@@ -199,13 +201,13 @@ export default function CheckoutContent() {
 
   return (
     <div className="min-h-screen bg-[#F4F6FA] py-10 font-sans">
-      <div className="container mx-auto px-4 max-w-5xl">
+      <div className="container mx-auto px-4 max-w-6xl">
         <h1 className="text-3xl font-black text-[#253D4E] mb-8 flex items-center gap-3">
           <FiShield className="text-[#3BB77E]" /> Secure Checkout
         </h1>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="grid lg:grid-cols-10 gap-8">
+          <div className="lg:col-span-6 space-y-6">
             {/* Contact & Address Section */}
             <div className="bg-white rounded-2xl p-6 border shadow-sm">
               <div className="flex justify-between items-center mb-6">
@@ -226,7 +228,7 @@ export default function CheckoutContent() {
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 <div className="space-y-1">
                   <label className="text-[10px] font-black text-gray-400 uppercase ml-1">
-                    Full Name
+                    Receiver's Name
                   </label>
                   <input
                     ref={nameInputRef}
@@ -234,7 +236,7 @@ export default function CheckoutContent() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full bg-gray-50 border p-3 rounded-xl font-bold text-sm outline-none focus:border-[#3BB77E]"
-                    placeholder="Enter your name"
+                    placeholder="Enter receiver's name"
                   />
                 </div>
                 <div className="space-y-1">
@@ -304,43 +306,86 @@ export default function CheckoutContent() {
           </div>
 
           {/* Order Summary */}
-          <div className="space-y-6">
+          <div className="lg:col-span-4 space-y-6">
             <div className="bg-[#253D4E] rounded-2xl p-6 text-white sticky top-4 shadow-xl">
               <h3 className="text-lg font-black mb-6 flex items-center gap-2">
                 <FiShoppingBag /> Summary
               </h3>
 
               <div className="space-y-4 mb-6 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
-                {cartItems.map((item, i) => (
-                  <div key={i} className="flex justify-between text-sm gap-4">
-                    <span className="opacity-70 font-bold">
-                      {item.quantity}x {item.name}
-                    </span>
-                    <span className="font-black">
-                      ₹{item.price * item.quantity}
-                    </span>
-                  </div>
-                ))}
+                {cartItems.map((item, i) => {
+                  const { itemTotalCurrent, itemTotalOld, hasDiscount, totalDiscount, isCombo } = getProductPrices(item);
+                  return (
+                    <div key={i} className="flex justify-between items-start text-xs gap-4 mb-4 last:mb-0">
+                      <div className="flex flex-col gap-1">
+                        <span className="opacity-90 font-black text-xs">
+                          {item.quantity}x {item.name}
+                        </span>
+                        {hasDiscount && (
+                          <span className={`${isCombo ? "bg-[#7C3AED]" : "bg-[#FF7F50]"} text-white text-[8px] font-black px-2 py-0.5 rounded-lg uppercase shadow-xl w-fit italic leading-none`}>
+                            {isCombo ? `Combo Saving ${totalDiscount.toFixed(0)}% OFF` : `${totalDiscount.toFixed(0)}% OFF`}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-end shrink-0">
+                        <span className="font-black text-xs text-[#3BB77E]">
+                          ₹{itemTotalCurrent.toFixed(2)}
+                        </span>
+                        {hasDiscount && (
+                          <span className="text-[9px] text-white/40 font-black line-through">
+                            ₹{itemTotalOld.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
 
-              <div className="border-t border-white/10 pt-4 space-y-3">
-                <div className="flex justify-between text-xs font-bold opacity-60">
-                  <span>Subtotal</span>
-                  <span>₹{subtotal.toFixed(2)}</span>
+              <div className="border-t border-white/10 pt-6 space-y-4">
+                {/* Item(s) Total */}
+                <div className="flex justify-between text-[12px] font-black uppercase tracking-[2px] text-white">
+                  <span>Item(s) Total</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#3BB77E] text-[15px]">₹{itemTotalCurrent.toFixed(2)}</span>
+                    {hasCartDiscount && <span className="line-through text-white/40 font-black text-[12px]">₹{itemTotalOld.toFixed(2)}</span>}
+                  </div>
                 </div>
+
+                {/* Handling Fee */}
+                <div className="flex justify-between text-[12px] font-black uppercase tracking-[2px] text-white">
+                  <span>Handling Fee</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#3BB77E] text-[15px]">
+                      {handlingFeeCurrent === 0 ? "FREE" : `₹${handlingFeeCurrent.toFixed(2)}`}
+                    </span>
+                    <span className="line-through text-white/40 font-black text-[12px]">₹{handlingFeeOld.toFixed(2)}</span>
+                  </div>
+                </div>
+
+                {/* Delivery Fee */}
+                <div className="flex justify-between text-[12px] font-black uppercase tracking-[2px] text-white">
+                  <span>Delivery Fee</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[#3BB77E] text-[15px]">
+                      {deliveryFeeCurrent === 0 ? "FREE" : `₹${deliveryFeeCurrent.toFixed(2)}`}
+                    </span>
+                    <span className="line-through text-white/40 font-black text-[12px]">₹{deliveryFeeOld.toFixed(2)}</span>
+                  </div>
+                </div>
+
                 {appliedCoupon && (
-                  <div className="flex justify-between text-xs font-bold text-[#3BB77E]">
-                    <span>Discount ({appliedCoupon.code})</span>
-                    <span>-₹{discountAmount.toFixed(2)}</span>
+                  <div className="flex flex-col gap-1 py-3 px-4 rounded-xl bg-green-500/10 border border-green-500/20">
+                    <div className="flex justify-between text-[13px] font-black uppercase tracking-[2px] text-[#3BB77E]">
+                      <span>Coupon: {appliedCoupon.code}</span>
+                      <span className="whitespace-nowrap">-₹{discountAmount.toFixed(2)}</span>
+                    </div>
                   </div>
                 )}
-                <div className="flex justify-between text-xs font-bold opacity-60">
-                  <span>Delivery Fee</span>
-                  <span>₹25</span>
-                </div>
-                <div className="flex justify-between items-center pt-2">
-                  <span className="font-black">Grand Total</span>
-                  <span className="text-2xl font-black text-[#3BB77E]">
+
+                <div className="flex justify-between items-center pt-4 border-t border-white/5">
+                  <span className="font-black text-white text-lg">Grand Total</span>
+                  <span className="text-3xl font-black text-[#3BB77E] drop-shadow-md">
                     ₹{total.toFixed(2)}
                   </span>
                 </div>
@@ -372,9 +417,9 @@ export default function CheckoutContent() {
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setValidationModal({ ...validationModal, isOpen: false })}></div>
           <div className="bg-white rounded-[30px] p-8 max-w-sm w-full relative z-10 shadow-2xl animate-float-slow">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6 mx-auto">
-              {validationModal.field === "name" ? <FiUser className="text-red-500 text-2xl" /> : 
-               validationModal.field === "phone" ? <FiPhone className="text-red-500 text-2xl" /> : 
-               <FiMapPin className="text-red-500 text-2xl" />}
+              {validationModal.field === "receiver's name" ? <FiUser className="text-red-500 text-2xl" /> :
+                validationModal.field === "phone" ? <FiPhone className="text-red-500 text-2xl" /> :
+                  <FiMapPin className="text-red-500 text-2xl" />}
             </div>
             <h3 className="text-xl font-black text-[#253D4E] text-center mb-2 uppercase tracking-tight">Missing Required Detail</h3>
             <p className="text-gray-500 text-center text-sm font-bold mb-8">
@@ -383,9 +428,9 @@ export default function CheckoutContent() {
 
             <div className="space-y-3">
               {validationModal.defaultValue && (
-                <button 
+                <button
                   onClick={() => {
-                    if (validationModal.field === "name") setName(validationModal.defaultValue);
+                    if (validationModal.field === "receiver's name") setName(validationModal.defaultValue);
                     if (validationModal.field === "phone") setPhone(validationModal.defaultValue);
                     if (validationModal.field === "address") setAddress(validationModal.defaultValue);
                     setValidationModal({ ...validationModal, isOpen: false });
@@ -394,15 +439,15 @@ export default function CheckoutContent() {
                   className="w-full bg-[#DEF9EC] text-[#3BB77E] py-4 rounded-xl font-black text-sm hover:bg-[#3BB77E] hover:text-white transition-all flex flex-col items-center gap-0.5"
                 >
                   <span>Use Profile Default</span>
-                  <span className="text-[10px] opacity-70 truncate max-w-full px-4">{validationModal.defaultValue}</span>
+                  <span className="text-sm opacity-90 truncate max-w-full px-4 font-black">{validationModal.defaultValue}</span>
                 </button>
               )}
-              
-              <button 
+
+              <button
                 onClick={() => {
                   setValidationModal({ ...validationModal, isOpen: false });
                   setTimeout(() => {
-                    if (validationModal.field === "name") nameInputRef.current?.focus();
+                    if (validationModal.field === "receiver's name") nameInputRef.current?.focus();
                     if (validationModal.field === "phone") phoneInputRef.current?.focus();
                     if (validationModal.field === "address") addressInputRef.current?.focus();
                   }, 300);

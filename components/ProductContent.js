@@ -8,14 +8,16 @@ import {
   FiZap,
   FiTag,
   FiLayers,
-  FiShield
+  FiShield,
+  FiPlus,
+  FiMinus,
 } from "react-icons/fi";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
 import { useStore } from "@/context/StoreContext";
 
 export default function ProductContent({ product: productFromDb, similarProducts }) {
-  const { addToCart } = useCart();
+  const { addToCart, cartItems, updateQuantity } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { storeData } = useStore();
   const [selectedPack, setSelectedPack] = React.useState("single");
@@ -24,22 +26,37 @@ export default function ProductContent({ product: productFromDb, similarProducts
   // Sync with global store to get ephemeral discounts
   const product = React.useMemo(() => {
     if (!storeData.fullPool?.length) return productFromDb;
-    const synced = storeData.fullPool.find(p => (p.id_custom || p._id) === (productFromDb.id_custom || productFromDb._id));
+    const synced = storeData.fullPool.find(p => (p.id_custom || p._id || p.id)?.toString() === (productFromDb.id_custom || productFromDb._id || productFromDb.id)?.toString());
     return synced || productFromDb;
   }, [storeData.fullPool, productFromDb]);
 
+  const syncedSimilarProducts = React.useMemo(() => {
+    if (!storeData.fullPool?.length) return similarProducts;
+    return similarProducts.map(sp => {
+      const synced = storeData.fullPool.find(p => (p.id_custom || p._id || p.id)?.toString() === (sp.id_custom || sp._id || sp.id)?.toString());
+      return synced || sp;
+    });
+  }, [storeData.fullPool, similarProducts]);
+
   if (!product) return null;
 
-  // Calculate pricing
-  const singlePrice = product.price;
-  const singleOldPrice = product.oldPrice || null;
-  const comboPrice = Math.round(product.price * 2 * 0.9);
+  // Calculate pricing using additive logic (Cart Rule)
+  const mrp = parseFloat(product.oldPrice) || parseFloat(product.price);
+  const currentPrice = parseFloat(product.price);
+  const originalDiscountPercent = product.discount ? parseFloat(String(product.discount).replace("%", "")) : (mrp > currentPrice ? ((mrp - currentPrice) / mrp * 100) : 0);
+  
+  const singlePrice = currentPrice;
+  const singleOldPrice = mrp > currentPrice ? mrp : null;
+  
+  // Rule: 10% extra discount applied on MRP
+  const comboDiscountPercent = originalDiscountPercent + 10;
+  const comboPrice = Math.floor((mrp * 2) * (1 - comboDiscountPercent / 100));
   
   const isDouble = selectedPack === "double";
   const displayPrice = isDouble ? comboPrice : singlePrice;
-  const displayOldPrice = isDouble ? (product.oldPrice ? product.oldPrice * 2 : product.price * 2) : singleOldPrice;
+  const displayOldPrice = isDouble ? (mrp * 2) : singleOldPrice;
   const displayDiscount = isDouble 
-    ? `SAVE ${parseInt(product.discount || 0) + 10}%` 
+    ? `SAVE ${Math.round(comboDiscountPercent)}%` 
     : (product.discount ? `SAVE ${product.discount}` : null);
 
   return (
@@ -104,7 +121,12 @@ export default function ProductContent({ product: productFromDb, similarProducts
                        </span>
                      )}
                      <span className="truncate text-sm opacity-70 mb-0.5">{product.unit} (Single)</span>
-                     <span className={`text-lg ${selectedPack === "single" ? 'text-[#3BB77E]' : 'text-slate-600'}`}>₹{singlePrice}</span>
+                     <div className="flex items-center gap-2">
+                        <span className={`text-lg ${selectedPack === "single" ? 'text-[#3BB77E]' : 'text-slate-600'}`}>₹{singlePrice}</span>
+                        {singleOldPrice && (
+                          <span className="text-xs text-slate-400 line-through font-bold opacity-60">₹{singleOldPrice}</span>
+                        )}
+                     </div>
                   </button>
                   <button 
                     onClick={() => setSelectedPack("double")}
@@ -114,7 +136,10 @@ export default function ProductContent({ product: productFromDb, similarProducts
                        COMBO SAVING {parseInt(product.discount || 0) + 10}% OFF
                      </span>
                      <span className="truncate text-sm opacity-70 mb-0.5">2 x {product.unit} (Double)</span>
-                     <span className={`text-lg ${selectedPack === "double" ? 'text-[#3BB77E]' : 'text-slate-600'}`}>₹{comboPrice}</span>
+                     <div className="flex items-center gap-2">
+                        <span className={`text-lg ${selectedPack === "double" ? 'text-[#3BB77E]' : 'text-slate-600'}`}>₹{comboPrice}</span>
+                        <span className="text-xs text-slate-400 line-through font-bold opacity-60">₹{product.oldPrice ? product.oldPrice * 2 : product.price * 2}</span>
+                     </div>
                   </button>
                </div>
             </div>
@@ -140,12 +165,39 @@ export default function ProductContent({ product: productFromDb, similarProducts
             </div>
 
             <div className="w-full">
-              <button 
-                onClick={() => addToCart({ ...product, price: displayPrice, pack: selectedPack })}
-                className="w-full md:w-auto md:min-w-[200px] bg-[#3BB77E] text-white py-4 px-10 rounded-2xl font-black text-lg shadow-xl shadow-green-100 hover:bg-[#29A56C] transition-all flex items-center justify-center gap-3 active:scale-95"
-              >
-                Add to Cart
-              </button>
+              {(() => {
+                const itemInCart = cartItems.find((i) => (i._id || i.id) === (product._id || product.id));
+                return itemInCart ? (
+                  <div className="w-full md:w-fit md:min-w-[220px] bg-[#3BB77E] text-white py-4 px-8 rounded-2xl flex items-center justify-between shadow-xl shadow-green-100 gap-10">
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateQuantity(product._id || product.id, -1);
+                      }}
+                      className="hover:scale-110 transition-transform p-1"
+                    >
+                      <FiMinus size={22} strokeWidth={3} />
+                    </button>
+                    <span className="font-black text-2xl">{itemInCart.quantity}</span>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        updateQuantity(product._id || product.id, 1);
+                      }}
+                      className="hover:scale-110 transition-transform p-1"
+                    >
+                      <FiPlus size={22} strokeWidth={3} />
+                    </button>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={() => addToCart({ ...product, price: displayPrice, pack: selectedPack })}
+                    className="w-full md:w-fit md:min-w-[220px] bg-[#3BB77E] text-white py-4 px-10 rounded-2xl font-black text-lg shadow-xl shadow-green-100 hover:bg-[#29A56C] transition-all flex items-center justify-center gap-3 active:scale-95"
+                  >
+                    Add to Cart
+                  </button>
+                );
+              })()}
             </div>
 
           </div>
@@ -212,54 +264,108 @@ export default function ProductContent({ product: productFromDb, similarProducts
           <h2 className="text-xl font-black text-[#253D4E] mb-10 flex items-center gap-2">
             Customers also bought <span className="w-10 h-1 bg-[#3BB77E]/20 rounded-full"></span>
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
-            {similarProducts.map((prod) => (
-              <Link
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {syncedSimilarProducts.map((prod) => (
+              <div 
                 key={prod._id || prod.id}
-                href={`/product/${prod.id_custom || prod.id}`}
-                className="bg-white border-2 border-gray-50 hover:border-green-100 hover:shadow-2xl transition-all rounded-3xl p-4 group flex flex-col relative"
+                onClick={() => window.location.href = `/product/${prod.id_custom || prod.id}`}
+                className="bg-white border hover:shadow-xl transition-all relative group flex flex-col cursor-pointer rounded-2xl p-3 md:p-4 hover:border-green-300"
               >
-                <div className="h-32 flex items-center justify-center mb-4 group-hover:scale-105 transition-transform overflow-hidden">
-                  <img
-                    src={prod.image || prod.img}
-                    alt={prod.name}
-                    className="max-h-full object-contain"
-                  />
-                </div>
-                <div className="flex justify-between items-start mb-2 h-10 overflow-hidden">
-                  <h4 className="font-bold text-[#253D4E] text-[13px] group-hover:text-[#3BB77E] line-clamp-2 leading-tight pr-2">
-                    {prod.name}
-                  </h4>
-                  <button 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      const id = prod._id || prod.id;
-                      setAnimatingHeart(id);
-                      toggleWishlist(prod);
-                      setTimeout(() => setAnimatingHeart(null), 400);
-                    }}
-                    className={`text-lg hover:scale-110 transition-transform shrink-0 relative z-20 ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop" : ""}`}
-                  >
-                    <FiHeart size={16} className={isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : "text-gray-300"} />
-                  </button>
-                </div>
-                <div className="flex justify-between items-center mt-auto pt-2">
-                  <span className="text-[#3BB77E] font-black text-sm">
-                    ₹{prod.price}
+                {/* Hot Deal Tag */}
+                {prod.discount && (
+                  <span className="absolute top-0 left-0 bg-pink-500 text-white text-[8px] md:text-[9px] font-black px-3 md:px-4 py-1.5 rounded-br-2xl rounded-tl-2xl z-10 italic uppercase leading-none">
+                    Hot Deal
                   </span>
-                  <button 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      addToCart(prod);
-                    }}
-                    className="bg-[#DEF9EC] text-[#3BB77E] p-2 rounded-xl hover:bg-[#3BB77E] hover:text-white transition-colors relative z-20"
-                  >
-                    <FiShoppingCart size={14} />
-                  </button>
+                )}
+                
+                {/* Wishlist Heart */}
+                <button 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const id = prod._id || prod.id;
+                    setAnimatingHeart(id);
+                    toggleWishlist(prod);
+                    setTimeout(() => setAnimatingHeart(null), 400);
+                  }}
+                  className={`absolute top-4 right-4 md:top-5 md:right-5 z-20 p-2 rounded-full transition-all ${animatingHeart === (prod._id || prod.id) ? "animate-heart-pop text-red-500" : "text-gray-300 hover:scale-110"}`}
+                >
+                  <FiHeart className={`text-lg md:text-xl ${isInWishlist(prod._id || prod.id) ? "text-red-500 fill-red-500" : ""}`} />
+                </button>
+
+                {/* Image */}
+                <div className="flex items-center justify-center overflow-hidden mb-1 group-hover:scale-105 transition-transform h-32 md:h-40">
+                  <img src={prod.image || prod.img} alt={prod.name} className="w-full h-full object-contain" />
                 </div>
-              </Link>
+
+                {/* Info */}
+                <div className="text-[9px] md:text-[10px] text-gray-400 uppercase font-black mb-1">{prod.category}</div>
+                <h3 className="font-bold text-[#253D4E] leading-tight hover:text-[#3BB77E] transition-colors line-clamp-2 mb-1 text-[13px] md:text-sm h-10 grow">
+                  {prod.name}
+                </h3>
+
+                {/* Unit */}
+                <div className="flex mb-2">
+                  <span className="text-[9px] md:text-[10px] font-black text-[#3BB77E] bg-[#DEF9EC] px-2 md:px-3 py-1 rounded-md uppercase">{prod.unit || "Unit"}</span>
+                </div>
+
+                {/* Pricing & Cart Action */}
+                <div className="flex justify-between items-center pt-2 border-t border-gray-50 mt-auto">
+                  <div>
+                    <span className="text-lg font-black text-[#3BB77E]">₹{prod.price}</span>
+                    {prod.oldPrice && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[#adadad] text-[10px] font-bold relative">
+                          ₹{prod.oldPrice}
+                          <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] bg-[#888]"></span>
+                        </span>
+                        <span className="bg-[#FF7F50] text-white text-[8px] px-1.5 py-0.5 rounded font-black italic uppercase">
+                          {prod.discount} OFF
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Add / Qty Controls */}
+                  {(() => {
+                    const itemInCart = cartItems.find((i) => (i._id || i.id) === (prod._id || prod.id));
+                    return itemInCart ? (
+                      <div className="flex items-center justify-between bg-[#3BB77E] text-white rounded-xl px-2 py-1 md:px-3 md:py-2 shadow-sm relative z-20 w-[75px] md:w-[90px]">
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(prod._id || prod.id, -1);
+                          }}
+                          className="hover:scale-110 transition-transform flex items-center justify-center p-0.5"
+                        >
+                          <FiMinus size={14} strokeWidth={3} />
+                        </button>
+                        <span className="font-black text-xs md:text-sm px-1">{itemInCart.quantity}</span>
+                        <button 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(prod._id || prod.id, 1);
+                          }}
+                          className="hover:scale-110 transition-transform flex items-center justify-center p-0.5"
+                        >
+                          <FiPlus size={14} strokeWidth={3} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(prod);
+                        }}
+                        className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white p-2.5 md:px-4 md:py-2.5 rounded-xl transition-all shadow-sm md:font-black md:text-xs flex items-center justify-center gap-2 shrink-0 relative z-20 w-[75px] md:w-[90px]"
+                      >
+                        <span className="hidden md:inline">Add</span>
+                        <FiShoppingCart size={18} className="md:w-4 md:h-4 w-[18px] h-[18px]" />
+                      </button>
+                    );
+                  })()}
+                </div>
+              </div>
             ))}
           </div>
         </div>

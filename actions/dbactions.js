@@ -79,7 +79,17 @@ export const fetchSimilarProducts = async (category, currentId) => {
 
 export const fetchBlogPostById = async (id) => {
   await connectDb();
-  if (!/^[0-9a-fA-F]{24}$/.test(id)) return null;
-  const post = await BlogPost.findById(id).lean();
+  let post = null;
+
+  // Try custom numeric ID first
+  if (!isNaN(id) && !isNaN(parseFloat(id)) && !id.startsWith("0x")) {
+    post = await BlogPost.findOne({ id_custom: Number(id) }).lean();
+  }
+
+  // If not found, try MongoDB ObjectID
+  if (!post && /^[0-9a-fA-F]{24}$/.test(id)) {
+    post = await BlogPost.findById(id).lean();
+  }
+
   return post ? JSON.parse(JSON.stringify(post)) : null;
 };

@@ -25,9 +25,13 @@ export default async function BlogPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogs && blogs.length > 0 ? (
             blogs.map((blog) => (
-              <div key={blog._id || blog.id} className="border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all group flex flex-col">
+              <Link 
+                key={blog._id || blog.id} 
+                href={`/blog/${blog._id || blog.id}`}
+                className="border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl hover:border-[#BCE3C9] transition-all group flex flex-col bg-white"
+              >
                 <div className="h-52 relative overflow-hidden">
-                  <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  <img src={blog.image} alt={blog.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                   <span className="absolute top-4 left-4 bg-white/90 px-3 py-1 rounded-lg text-[10px] font-black text-[#3BB77E] uppercase shadow-sm">
                     {blog.category}
                   </span>
@@ -37,13 +41,13 @@ export default async function BlogPage() {
                     <span className="flex items-center gap-1"><FiClock /> {blog.date}</span>
                     <span className="flex items-center gap-1"><FiUser /> {blog.author}</span>
                   </div>
-                  <h3 className="text-xl font-black text-[#253D4E] mb-3 line-clamp-2 leading-tight">{blog.title}</h3>
-                  <p className="text-gray-500 text-sm mb-5 line-clamp-2">{blog.excerpt}</p>
-                  <Link href={`/blog/${blog.id}`} className="mt-auto text-[#3BB77E] text-xs font-black uppercase flex items-center gap-2">
-                    Read More <FiArrowRight />
-                  </Link>
+                  <h3 className="text-xl font-black text-[#253D4E] mb-3 group-hover:text-[#3BB77E] transition-colors line-clamp-2 leading-tight">{blog.title}</h3>
+                  <p className="text-gray-500 text-sm mb-5 line-clamp-2 font-medium">{blog.excerpt}</p>
+                  <div className="mt-auto text-[#3BB77E] text-xs font-black uppercase flex items-center gap-2 group-hover:gap-3 transition-all">
+                    Read More <FiArrowRight className="group-hover:translate-x-1 transition-transform" />
+                  </div>
                 </div>
-              </div>
+              </Link>
             ))
           ) : (
              <div className="col-span-full text-center py-20 text-gray-400 font-bold">No stories found yet.</div>

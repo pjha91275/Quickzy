@@ -112,7 +112,7 @@ export default function ProfileContent() {
           <div className="grid gap-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-gray-400 uppercase tracking-[2px] ml-1">
-                Full Name
+                Receiver's Name
               </label>
               <div className="relative">
                 <FiUser className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300" />

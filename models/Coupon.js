@@ -11,6 +11,7 @@ const CouponSchema = new Schema({
   totalUsageLimit: { type: Number, default: 100 },
   totalUsedCount: { type: Number, default: 0 },
   usedBy: [{ email: String, count: Number }],
+  freeDelivery: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
 

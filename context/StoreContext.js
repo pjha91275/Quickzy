@@ -1,5 +1,6 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { fetchProdAndCat } from "@/actions/dbactions";
 
 const StoreContext = createContext();
 
@@ -12,33 +13,44 @@ const getAbsoluteUrl = (path) => {
   return `https://res.cloudinary.com/dnafzpa8x/image/upload/${path}`;
 };
 
-// Normalizes image URLs from various sources and provides a default fallback
 const normalizeProductData = (pool) => {
   if (!pool || pool.length === 0) return [];
   return pool.map(p => {
     const rawImg = p.image || p.img;
+    const basePrice = parseFloat(p.originalPrice || p.price || 0);
     return {
       ...p,
       image: getAbsoluteUrl(rawImg),
       img: getAbsoluteUrl(rawImg),
-      price: p.originalPrice || p.price,
+      price: basePrice,
       oldPrice: null,
       discount: null,
       tag: null,
       tagColor: null,
-      originalPrice: p.originalPrice || p.price
+      originalPrice: basePrice
     };
   });
 };
 
-// Applies strict percentage-based discounts to a subset of products
-const applyDynamicPricing = (items, targetPercent) => {
+const applyGlobalPromotions = (items, homeCount, targetPercent = 35) => {
   if (!items || items.length === 0) return [];
-  
-  const discountCount = Math.floor(items.length * (targetPercent / 100));
-  const shuffledIds = shuffleArray(items.map(p => p._id || p.id));
-  const discountIds = new Set(shuffledIds.slice(0, discountCount));
-  
+
+  const totalCount = items.length;
+  const homeTarget = Math.round(homeCount * (targetPercent / 100));
+  const globalTarget = Math.round(totalCount * (targetPercent / 100));
+  const restTarget = globalTarget - homeTarget;
+
+  const discountIds = new Set();
+  const homeIndices = [];
+  for (let i = 0; i < homeCount; i++) homeIndices.push(i);
+  const pickedHome = homeIndices.sort(() => Math.random() - 0.5).slice(0, homeTarget);
+  pickedHome.forEach(idx => discountIds.add(items[idx]._id || items[idx].id));
+
+  const restIndices = [];
+  for (let i = homeCount; i < totalCount; i++) restIndices.push(i);
+  const pickedRest = restIndices.sort(() => Math.random() - 0.5).slice(0, restTarget);
+  pickedRest.forEach(idx => discountIds.add(items[idx]._id || items[idx].id));
+
   const getRandDiscount = () => Math.floor(Math.random() * (35 - 5 + 1)) + 5;
 
   return items.map(p => {
@@ -73,69 +85,96 @@ export const StoreProvider = ({ children }) => {
     categories: []
   });
 
-  const initializeStore = React.useCallback((products, categories) => {
+  const initializeStore = useCallback((products, categories) => {
     setStoreData(prev => {
-      if (!products?.length || prev.recentlyAdded?.length > 0) return prev;
+      // Avoid re-running if already done
+      if (!products?.length || prev.fullPool?.length > 0) return prev;
 
-      // Initialize normalized data pool
       const cleanPool = normalizeProductData(products);
-
-      // Apply dynamic discount engine across the entire catalog
-      // Ensures pricing consistency across product detail and grid views
-      const globalDiscountedPool = applyDynamicPricing(cleanPool, 35);
-      const poolMap = new Map(globalDiscountedPool.map(p => [p._id || p.id, p]));
-
-      // Extract recently added items (Top 3 by timestamp)
-      const sortedByDate = [...globalDiscountedPool].sort((a,b) => {
-        return (new Date(b.createdAt || 0)).getTime() - (new Date(a.createdAt || 0)).getTime();
+      const numRecent = 3;
+      const sortedByRecency = [...cleanPool].sort((a, b) => {
+        if (a.createdAt && b.createdAt) return new Date(b.createdAt) - new Date(a.createdAt);
+        if (a.id_custom && b.id_custom) return b.id_custom - a.id_custom;
+        return String(b._id || b.id).localeCompare(String(a._id || a.id));
       });
-      const top3RecentItems = shuffleArray(sortedByDate.slice(0, 3));
-      const recentIds = new Set(top3RecentItems.map(r => r._id || r.id));
 
-      // Assemble Home Page collection from remaining inventory
-      let availableForHome = shuffleArray(globalDiscountedPool.filter(p => !recentIds.has(p._id || p.id)));
+      const topRecentRaw = sortedByRecency.slice(0, numRecent);
+      const recentIds = new Set(topRecentRaw.map(r => r._id || r.id));
+      const remainingShuffled = shuffleArray(cleanPool.filter(p => !recentIds.has(p._id || p.id)));
+      const tempAvailable = [...remainingShuffled];
 
-      // Select popular items (One from each category where available)
-      const popularSet = [];
-      const catsForHome = shuffleArray(categories || []);
-      catsForHome.forEach(cat => {
-        const itemIdx = availableForHome.findIndex(p => 
-          (p.category || "").toLowerCase() === (cat.name || "").toLowerCase()
-        );
-        if (itemIdx > -1) {
-          popularSet.push(availableForHome[itemIdx]);
-          availableForHome.splice(itemIdx, 1);
+      const popularSetRaw = [];
+      const catsShuffled = shuffleArray(categories || []);
+      catsShuffled.forEach(cat => {
+        const idx = tempAvailable.findIndex(p => (p.category || "").toLowerCase() === (cat.name || "").toLowerCase());
+        if (idx > -1) {
+          popularSetRaw.push(tempAvailable[idx]);
+          tempAvailable.splice(idx, 1);
         }
       });
-      
-      while (popularSet.length < 15 && availableForHome.length > 0) {
-        popularSet.push(availableForHome.shift());
+
+      const DAILY_SIZE = 4;
+      const DEALS_SIZE = 4;
+      const SELLING_SIZE = 3;
+      const TRENDING_SIZE = 3;
+      const PICKS_SIZE = 3;
+      const HOME_TOTAL_TARGET = 35;
+
+      const popularNeeded = HOME_TOTAL_TARGET - numRecent - DAILY_SIZE - DEALS_SIZE - SELLING_SIZE - TRENDING_SIZE - PICKS_SIZE;
+      while (popularSetRaw.length < popularNeeded && tempAvailable.length > 0) {
+        popularSetRaw.push(tempAvailable.shift());
       }
 
-      // Populate feature sections
-      const dailyBest = availableForHome.splice(0, 4).map(p => ({
-        ...p, sold: Math.floor(Math.random() * 100) + 50, total: 200
+      const dailyBestRaw = tempAvailable.splice(0, DAILY_SIZE);
+      const dealsRaw = tempAvailable.splice(0, DEALS_SIZE);
+      const topSellingRaw = tempAvailable.splice(0, SELLING_SIZE);
+      const trendingRaw = tempAvailable.splice(0, TRENDING_SIZE);
+      const topPicksRaw = tempAvailable.splice(0, PICKS_SIZE);
+
+      const homeSubsetRaw = [
+        ...topRecentRaw, ...popularSetRaw, ...dailyBestRaw, ...dealsRaw, ...topSellingRaw, ...trendingRaw, ...topPicksRaw
+      ];
+
+      const fullSequenceRaw = [...homeSubsetRaw, ...tempAvailable];
+      const finalPool = applyGlobalPromotions(fullSequenceRaw, homeSubsetRaw.length, 35);
+
+      const pricedHomePageItems = finalPool.slice(0, homeSubsetRaw.length);
+      const recentlyAdded = pricedHomePageItems.slice(0, numRecent);
+      const popular = pricedHomePageItems.slice(numRecent, numRecent + popularSetRaw.length);
+      const dailyBest = pricedHomePageItems.slice(numRecent + popularSetRaw.length, numRecent + popularSetRaw.length + DAILY_SIZE).map(p => ({
+        ...p, sold: Math.floor(Math.random() * 80) + 40, total: 150
       }));
-      const deals = availableForHome.splice(0, 4);
-      const topSelling = availableForHome.splice(0, 3);
-      const trending = availableForHome.splice(0, 3);
-      const topPicks = availableForHome.splice(0, 3);
+      const deals = pricedHomePageItems.slice(numRecent + popularSetRaw.length + DAILY_SIZE, numRecent + popularSetRaw.length + DAILY_SIZE + DEALS_SIZE);
+      const topSelling = pricedHomePageItems.slice(numRecent + popularSetRaw.length + DAILY_SIZE + DEALS_SIZE, numRecent + popularSetRaw.length + DAILY_SIZE + DEALS_SIZE + SELLING_SIZE);
+      const trending = pricedHomePageItems.slice(numRecent + popularSetRaw.length + DAILY_SIZE + DEALS_SIZE + SELLING_SIZE, numRecent + popularSetRaw.length + DAILY_SIZE + DEALS_SIZE + SELLING_SIZE + TRENDING_SIZE);
+      const topPicks = pricedHomePageItems.slice(numRecent + popularSetRaw.length + DAILY_SIZE + DEALS_SIZE + SELLING_SIZE + TRENDING_SIZE);
 
       return {
         ...prev,
-        fullPool: globalDiscountedPool,
-        shopShuffled: shuffleArray(globalDiscountedPool),
-        recentlyAdded: top3RecentItems,
-        popular_all: popularSet,
-        dailyBest: dailyBest,
-        deals: deals,
-        topSelling: topSelling,
-        trending: trending,
-        topPicks: topPicks,
+        fullPool: finalPool,
+        shopShuffled: shuffleArray(finalPool),
+        recentlyAdded,
+        popular_all: popular,
+        dailyBest,
+        deals,
+        topSelling,
+        trending,
+        topPicks,
         categories
       };
     });
   }, []);
+
+  // Ensure store is initialized even if we land directly on Cart/Checkout
+  useEffect(() => {
+    const autoInit = async () => {
+      if (storeData.fullPool.length === 0) {
+        const { products, categories } = await fetchProdAndCat();
+        initializeStore(products, categories);
+      }
+    };
+    autoInit();
+  }, [initializeStore, storeData.fullPool.length]);
 
   return (
     <StoreContext.Provider value={{ storeData, initializeStore }}>
@@ -145,4 +184,3 @@ export const StoreProvider = ({ children }) => {
 };
 
 export const useStore = () => useContext(StoreContext);
-

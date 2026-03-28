@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 
 dotenv.config({ path: '.env.local' });
 
+// Uploading visual assets to Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -15,7 +16,7 @@ const SOURCE_DIR = path.join(__dirname, '../seed-data/Cloudinary-assets');
 
 async function seedCloudinary() {
   try {
-    console.log('📡 Seeding 60 images to Cloudinary from seed-data/Cloudinary-assets/ ...');
+    console.log('Seeding images to Cloudinary from seed-data/Cloudinary-assets/ ...');
     const folders = ['products', 'banners', 'blog', 'logo_without_name'];
 
     for (const folder of folders) {
@@ -30,7 +31,7 @@ async function seedCloudinary() {
         let publicId = `quickzy/${folder}/${fileName}`;
         if (folder === 'logo_without_name') publicId = `quickzy/brand/${fileName}`;
 
-        console.log(`📤 Uploading [${file}] to ${publicId}...`);
+        console.log(`Uploading [${file}] to ${publicId}...`);
         await cloudinary.uploader.upload(filePath, {
           public_id: publicId,
           overwrite: true,
@@ -39,8 +40,8 @@ async function seedCloudinary() {
         });
       }
     }
-    console.log('\n✅ Cloudinary Seeding Complete!');
-  } catch (err) { console.error('❌ Seeding failed:', err); }
+    console.log('\nCloudinary Seeding Complete!');
+  } catch (err) { console.error('Seeding failed:', err); }
 }
 
 seedCloudinary();

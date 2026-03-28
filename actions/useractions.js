@@ -2,20 +2,19 @@
 import connectDb from "@/db/connectDb";
 import User from "@/models/User";
 
-// 1. Fetch Cart
+// Get user cart from database
 export const fetchCart = async (email) => {
   if (!email) return [];
   await connectDb();
   const user = await User.findOne({ email: email.toLowerCase() }).lean();
 
-  // Convert BSON to plain object
   if (user?.cart) {
     return JSON.parse(JSON.stringify(user.cart));
   }
   return [];
 };
 
-// 1b. Fetch Wishlist
+// Get user wishlist items
 export const fetchWishlist = async (email) => {
   if (!email) return [];
   await connectDb();
@@ -26,7 +25,7 @@ export const fetchWishlist = async (email) => {
   return [];
 };
 
-// 2. Sync Cart
+// Update user cart in database
 export const syncCart = async (email, cart) => {
   if (!email) return;
   await connectDb();
@@ -36,7 +35,7 @@ export const syncCart = async (email, cart) => {
   );
 };
 
-// 2b. Sync Wishlist
+// Update user wishlist in database
 export const syncWishlist = async (email, wishlist) => {
   if (!email) return;
   await connectDb();
@@ -46,7 +45,7 @@ export const syncWishlist = async (email, wishlist) => {
   );
 };
 
-// 3. Update Profile (Name, Phone, Address)
+// Update personal information like name, phone, address
 export const updateProfile = async (email, updateData) => {
   try {
     if (!email) return { success: false };
@@ -60,7 +59,7 @@ export const updateProfile = async (email, updateData) => {
   }
 };
 
-// 4. Save Details (Used in Checkout)
+// Save checkout specific details
 export const saveCheckoutDetails = async (email, details) => {
   return await updateProfile(email, {
     name: details.name,
@@ -69,7 +68,7 @@ export const saveCheckoutDetails = async (email, details) => {
   });
 };
 
-// 5. Validate Coupon Code
+// Validate if a coupon code can be applied
 export const validateCoupon = async (code, cartSubtotal, userEmail) => {
   if (!code) return { success: false, message: "Please enter a code" };
   
@@ -86,12 +85,12 @@ export const validateCoupon = async (code, cartSubtotal, userEmail) => {
     return { success: false, message: `Minimum order amount for this coupon is ₹${coupon.minOrderAmount}` };
   }
   
-  // Total usage limit check
+  // Check global usage limit
   if (coupon.totalUsedCount >= coupon.totalUsageLimit) {
     return { success: false, message: "Coupon global usage limit reached" };
   }
 
-  // Per user usage limit check
+  // Check per user usage limit
   if (userEmail && coupon.usedBy) {
     const userUsage = coupon.usedBy.find(u => u.email === userEmail.toLowerCase());
     if (userUsage && userUsage.count >= coupon.usageLimitPerUser) {
@@ -105,7 +104,7 @@ export const validateCoupon = async (code, cartSubtotal, userEmail) => {
   };
 };
 
-// 6. Fetch Active Coupons
+// Get list of all currently active coupons
 export const getActiveCoupons = async () => {
   try {
     await connectDb();
