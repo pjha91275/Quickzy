@@ -7,7 +7,8 @@ const blogPostSchema = new mongoose.Schema({
   author: String,
   date: String,
   image: { type: String, required: true },
-  excerpt: String
+  excerpt: String,
+  content: { type: String, required: true }
 }, { timestamps: true });
 
 export default mongoose.models.BlogPost || mongoose.model('BlogPost', blogPostSchema);

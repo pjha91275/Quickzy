@@ -76,3 +76,10 @@ export const fetchSimilarProducts = async (category, currentId) => {
 
   return JSON.parse(JSON.stringify(similar));
 };
+
+export const fetchBlogPostById = async (id) => {
+  await connectDb();
+  if (!/^[0-9a-fA-F]{24}$/.test(id)) return null;
+  const post = await BlogPost.findById(id).lean();
+  return post ? JSON.parse(JSON.stringify(post)) : null;
+};
