@@ -347,9 +347,10 @@ const Navbar = ({ initialCategories = [] }) => {
                       userInitials
                     )}
                   </div>
-                  <span className="text-[13px] md:text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[90px] md:max-w-[100px]">
-                    {session.user.name || "My Account"}{" "}
-                    <IoIosArrowDown className="inline text-[10px]" />
+                  <span className="text-[12.5px] md:text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[65px] md:max-w-[110px] leading-none flex items-center gap-1">
+                    <span className="md:hidden">{session.user.name?.split(" ")[0] || "Account"}</span>
+                    <span className="hidden md:inline">{session.user.name || "Account"}</span>
+                    <IoIosArrowDown className="text-[10px] shrink-0" />
                   </span>
                 </div>
               )}
