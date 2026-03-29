@@ -55,14 +55,14 @@ const Footer = () => {
             </li>
             <li className="flex gap-2 items-center">
               <FiPhoneCall className="text-[#3BB77E] shrink-0" />{" "}
-              <a href="tel:+911800419" className="hover:text-[#3BB77E]">
-                <strong>Call Us:</strong> +91 1800-419
+              <a href="tel:+911800419123" className="hover:text-[#3BB77E]">
+                <strong>Call Us:</strong> +91 1800-419-123
               </a>
             </li>
             <li className="flex gap-2 items-center">
               <FiMail className="text-[#3BB77E] shrink-0" />{" "}
-              <a href="mailto:support@quickzy.com" className="hover:text-[#3BB77E]">
-                <strong>Email:</strong> support@quickzy.com
+              <a href="mailto:shopquickzy@gmail.com?subject=Quickzy Support Inquiry" className="hover:text-[#3BB77E] whitespace-nowrap">
+                <strong>Email:</strong> shopquickzy@gmail.com
               </a>
             </li>
             <li className="flex gap-2 items-center">
@@ -119,7 +119,7 @@ const Footer = () => {
           <ul className="space-y-3 font-medium">
             <li><Link href="/shop?category=Electronics" className="hover:text-[#3BB77E] transition-colors">Mobile & Gadgets</Link></li>
             <li><Link href="/shop?category=Personal Care" className="hover:text-[#3BB77E] transition-colors">Health & Beauty</Link></li>
-            <li><Link href="/shop?category=Milk & Dairy" className="hover:text-[#3BB77E] transition-colors">Dairy & Bread</Link></li>
+            <li><Link href={`/shop?category=${encodeURIComponent('Milk & Dairy')}`} className="hover:text-[#3BB77E] transition-colors">Dairy & Bread</Link></li>
             <li><Link href="/shop?category=Household Essentials" className="hover:text-[#3BB77E] transition-colors">Kitchen Essentials</Link></li>
             <li><Link href="/shop?category=Snacks" className="hover:text-[#3BB77E] transition-colors">Snacks & Drinks</Link></li>
           </ul>

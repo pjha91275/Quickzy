@@ -37,6 +37,11 @@ export default function ProfileContent() {
       return toast.error("Name and Phone are required!");
     }
 
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone.toString().replace(/\D/g, ''))) {
+      return toast.error("Please enter a valid 10-digit mobile number!");
+    }
+
     setLoading(true);
     const res = await updateProfile(session.user.email, {
       name,

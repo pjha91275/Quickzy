@@ -19,6 +19,7 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "react-toastify";
 import { useStore } from "@/context/StoreContext";
+import { signIn, useSession } from "next-auth/react";
 
 // Algorithm: Naive Shuffle (Randomized array sort)
 const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
@@ -40,6 +41,8 @@ export default function HomeContent({ products, categories, banners_db }) {
   const [footerEmail, setFooterEmail] = React.useState("");
   const [showMoreCategories, setShowMoreCategories] = React.useState(false);
   const { storeData, initializeStore } = useStore();
+  const { data: session } = useSession();
+  const [isFooterLoading, setIsFooterLoading] = React.useState(false);
 
   const [dataReady, setDataReady] = React.useState({
     popular: [],
@@ -198,24 +201,65 @@ export default function HomeContent({ products, categories, banners_db }) {
   }, [storeData, activePopularFilter]);
 
   const handleBannerSearch = () => {
-    const term = bannerSearchTerm.trim().toLowerCase();
-    if (!term) return (window.location.href = banners[currentSlide].shopLink);
+    if (!bannerSearchTerm.trim()) return (window.location.href = banners[currentSlide].shopLink);
 
-    const catMatch = categories.find(c => c.name.toLowerCase() === term);
-    if (catMatch) return (window.location.href = `/shop?category=${encodeURIComponent(catMatch.name)}`);
+    const term = bannerSearchTerm.toLowerCase();
 
-    const prod = products.find(p => p.name.toLowerCase().includes(term));
-    if (prod) return (window.location.href = `/product/${prod.id_custom || prod._id}`);
+    // 1:1 match logic with Navbar.js handleSearchExecution
+    const categoryMatch = categories.find((c) => {
+      const catName = (c.name || "").toLowerCase();
+      return (
+        catName === term || catName.includes(term) || term.includes(catName)
+      );
+    });
 
+    if (categoryMatch) {
+      window.location.href = `/shop?category=${encodeURIComponent(categoryMatch.name)}`;
+      return;
+    }
+
+    // exact match check
+    const exactProduct = products.find(
+      (p) => (p.name || "").toLowerCase() === term,
+    );
+    if (exactProduct) {
+      window.location.href = `/product/${exactProduct.id_custom || exactProduct._id}`;
+      return;
+    }
+
+    // fallback to search
     window.location.href = `/shop?search=${encodeURIComponent(bannerSearchTerm)}`;
   };
 
-  const handleFooterLogin = () => {
+  const handleFooterLogin = async () => {
+    if (session) {
+      toast.info("You are already logged in!");
+      setFooterEmail("");
+      return;
+    }
     if (!footerEmail) return toast.warning("Please enter your email!");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(footerEmail)) return toast.error("Invalid email address!");
 
-    localStorage.setItem("quickzy-login-email", footerEmail);
-    window.dispatchEvent(new CustomEvent("open-auth", { detail: { step: 2 } }));
+    setIsFooterLoading(true);
+    try {
+      const result = await signIn("email", {
+        email: footerEmail,
+        redirect: false,
+        callbackUrl: window.location.origin,
+      });
+
+      if (result?.ok) {
+        localStorage.setItem("quickzy-login-email", footerEmail);
+        window.dispatchEvent(new CustomEvent("open-auth", { detail: { step: 2 } }));
+        toast.success("Magic link sent! Check your inbox.");
+      } else {
+        toast.error("Failed to send magic link. Try again.");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred.");
+    } finally {
+      setIsFooterLoading(false);
+    }
   };
 
   const router = useRouter();
@@ -469,7 +513,11 @@ export default function HomeContent({ products, categories, banners_db }) {
           { color: "bg-pink-100", title: "Latest Gadgets & Hearables", cat: "Electronics", imgClass: "w-36 h-36 md:w-48 md:h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" },
           { color: "bg-blue-100", title: "Daily Household Essentials", cat: "Household Essentials", imgClass: "w-36 h-36 md:w-48 md:h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" }
         ].map(p => (
-          <div key={p.cat} className={`${p.color} rounded-2xl p-6 md:p-8 relative overflow-hidden h-52 md:h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition`}>
+          <div 
+            key={p.cat} 
+            onClick={() => router.push(`/shop?category=${encodeURIComponent(p.cat)}`)}
+            className={`${p.color} rounded-2xl p-6 md:p-8 relative overflow-hidden h-52 md:h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition`}
+          >
             <div className="relative z-10 max-w-[180px]">
               <h4 className="font-bold text-xl mb-4 text-gray-800 leading-tight">{p.title}</h4>
               <Link href={`/shop?category=${encodeURIComponent(p.cat)}`} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition-colors">Shop Now <FiArrowRight /></Link>
@@ -516,10 +564,10 @@ export default function HomeContent({ products, categories, banners_db }) {
       <section>
         <h2 className="text-3xl font-bold text-[#253D4E] mb-8">Daily Best Sells</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-          <Link href="/shop?category=Vegetables" className="h-[500px] bg-cover bg-center rounded-[40px] p-5 md:p-10 flex flex-col justify-center md:justify-start relative overflow-hidden shadow-md group border" style={{ backgroundImage: "url('https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-2.jpg')" }}>
+          <Link href="/shop?category=Vegetables" className="h-[500px] bg-cover bg-center rounded-[40px] p-5 md:p-10 md:pt-20 lg:pl-6 lg:pr-10 lg:pt-24 flex flex-col justify-center md:justify-start relative overflow-hidden shadow-md group border" style={{ backgroundImage: "url('https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-2.jpg')" }}>
             <div className="relative z-20">
               <h6 className="text-white/80 font-bold mb-2 uppercase tracking-widest text-xs">Recommended</h6>
-              <h3 className="text-white text-[46px] md:text-3xl lg:text-[28px] xl:text-[2.7rem] font-extrabold mb-5 md:mb-8 leading-[1.15] md:leading-[1.1] lg:leading-[1.25] xl:leading-[1.1] pr-2 md:pr-4">Premium and fresh <br className="sm:hidden" /> Quality Products Guaranteed</h3>
+              <h3 className="text-white text-[46px] md:text-[38px] lg:text-[24px] xl:text-[2.2rem] font-extrabold mb-5 md:mb-8 lg:mb-10 leading-[1.15] md:leading-[1.25] lg:leading-[1.4] xl:leading-[1.1] pr-2 md:pr-4">Premium and fresh <br className="sm:hidden" /> Quality Products Guaranteed</h3>
               <div className="bg-[#3BB77E] text-white px-5 md:px-6 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-black flex items-center gap-2 hover:bg-[#29A56C] transition shadow-xl mt-4 max-w-max whitespace-nowrap lg:whitespace-nowrap">Order Now <FiArrowRight /></div>
             </div>
             <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-slate-900/40 transition-colors z-10"></div>
@@ -653,8 +701,17 @@ export default function HomeContent({ products, categories, banners_db }) {
           </div>
           <div className="mt-8">
             <div className="bg-white rounded-full p-1.5 md:p-2 flex max-w-sm md:max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
-              <input type="email" placeholder="Enter email" className="flex-1 px-4 md:px-5 outline-none text-xs md:text-base text-gray-700 bg-transparent min-w-0" value={footerEmail} onChange={e => setFooterEmail(e.target.value)} onKeyDown={e => e.key === "Enter" && handleFooterLogin()} />
-              <button onClick={handleFooterLogin} className="bg-[#3BB77E] text-white rounded-full px-5 md:px-8 py-2 md:py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg text-xs md:text-base shrink-0">Login</button>
+              <input 
+                type="email" 
+                placeholder="Enter email" 
+                className="flex-1 px-4 md:px-5 outline-none text-xs md:text-base text-gray-700 bg-transparent min-w-0 autofill:bg-transparent autofill:shadow-[0_0_0_1000px_white_inset]" 
+                value={footerEmail} 
+                onChange={e => setFooterEmail(e.target.value)} 
+                onKeyDown={e => e.key === "Enter" && handleFooterLogin()} 
+              />
+              <button disabled={isFooterLoading} onClick={handleFooterLogin} className="bg-[#3BB77E] text-white rounded-full px-5 md:px-8 py-2 md:py-3.5 font-black hover:bg-[#29A56C] transition shadow-lg text-xs md:text-base shrink-0 disabled:opacity-50">
+                {isFooterLoading ? "Please wait..." : "Login"}
+              </button>
             </div>
           </div>
         </div>

@@ -65,10 +65,10 @@ const ContactPage = () => {
               <h3 className="text-lg font-black text-[#253D4E] border-b pb-6 border-gray-100 mb-8 uppercase tracking-widest">Quick Contact</h3>
               <div className="space-y-6">
                 {[
-                  { icon: <FiPhone />, label: "Emergency Helpline", val: "+91 1800-419-123" },
-                  { icon: <FiMail />, label: "Support Email", val: "support@quickzy.com" },
-                  { icon: <FiClock />, label: "Hours of Service", val: "24/7 Premium Support" },
-                  { icon: <FiMapPin />, label: "Head Office", val: "Worli, Mumbai" }
+                   { icon: <FiPhone />, label: "Emergency Helpline", val: <a href="tel:+911800419123" className="hover:text-[#3BB77E] transition-colors relative z-10 font-black">+91 1800-419-123</a> },
+                   { icon: <FiMail />, label: "Support Email", val: <a href="mailto:shopquickzy@gmail.com?subject=Quickzy Support Inquiry" className="hover:text-[#3BB77E] transition-colors relative z-10 font-black">shopquickzy@gmail.com</a> },
+                   { icon: <FiClock />, label: "Hours of Service", val: <span className="font-bold text-gray-400">24/7 Premium Support</span> },
+                   { icon: <FiMapPin />, label: "Head Office", val: <span className="font-bold text-gray-400">Worli, Mumbai</span> }
                 ].map((item, i) => (
                   <div key={i} className="flex gap-4 items-center group">
                     <div className="w-12 h-12 rounded-xl bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] text-lg shrink-0 group-hover:bg-[#3BB77E] group-hover:text-white transition-all">

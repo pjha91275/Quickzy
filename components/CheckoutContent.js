@@ -58,6 +58,11 @@ export default function CheckoutContent() {
     if (!name || !phone || !address) {
       return toast.error("Please fill all contact and address fields!");
     }
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone.toString().replace(/\D/g, ''))) {
+      return toast.error("Please enter a valid 10-digit mobile number!");
+    }
     setIsSaving(true);
     const res = await saveCheckoutDetails(session.user.email, {
       name,
@@ -95,6 +100,11 @@ export default function CheckoutContent() {
         field: "phone",
         defaultValue: session.user.phone || ""
       });
+    }
+
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!phoneRegex.test(phone.toString().replace(/\D/g, ''))) {
+      return toast.error("Please enter a valid 10-digit mobile number!");
     }
     if (!address) {
       toast.warn("Please enter the address to proceed!");
