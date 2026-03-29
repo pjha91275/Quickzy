@@ -55,6 +55,7 @@ export const updateProfile = async (email, updateData) => {
 
     return { success: true };
   } catch (err) {
+    console.error("updateProfile error:", err.message);
     return { success: false };
   }
 };
@@ -73,6 +74,7 @@ export const validateCoupon = async (code, cartSubtotal, userEmail) => {
   if (!code) return { success: false, message: "Please enter a code" };
   
   await connectDb();
+  // Algorithm: Data Model Import & MongoDB Query (B-Tree index lookup)
   const Coupon = (await import("@/models/Coupon")).default;
   
   const coupon = await Coupon.findOne({ code: code.trim().toUpperCase(), isActive: true });
@@ -112,6 +114,7 @@ export const getActiveCoupons = async () => {
     const activeCoupons = await Coupon.find({ isActive: true }).sort({ createdAt: -1 }).lean();
     return JSON.parse(JSON.stringify(activeCoupons));
   } catch (error) {
+    console.error("getActiveCoupons error:", error.message);
     return [];
   }
 };

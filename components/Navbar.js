@@ -39,7 +39,7 @@ const Navbar = ({ initialCategories = [] }) => {
   const [guestAddress, setGuestAddress] = useState("");
   const [currentAddress, setCurrentAddress] = useState("Select Location");
 
-  // Sync address logic
+  // update address
   React.useEffect(() => {
     if (session?.user?.address?.text) {
       setCurrentAddress(session.user.address.text);
@@ -60,7 +60,7 @@ const Navbar = ({ initialCategories = [] }) => {
     // Left empty or removed if no other logic needed
   }, [session]);
 
-  // Listen for global auth open events (from footer or elsewhere)
+  // handle global events
   React.useEffect(() => {
     const handleOpenAuth = (e) => {
       const { step, email: passedEmail, error } = e.detail || {};
@@ -79,12 +79,12 @@ const Navbar = ({ initialCategories = [] }) => {
     };
   }, []);
 
-  // Search States
+  // search state
   const [searchTerm, setSearchTerm] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [data, setData] = useState({ products: [], categories: initialCategories });
 
-  // Fetch search data
+  // load data
   React.useEffect(() => {
     const loadSearchData = async () => {
       const result = await fetchProdAndCat();
@@ -93,7 +93,7 @@ const Navbar = ({ initialCategories = [] }) => {
     loadSearchData();
   }, []);
 
-  // Update type-ahead suggestions
+  // Algorithm: Linear Search / Substring Matching (filtering search suggestions)
   React.useEffect(() => {
     if (searchTerm.length < 2) {
       setSuggestions([]);
@@ -102,12 +102,10 @@ const Navbar = ({ initialCategories = [] }) => {
 
     const term = searchTerm.toLowerCase();
 
-    // Check Categories
     const matchedCategories = data.categories
       .filter((c) => (c.name || "").toLowerCase().includes(term))
       .map((c) => ({ ...c, type: "category" }));
 
-    // Check Products
     const matchedProducts = data.products
       .filter(
         (p) =>
@@ -119,7 +117,7 @@ const Navbar = ({ initialCategories = [] }) => {
     setSuggestions([...matchedCategories, ...matchedProducts].slice(0, 10));
   }, [searchTerm, data]);
 
-  // Handle clicking a suggestion
+  // on suggestion click
   const handleSuggestionClick = (item) => {
     setSearchTerm(item.name);
     setSuggestions([]); // Close dropdown
@@ -128,18 +126,17 @@ const Navbar = ({ initialCategories = [] }) => {
       router.push(`/shop?category=${encodeURIComponent(item.name)}`);
     } else {
       router.push(`/product/${item.id_custom || item._id}`);
-      // Force close suggestions for products specifically
       setTimeout(() => setSuggestions([]), 100);
     }
   };
 
-  // Handle search submit
+  // execute search
+  // Algorithm: Filter-based Lookup (Linear time)
   const handleSearchExecution = () => {
     if (!searchTerm.trim()) return;
 
     const term = searchTerm.toLowerCase();
 
-    // Match categories
     const categoryMatch = data.categories.find((c) => {
       const catName = (c.name || "").toLowerCase();
       return (
@@ -153,7 +150,7 @@ const Navbar = ({ initialCategories = [] }) => {
       return;
     }
 
-    // Check if it's a specific product name (exact match)
+    // exact match check
     const exactProduct = data.products.find(
       (p) => (p.name || "").toLowerCase() === term,
     );
@@ -163,7 +160,7 @@ const Navbar = ({ initialCategories = [] }) => {
       return;
     }
 
-    // Show generic search results page
+    // show results
     router.push(`/shop?search=${encodeURIComponent(searchTerm)}`);
     setSuggestions([]);
   };
@@ -234,7 +231,6 @@ const Navbar = ({ initialCategories = [] }) => {
               All Categories
             </div>
 
-            {/* UI PART: Bind value={searchTerm} and add an onChange to update the term. */}
             <input
               type="text"
               placeholder="Search for items, categories..."
@@ -244,7 +240,6 @@ const Navbar = ({ initialCategories = [] }) => {
               onKeyDown={(e) => e.key === "Enter" && handleSearchExecution()}
             />
 
-            {/* Part B: SUGGESTION DROPDOWN */}
             {suggestions.length > 0 && (
               <div className="absolute top-[110%] left-0 w-full bg-white border border-gray-100 rounded-2xl shadow-2xl z-50 overflow-hidden py-2 animate-in fade-in slide-in-from-top-2 duration-200">
                 {suggestions.map((item) => (
@@ -336,7 +331,7 @@ const Navbar = ({ initialCategories = [] }) => {
                   onClick={() => setIsAccountDropdownOpen(!isAccountDropdownOpen)}
                   className="flex items-center justify-center gap-1 cursor-pointer group h-[42px] sm:h-[48px]"
                 >
-                  <div className="w-[32px] h-[32px] md:w-[34px] md:h-[34px] rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-[12px] md:text-[13px] uppercase overflow-hidden border border-[#3BB77E]/20">
+                  <div className="w-[32px] h-[32px] md:w-[34px] md:h-[34px] rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-[12px] md:text-[13px] uppercase overflow-hidden border border-[#3BB77E]/20 shrink-0">
                     {session.user.image ? (
                       <img
                         src={session.user.image}
@@ -348,9 +343,9 @@ const Navbar = ({ initialCategories = [] }) => {
                       userInitials
                     )}
                   </div>
-                  <span className="hidden min-[450px]:flex text-[12.5px] md:text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[65px] md:max-w-[110px] leading-none items-center gap-1 transition-all">
-                    <span className="md:hidden">{session.user.name?.split(" ")[0] || "Account"}</span>
-                    <span className="hidden md:inline">{session.user.name || "Account"}</span>
+                  <IoIosArrowDown className="text-[#3BB77E] text-[10px] md:hidden" />
+                  <span className="hidden md:flex text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[110px] leading-none items-center gap-1 transition-all">
+                    {session.user.name || "Account"}
                     <IoIosArrowDown className="text-[10px] shrink-0" />
                   </span>
                 </div>
@@ -534,7 +529,7 @@ const Navbar = ({ initialCategories = [] }) => {
               </button>
             </div>
             <nav className="flex flex-col font-bold text-[#253D4E] overflow-y-auto flex-1 pb-[100px]">
-              {/* Browse All Categories Dropdown */}
+              // category dropdown
               <div className="border-b border-gray-50 py-3">
                 <div
                   className={`flex items-center justify-between cursor-pointer w-full text-left bg-[#3BB77E] text-white px-3 py-2.5 rounded-xl shadow-sm transition-all hover:bg-[#29A56C] ${isMobileCategoriesOpen ? 'ring-2 ring-green-100' : ''}`}
@@ -576,7 +571,7 @@ const Navbar = ({ initialCategories = [] }) => {
                 </div>
               </div>
 
-              {/* Location Selector in Mobile Menu (Visible for md & below) */}
+              // location selector
               <div className="lg:hidden border-b border-gray-50 py-3">
                 <div
                   onClick={() => {
@@ -634,7 +629,7 @@ const Navbar = ({ initialCategories = [] }) => {
                 Contact
               </Link>
 
-              {/* Your Account Section - Refined Mobile UI */}
+              // account section
               <div className="border-b border-gray-50 py-3">
                 {!isLoggedIn ? (
                   /* Standard Login Button (No Dropdown for Logged Out) */
@@ -652,7 +647,6 @@ const Navbar = ({ initialCategories = [] }) => {
                     <IoIosArrowDown className="text-white/70 text-sm" />
                   </button>
                 ) : (
-                  /* Logged In Dropdown logic */
                   <>
                     <div
                       className={`flex items-center justify-between cursor-pointer w-max min-w-[160px] text-left bg-[#f8f9fa] border border-gray-200 text-[#253D4E] px-4 py-3 rounded-2xl shadow-sm transition-all hover:bg-gray-100 ${isMobileAccountOpen ? 'ring-2 ring-[#DEF9EC]' : ''}`}

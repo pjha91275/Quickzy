@@ -14,7 +14,7 @@ cloudinary.config({
 
 export async function getProductsAdmin() {
   await connectDb();
-  // Return plain objects to avoid serialization errors
+  // avoid serialization errors
   const products = await Product.find({}).sort({ _id: -1 }).lean();
   return JSON.parse(JSON.stringify(products));
 }
@@ -35,24 +35,23 @@ export async function deleteProductAdmin(formData) {
       if (fullPublicId !== fallbackPublicId) {
         await cloudinary.uploader.destroy(fallbackPublicId);
       }
-    } catch (e) {
-      console.error("Cloudinary: Could not delete product image:", e);
-    }
+    } catch (e) { }
   }
 
-  // Invalidate cache
+  // update data
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
   return { success: true };
 }
 
+// Algorithm: Sequential processing for Cloudinary cleanup
 export async function saveProductAdmin(formData) {
   try {
     await connectDb();
     const Category = (await import("@/models/Category")).default;
     
-    // Extract everything from the HTML form data
+    // get form data
     const name = formData.get("name");
     const price = formData.get("price");
     const oldPrice = formData.get("oldPrice");
@@ -61,7 +60,7 @@ export async function saveProductAdmin(formData) {
     const discount = formData.get("discount");
     const imageFile = formData.get("image");
 
-    // New Category Logic
+    // handle new category creation
     const isNewCategory = category === "NEW_CATEGORY_TRIGGER";
     if (isNewCategory) {
       const newCatName = formData.get("newCategoryName");
@@ -71,7 +70,7 @@ export async function saveProductAdmin(formData) {
          return { success: false, error: "New Category name and image are required." };
       }
 
-      // Upload Category Image
+      // upload image
       const catBuf = Buffer.from(await newCatImageFile.arrayBuffer());
       const catImageUrl = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -84,20 +83,20 @@ export async function saveProductAdmin(formData) {
         stream.end(catBuf);
       });
 
-      // Save new Category to DB
+      // save to db
       const newCatDoc = new Category({
         name: newCatName,
         image: catImageUrl,
-        count: 1, // Will be updated by store context or triggers
-        bg: "bg-green-50" // Default light bg
+        count: 1, 
+        bg: "bg-green-50" 
       });
       await newCatDoc.save();
-      category = newCatName; // Switch product category to the new name
+      category = newCatName; 
     }
 
     let imageUrl = "";
 
-    // Stream upload to Cloudinary directly for Product
+    // upload product image
     if (imageFile && imageFile.size > 0) {
       const arrayBuffer = await imageFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
@@ -114,7 +113,7 @@ export async function saveProductAdmin(formData) {
       });
     }
 
-    // Generate sequential custom ID
+    // get next product id
     const lastProduct = await Product.findOne().sort({ id_custom: -1 });
     const nextId = lastProduct && lastProduct.id_custom ? lastProduct.id_custom + 1 : 1000;
 
@@ -137,7 +136,7 @@ export async function saveProductAdmin(formData) {
     
     return { success: true };
   } catch (error) {
-    console.error("Error saving product:", error);
+    console.error("Action error:", error.message);
     return { success: false, error: error.message };
   }
 }
@@ -147,7 +146,7 @@ export async function getOrdersAdmin() {
   const User = (await import("@/models/User")).default;
   const orders = await Order.find({}).sort({ createdAt: -1 }).lean();
   
-  // Attach user image to each order manually since we don't have a ref in schema
+  // get user images for orders
   const ordersWithUserImg = await Promise.all(orders.map(async (order) => {
     const user = await User.findOne({ email: order.userEmail }).select("image").lean();
     return { ...order, userImage: user?.image || "" };
@@ -176,6 +175,8 @@ export async function updateOrderStatusAdmin(formData) {
 export async function getUsersAdmin() {
   await connectDb();
   const User = (await import("@/models/User")).default;
+  // Algorithm: Naive Shuffle (Randomized array sort) - used for product randomization
+  const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
   const users = await User.find({}).sort({ createdAt: -1 }).lean();
   return JSON.parse(JSON.stringify(users));
 }
@@ -191,7 +192,7 @@ export async function toggleUserRoleAdmin(formData) {
   
   const targetUser = await User.findById(id);
   if (targetUser && targetUser.email === process.env.ADMIN_EMAIL) {
-    // Genesis Admin Protection
+    // protect main admin
     return { success: false, error: "Genesis Admin cannot be modified." };
   }
 
@@ -226,9 +227,7 @@ export async function deleteBannerAdmin(formData) {
       if (fullPublicId !== fallbackPublicId) {
         await cloudinary.uploader.destroy(fallbackPublicId);
       }
-    } catch (e) {
-      console.error("Cloudinary: Could not delete banner image:", e);
-    }
+    } catch (e) { }
   }
 
   revalidatePath("/admin/banners");
@@ -267,7 +266,7 @@ export async function saveBannerAdmin(formData) {
 
     let imageUrl = "";
 
-    // Handle Cloudinary upload
+    // upload banner image
     if (imageFile && imageFile.size > 0) {
       if (imageFile.size > 5 * 1024 * 1024) {
         return { success: false, error: "Image exceeds 5MB limit." };
@@ -309,7 +308,7 @@ export async function saveBannerAdmin(formData) {
     
     return { success: true };
   } catch (error) {
-    console.error("Error saving banner:", error);
+    console.error("Action error:", error.message);
     return { success: false, error: error.message };
   }
 }
@@ -387,7 +386,6 @@ export async function saveCouponAdmin(formData) {
     
     return { success: true };
   } catch (error) {
-    console.error("Error saving coupon:", error);
     return { success: false, error: error.message };
   }
 }

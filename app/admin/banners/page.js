@@ -6,7 +6,7 @@ import { FiPlus, FiTrash2, FiImage, FiLink } from "react-icons/fi";
 export default async function BannersPage() {
   const banners = await getBannersAdmin();
 
-  // Helper to remove HTML tags so admins only see plain text
+  // remove html tags
   const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, ' ') : '';
 
   return (

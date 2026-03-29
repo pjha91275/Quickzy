@@ -7,8 +7,11 @@ import Banner from "@/models/Banner";
 
 export const fetchProdAndCat = async () => {
   await connectDb();
-  const products = await Product.find({}).lean();
-  const categories = await Category.find({}).lean();
+  // Algorithm: Concurrency (Promise.all) for parallel data fetching
+  const [products, categories] = await Promise.all([
+    Product.find({}).lean(),
+    Category.find({}).lean()
+  ]);
 
   return JSON.parse(JSON.stringify({ products, categories }));
 };
@@ -27,6 +30,7 @@ export const fetchBanners = async () => {
 
 export const fetchAllData = async () => {
   await connectDb();
+  // Algorithm: Concurrency (Promise.all) for parallel data fetching
   const [products, categories, blogPosts, banners] = await Promise.all([
     Product.find({}).lean(),
     Category.find({}).lean(),
@@ -48,21 +52,26 @@ export const fetchCategories = async () => {
 };
 
 export const fetchProductById = async (id) => {
-  await connectDb();
+  try {
+    await connectDb();
 
   let product = null;
 
-  // Try custom numeric ID first (Only if id is a valid number string)
+  // find by numeric id
   if (!isNaN(id) && !isNaN(parseFloat(id)) && !id.startsWith("0x")) {
     product = await Product.findOne({ id_custom: Number(id) }).lean();
   }
 
-  // If not found, try MongoDB ObjectID (if it's a valid 24-character hex)
+  // Algorithm: Linear Search (Lookup by ID or custom field)
   if (!product && /^[0-9a-fA-F]{24}$/.test(id)) {
     product = await Product.findById(id).lean();
   }
 
   return product ? JSON.parse(JSON.stringify(product)) : null;
+} catch (error) {
+  console.error("fetchProductById error:", error.message);
+  return null;
+}
 };
 
 export const fetchSimilarProducts = async (category, currentId) => {
@@ -81,12 +90,10 @@ export const fetchBlogPostById = async (id) => {
   await connectDb();
   let post = null;
 
-  // Try custom numeric ID first
   if (!isNaN(id) && !isNaN(parseFloat(id)) && !id.startsWith("0x")) {
     post = await BlogPost.findOne({ id_custom: Number(id) }).lean();
   }
 
-  // If not found, try MongoDB ObjectID
   if (!post && /^[0-9a-fA-F]{24}$/.test(id)) {
     post = await BlogPost.findById(id).lean();
   }

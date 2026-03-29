@@ -20,15 +20,15 @@ import { useWishlist } from "@/context/WishlistContext";
 import { toast } from "react-toastify";
 import { useStore } from "@/context/StoreContext";
 
-// Helper for shuffle
+// Algorithm: Naive Shuffle (Randomized array sort)
 const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
 export default function HomeContent({ products, categories, banners_db }) {
-  // Separate hero and footer banners
+  // get banner types
   const heroBanners = banners_db?.filter(b => b.type === "hero") || [];
   const footerBanner = banners_db?.find(b => b.type === "footer");
 
-  const banners = heroBanners; // For carousel logic
+  const banners = heroBanners; 
 
   const { addToCart, cartItems, updateQuantity } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -51,7 +51,7 @@ export default function HomeContent({ products, categories, banners_db }) {
     topPicks: []
   });
 
-  // Integrated ProductCard component that matches shop style on mobile
+  // shared product card
   const ProductCard = ({ prod, isDailyBest, showProgress }) => (
     <div
       onClick={() => router.push(`/product/${prod.id_custom || prod.id}`)}
@@ -163,18 +163,18 @@ export default function HomeContent({ products, categories, banners_db }) {
     return () => clearInterval(timer);
   }, []);
 
-  // Trigger store setup on load
+  // init store data
   React.useEffect(() => {
     if (products?.length > 0 && categories?.length > 0) {
       initializeStore(products, categories);
     }
   }, [products, categories, initializeStore]);
 
-  // Hydrate local data from store
+  // get data from store
   React.useEffect(() => {
     if (!storeData.fullPool?.length) return;
 
-    // Filter logic for popular section (dynamic)
+    // filter popular items
     let rawPopular = [];
     if (activePopularFilter === "All") {
       rawPopular = storeData.popular_all;
@@ -330,21 +330,21 @@ export default function HomeContent({ products, categories, banners_db }) {
         {/* Mobile: Full background image with text overlay */}
         <div className="md:hidden relative h-[280px] sm:h-[320px] w-full">
           <img src={banners[currentSlide].image} className="absolute inset-0 w-full h-full object-cover" alt="" />
-          {/* Specific overlays for brightness control: Hero 1 & 5 (2%), Hero 2-4 (1%) */}
+          // overlay logic
           <div className={`absolute inset-0 transition-opacity duration-700 ${[1, 2, 3].includes(currentSlide) ? 'bg-black/[0.01]' : 'bg-black/[0.02]'}`} />
           <div className={`relative z-20 h-full flex flex-col px-5 ${currentSlide === 0 ? 'justify-between pt-10 pb-9' : 'justify-start pt-6 pb-12'}`}>
             <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-[#253D4E] px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm w-max shrink-0">
               <img src="/logo.png" className="w-3.5 h-3.5" alt="" />{banners[currentSlide].tag}
             </div>
 
-            {/* 1st Banner: Minimal with spacing, Others: Balanced large text (reduced from 4xl to 1.95rem) */}
+            // banner text variants
             {currentSlide !== 0 ? (
               <div className="mt-3 space-y-2">
                 <h1 className="text-[1.6rem] min-[400px]:text-[1.95rem] font-black text-white leading-tight text-shadow-strong pr-2 transition-all duration-500" dangerouslySetInnerHTML={{ __html: banners[currentSlide].title }}></h1>
                 <p className="text-white font-bold text-base text-shadow-medium transition-all duration-500">{banners[currentSlide].subtitle}</p>
               </div>
             ) : (
-              <div className="flex-1" /> // Spacer for Slide 1 to push search bar to bottom
+              <div className="flex-1" /> 
             )}
 
             <div onClick={e => e.stopPropagation()} className="bg-white rounded-full p-1 flex shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50 shrink-0 mt-auto">
@@ -638,15 +638,15 @@ export default function HomeContent({ products, categories, banners_db }) {
       </section>
 
       <div className="rounded-[40px] mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[300px] md:min-h-[400px]">
-        {/* Dynamic Footer Image from Atlas */}
+        // background image
         <img
           src={footerBanner?.image || "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162639/quickzy/banners/footer-banner.jpg"}
           className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 md:scale-100 scale-[2.2]"
           alt=""
         />
-        {/* Clear overlay for text legibility */}
+        // overlay
         <div className="absolute inset-0 bg-black/0 md:bg-black/10 transition-colors" />
-        {/* Mobile: stacked layout — text top-left, email at bottom */}
+        // mobile layout
         <div className="relative z-10 flex flex-col justify-between h-full p-8 md:p-14 min-h-[300px] md:min-h-[400px]">
           <div className="max-w-[280px] md:max-w-lg">
             <h2 className="text-3xl md:text-5xl font-black text-white leading-tight transition-all text-shadow-strong">Stay home &amp; get <br />your daily <br /><span className="text-[#3BB77E]">needs from <br />our shop</span></h2>

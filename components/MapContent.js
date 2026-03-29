@@ -70,13 +70,14 @@ const MapContent = ({ onConfirm, onClose, initialCoords }) => {
         formattedAddress || `Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`,
       );
     } catch (error) {
-      console.error("Geocoding error:", error);
+      console.error("fetchAddress error:", error.message);
       setAddress("Could not find address line. You can still confirm.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Algorithm: Linear Search / Substring Matching (filtering search results)
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query.length < 3) {
@@ -97,7 +98,7 @@ const MapContent = ({ onConfirm, onClose, initialCoords }) => {
         setSearchResults([]);
       }
     } catch (error) {
-      console.error("Search error:", error);
+      console.error("handleSearch error:", error.message);
       setSearchResults([]);
     } finally {
       setIsSearching(false);

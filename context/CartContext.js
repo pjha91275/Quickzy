@@ -53,7 +53,7 @@ export const CartProvider = ({ children }) => {
     if (status !== "loading") loadAppData();
   }, [status, session?.user?.email]);
 
-  // Handle price and discount reconciliation
+  // Algorithm: Hash Map Lookup (O(1) average lookup for price synchronization)
   const performSync = useCallback((currentCart, pool) => {
     if (!pool?.length || !currentCart?.length) return;
 

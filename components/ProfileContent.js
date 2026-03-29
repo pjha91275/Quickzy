@@ -22,7 +22,7 @@ export default function ProfileContent() {
   const [address, setAddress] = useState("");
   const [avatar, setAvatar] = useState("");
 
-  // Load data when session is ready
+  // load session data
   useEffect(() => {
     if (session?.user) {
       setName(session.user.name || "");
@@ -42,27 +42,23 @@ export default function ProfileContent() {
       name,
       phone,
       "address.text": address,
-      image: avatar, // In a real app, you'd upload the file first, but we'll save the URL for now
+      image: avatar, 
     });
 
     if (res.success) {
       toast.success("Profile updated successfully!");
-      await update(); // This refreshes the session data on the client side
+      await update(); 
     } else {
       toast.error("Failed to update profile.");
     }
     setLoading(false);
   };
 
-  // Simple mock image change
+  // handle avatar change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // For now, we just show a toast as real upload requires an API route/Cloudinary
-      toast.info(
-        "Image selected! (In a real app, we'd upload this to Cloudinary now)",
-      );
-      // Mock: create a local preview URL
+      toast.info("Image selected!");
       setAvatar(URL.createObjectURL(file));
     }
   };

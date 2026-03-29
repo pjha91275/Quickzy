@@ -4,6 +4,7 @@ import { fetchProdAndCat } from "@/actions/dbactions";
 
 const StoreContext = createContext();
 
+// Algorithm: Naive Shuffle (Randomized array sort)
 const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
 const getAbsoluteUrl = (path) => {
@@ -85,6 +86,7 @@ export const StoreProvider = ({ children }) => {
     categories: []
   });
 
+  // Algorithm: Data Partitioning & Shuffling (Preparing initial store state)
   const initializeStore = useCallback((products, categories) => {
     setStoreData(prev => {
       // Avoid re-running if already done
@@ -168,9 +170,13 @@ export const StoreProvider = ({ children }) => {
   // Ensure store is initialized even if we land directly on Cart/Checkout
   useEffect(() => {
     const autoInit = async () => {
-      if (storeData.fullPool.length === 0) {
-        const { products, categories } = await fetchProdAndCat();
-        initializeStore(products, categories);
+      try {
+        if (storeData.fullPool.length === 0) {
+          const { products, categories } = await fetchProdAndCat();
+          initializeStore(products, categories);
+        }
+      } catch (error) {
+        console.error("Store autoInit error:", error.message);
       }
     };
     autoInit();

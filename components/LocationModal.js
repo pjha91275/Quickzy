@@ -118,6 +118,7 @@ const LocationModal = ({ isOpen, onClose, compulsory = false }) => {
         setTimeout(() => window.location.reload(), 1000);
       }
     } catch (error) {
+      console.error("confirmAndSaveLocation error:", error.message);
       toast.error("Error saving location.");
     } finally {
       setIsLoading(false);
