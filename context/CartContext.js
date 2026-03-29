@@ -94,10 +94,7 @@ export const CartProvider = ({ children }) => {
       
       const now = Date.now();
       if (now - lastToastRef.current > 3000) {
-        toast.info("Prices in your cart have been refined based on current offers!", {
-          className: "bg-[#253D4E] text-[#3BB77E] font-black",
-          autoClose: 4000
-        });
+        // Price update toast disabled as per user request to avoid noise on reload
         lastToastRef.current = now;
       }
     }
@@ -166,13 +163,15 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = (productId, amount) => {
-    setCartItems(prev => prev.map(item => {
-      if ((item._id || item.id) === productId) {
-        const q = (item.quantity || 1) + amount;
-        return q > 0 ? { ...item, quantity: q } : item;
+    setCartItems(prev => {
+      const item = prev.find(i => (i._id || i.id) === productId);
+      if (!item) return prev;
+      const q = (item.quantity || 1) + amount;
+      if (q <= 0) {
+        return prev.filter(i => (i._id || i.id) !== productId);
       }
-      return item;
-    }));
+      return prev.map(i => (i._id || i.id) === productId ? { ...i, quantity: q } : i);
+    });
   };
 
   const clearCart = () => {

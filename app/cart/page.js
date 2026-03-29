@@ -97,9 +97,9 @@ export default function Cart() {
 
   return (
     <main className="container mx-auto px-4 py-10 min-h-[60vh]">
-      <div className="flex flex-col lg:flex-row gap-10">
+      <div className="flex flex-col lg:flex-row gap-8 xl:gap-10">
         {/* Main cart items list */}
-        <div className="lg:w-[70%]">
+        <div className="lg:w-[65%] xl:w-[70%]">
           <div className="flex items-center justify-between mb-8">
             <h1 className="text-4xl font-black text-[#253D4E] flex items-center gap-3">
               Your Cart
@@ -269,8 +269,8 @@ export default function Cart() {
         </div>
 
         {/* Sidebar Summary Section */}
-        <div className="lg:w-[30%] space-y-8">
-          <div className="bg-white border rounded-2xl p-8 shadow-sm">
+        <div className="lg:w-[35%] xl:w-[30%] space-y-8">
+          <div className="bg-white border rounded-2xl p-5 lg:p-6 xl:p-8 shadow-sm">
             <h2 className="text-2xl font-black text-[#253D4E] mb-8 pb-4 border-b">Cart Summary</h2>
             <div className="space-y-4 mb-8">
               <div className="flex justify-between items-center group mb-3">
@@ -362,7 +362,7 @@ export default function Cart() {
             </button>
           </div>
 
-          <div className="bg-white border rounded-2xl p-8 shadow-sm space-y-4">
+          <div className="bg-white border rounded-2xl p-5 lg:p-6 xl:p-8 shadow-sm space-y-4">
             <h4 className="font-black text-[#253D4E] text-lg">Apply Coupon</h4>
             {appliedCoupon ? (
               <div className="bg-[#DEF9EC] p-4 rounded-xl border border-green-100 flex items-center justify-between">
@@ -381,19 +381,19 @@ export default function Cart() {
             ) : (
               <>
                 <p className="text-sm text-gray-400 font-medium">Using A Promo Code?</p>
-                <div className="flex gap-2">
+                <div className="flex flex-col xl:flex-row gap-2">
                   <input
                     type="text"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                     placeholder="Enter Coupon Code"
-                    className="flex-1 border rounded-md px-4 outline-none focus:border-[#3BB77E] font-bold text-[#253D4E] uppercase"
+                    className="flex-1 border rounded-md px-4 py-2.5 outline-none focus:border-[#3BB77E] font-bold text-[#253D4E] uppercase text-sm"
                   />
                   <button
                     id="apply-btn"
                     disabled={couponLoading}
                     onClick={handleApplyCoupon}
-                    className="bg-[#253D4E] text-white px-4 py-2 rounded-md font-bold hover:bg-black transition disabled:opacity-70"
+                    className="bg-[#253D4E] text-white px-6 py-2.5 rounded-md font-bold hover:bg-black transition disabled:opacity-70 whitespace-nowrap"
                   >
                     {couponLoading ? "..." : "Apply"}
                   </button>
@@ -442,19 +442,19 @@ export default function Cart() {
                         }}
                         className={`border rounded-xl p-4 transition-all ${isValidNow ? "cursor-pointer hover:shadow-md hover:bg-gray-50/50 border-gray-100" : "opacity-60 cursor-not-allowed bg-gray-50 border-gray-100"}`}
                       >
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center gap-3">
-                            <span className={`font-black flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm uppercase tracking-wider ${isValidNow ? `${theme.bg} ${theme.text}` : "bg-gray-200 text-gray-400"}`}>
+                        <div className="flex flex-col lg:flex-col xl:flex-row justify-between items-start xl:items-center gap-3">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className={`font-black flex items-center gap-2 px-3 py-1.5 rounded-lg text-[13px] xl:text-sm uppercase tracking-wider ${isValidNow ? `${theme.bg} ${theme.text}` : "bg-gray-200 text-gray-400"}`}>
                               <FiTag size={14} className={isValidNow ? theme.text : "text-gray-400"} />
                               {c.code}
                             </span>
                             {appliedCoupon?.code === c.code && (
-                              <span className="bg-[#3BB77E] text-white text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest animate-pulse">
+                              <span className="bg-[#3BB77E] text-white text-[10px] px-2.5 py-0.5 rounded-full font-black uppercase tracking-widest animate-pulse">
                                 Applied
                               </span>
                             )}
                           </div>
-                          <span className="text-[12px] font-black text-[#253D4E] text-right">
+                          <span className="text-sm xl:text-[11px] font-black text-[#253D4E] text-left leading-tight shrink-0">
                             {c.discountValue === 0
                               ? "Free Delivery & Handling"
                               : (c.discountType === "percentage" ? `${c.discountValue}% OFF` : `₹${c.discountValue} FLAT`)

@@ -265,7 +265,7 @@ export default function ShopContent({ products, categories }) {
           </div>
 
           <div
-            className={`grid gap-6 ${view === "grid" ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4" : "grid-cols-1"}`}
+            className={`grid gap-6 ${view === "grid" ? "grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"}`}
           >
             {sortedProducts.map((prod) => (
               <Link
@@ -503,15 +503,17 @@ export default function ShopContent({ products, categories }) {
                           <span className="text-3xl font-black text-[#3BB77E] block leading-none">
                             ₹{prod.price}
                           </span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[#adadad] text-sm font-bold relative">
-                              ₹{prod.oldPrice}
-                              <span className="absolute top-1/2 left-[-3px] w-[calc(100%+6px)] h-[1.5px] bg-[#888]"></span>
-                            </span>
-                            <span className="bg-[#FF7F50] text-white text-[10px] px-2 py-0.5 rounded-full font-black italic uppercase shadow-sm">
-                              {prod.discount} OFF
-                            </span>
-                          </div>
+                          {prod.oldPrice && (
+                            <div className="flex items-center gap-2">
+                              <span className="text-[#adadad] text-sm font-bold relative">
+                                ₹{prod.oldPrice}
+                                <span className="absolute top-1/2 left-[-3px] w-[calc(100%+6px)] h-[1.5px] bg-[#888]"></span>
+                              </span>
+                              <span className="bg-[#FF7F50] text-white text-[10px] px-2 py-0.5 rounded-full font-black italic uppercase shadow-sm">
+                                {prod.discount} OFF
+                              </span>
+                            </div>
+                          )}
                         </div>
 
                         <div className="flex items-center gap-2 mt-2">

@@ -14,7 +14,7 @@ import {
 } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 import { useSession, signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { fetchProdAndCat } from "@/actions/dbactions";
 
 import AuthModal from "./AuthModal";
@@ -25,9 +25,12 @@ const Navbar = ({ initialCategories = [] }) => {
   const { cartItems, subtotal } = useCart();
   const { data: session } = useSession();
   const router = useRouter();
+  const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+  const [isNavCategoriesOpen, setIsNavCategoriesOpen] = useState(false);
   const [authModalStep, setAuthModalStep] = useState(1);
   const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
 
@@ -176,9 +179,9 @@ const Navbar = ({ initialCategories = [] }) => {
         onClose={() => setIsAuthModalOpen(false)}
         onLoginSuccess={() => setIsAuthModalOpen(false)}
       />
-      <LocationModal 
-        isOpen={isLocationModalOpen} 
-        onClose={() => setIsLocationModalOpen(false)} 
+      <LocationModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
       />
       <header className="w-full bg-white border-b relative font-sans z-50">
         <div className="container mx-auto p-4 flex flex-wrap md:flex-nowrap items-center justify-between md:justify-start gap-3 md:gap-2 lg:gap-3">
@@ -195,11 +198,11 @@ const Navbar = ({ initialCategories = [] }) => {
                     />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <div className="text-xl md:text-2xl lg:text-3xl font-black text-[#3BB77E] tracking-tight ml-2 -mt-0.5 leading-none">
+                    <div className="text-xl md:text-2xl lg:text-xl xl:text-3xl font-black text-[#3BB77E] tracking-tight ml-2 -mt-0.5 leading-none">
                       Quickzy
                     </div>
-                    <span className="text-[8px] text-gray-400 font-black ml-2 mt-0.5 whitespace-nowrap hidden sm:block uppercase tracking-widest scale-95 origin-left">
-                      Fast. Fresh. Delivered in a Zap.
+                    <span className="text-[7.5px] sm:text-[8px] lg:text-[6.9px] lg:whitespace-normal lg:leading-tight lg:max-w-[85px] xl:text-[8px] xl:whitespace-nowrap xl:max-w-none text-gray-400 font-black ml-2 mt-0.5 block uppercase tracking-widest scale-95 origin-left">
+                      Fast. Fresh. <br /> Delivered in a Zap.
                     </span>
                   </div>
                 </div>
@@ -207,9 +210,9 @@ const Navbar = ({ initialCategories = [] }) => {
             </Link>
 
             {/* Location Trigger - Premium Blinkit Style */}
-            <div 
+            <div
               onClick={() => setIsLocationModalOpen(true)}
-              className="hidden sm:flex flex-col justify-center cursor-pointer hover:bg-gray-50 px-3 py-2.5 rounded-2xl transition-all group/loc border-l border-gray-100 ml-1 w-[180px] lg:w-[220px] shrink-0 overflow-hidden"
+              className="hidden sm:flex flex-col justify-center cursor-pointer hover:bg-gray-50 px-3 py-2.5 rounded-2xl transition-all group/loc border-l border-gray-100 ml-1 w-[130px] lg:w-[170px] xl:w-[220px] shrink-0 overflow-hidden"
             >
               <div className="flex items-center gap-1 leading-none mb-1">
                 <span className="text-[13px] font-black text-[#253D4E] uppercase tracking-tight truncate">
@@ -224,8 +227,8 @@ const Navbar = ({ initialCategories = [] }) => {
           </div>
 
           {/* Middle: Search Bar */}
-          <div className="flex w-full md:w-auto md:flex-[1.5] lg:flex-[2] order-last md:order-none mt-3 md:mt-0 border-2 border-[#BCE3C9] rounded-md items-center h-[44px] sm:h-[48px] relative">
-            <div className="px-4 border-r hidden lg:block text-sm font-bold text-gray-700 whitespace-nowrap">
+          <div className="flex w-full md:w-auto md:flex-[1.5] lg:flex-[2.2] xl:flex-[2] order-last md:order-none mt-3 md:mt-0 border-2 border-[#BCE3C9] rounded-md items-center h-[44px] sm:h-[48px] relative">
+            <div className="px-2 border-r hidden lg:block text-[11px] xl:text-sm xl:px-4 font-bold text-gray-700 whitespace-nowrap">
               All Categories
             </div>
 
@@ -259,11 +262,10 @@ const Navbar = ({ initialCategories = [] }) => {
                       )}
                     </div>
                     <span
-                      className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest ${
-                        item.type === "category"
+                      className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-full tracking-widest ${item.type === "category"
                           ? "bg-[#3BB77E] text-white"
                           : "bg-gray-100 text-gray-500"
-                      }`}
+                        }`}
                     >
                       {item.type}
                     </span>
@@ -281,7 +283,7 @@ const Navbar = ({ initialCategories = [] }) => {
           </div>
 
           {/* Right Side: Icons */}
-          <div className="flex justify-end gap-3 md:gap-5 lg:gap-6 items-center text-[#253D4E] shrink-0 ml-auto md:ml-0 md:flex-1">
+          <div className="flex justify-end gap-3 md:gap-4 lg:gap-4 xl:gap-6 items-center text-[#253D4E] shrink-0 ml-auto md:ml-0 md:flex-1">
             <Link
               href="/wishlist"
               className="hidden lg:flex items-center justify-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group h-[44px] sm:h-[48px]"
@@ -292,19 +294,19 @@ const Navbar = ({ initialCategories = [] }) => {
                   2
                 </span>
               </div>
-              <span className="text-[15px] font-medium text-gray-500 group-hover:text-[#3BB77E]">
+              <span className="text-[15px] font-medium text-gray-500 group-hover:text-[#3BB77E] hidden xl:block">
                 Wishlist
               </span>
             </Link>
             {cartItems.length === 0 ? (
-              <div className="flex items-center justify-center min-w-[110px] sm:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-5 py-2.5 sm:py-3 bg-slate-50 rounded-xl text-slate-400 cursor-not-allowed border border-slate-100 shadow-inner group/cart whitespace-nowrap">
+              <div className="flex items-center justify-center min-w-[90px] sm:min-w-[125px] lg:min-w-[115px] xl:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-4 xl:px-5 py-2.5 sm:py-3 bg-slate-50 rounded-xl text-slate-400 cursor-not-allowed border border-slate-100 shadow-inner group/cart whitespace-nowrap">
                 <FiShoppingCart className="text-xl sm:text-2xl group-hover/cart:rotate-12 transition-transform" />
                 <span className="text-xs sm:text-sm font-black tracking-tighter whitespace-nowrap">MY CART</span>
               </div>
             ) : (
               <Link
                 href="/cart"
-                className="flex items-center justify-center min-w-[110px] sm:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-5 py-2 sm:py-2.5 bg-[#3BB77E] text-white rounded-lg shadow-md hover:shadow-lg hover:bg-[#2e9262] transition-all cursor-pointer hover:-translate-y-0.5"
+                className="flex items-center justify-center min-w-[90px] sm:min-w-[125px] lg:min-w-[115px] xl:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-4 xl:px-5 py-2 sm:py-2.5 bg-[#3BB77E] text-white rounded-lg shadow-md hover:shadow-lg hover:bg-[#2e9262] transition-all cursor-pointer hover:-translate-y-0.5"
               >
                 <div className="relative">
                   <FiShoppingCart className="text-xl sm:text-2xl" />
@@ -328,7 +330,10 @@ const Navbar = ({ initialCategories = [] }) => {
                   </span>
                 </button>
               ) : (
-                <div className="flex items-center justify-center gap-1 cursor-pointer group h-[44px] sm:h-[48px]">
+                <div 
+                  onClick={() => setIsAccountDropdownOpen(!isAccountDropdownOpen)}
+                  className="flex items-center justify-center gap-1 cursor-pointer group h-[44px] sm:h-[48px]"
+                >
                   <div className="w-[34px] h-[34px] rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-[13px] uppercase overflow-hidden border border-[#3BB77E]/20">
                     {session.user.image ? (
                       <img
@@ -341,14 +346,17 @@ const Navbar = ({ initialCategories = [] }) => {
                       userInitials
                     )}
                   </div>
-                  <span className="hidden sm:block text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[100px]">
+                  <span className="hidden xl:block text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[100px]">
                     {session.user.name || "My Account"}{" "}
                     <IoIosArrowDown className="inline text-[10px]" />
                   </span>
                 </div>
               )}
 
-              <div className="hidden absolute top-full right-0 w-52 pt-4 z-50 group-hover/account:block animate-in fade-in slide-in-from-top-1">
+              <div className={`${isAccountDropdownOpen ? "block" : "hidden"} absolute top-full right-0 w-52 pt-4 z-50 lg:group-hover/account:block animate-in fade-in slide-in-from-top-1`}>
+                {isAccountDropdownOpen && (
+                  <div className="fixed inset-0 z-[-1]" onClick={(e) => { e.stopPropagation(); setIsAccountDropdownOpen(false); }} />
+                )}
                 <div className="bg-white border border-gray-100 rounded-2xl shadow-2xl p-5 flex flex-col gap-3">
                   {isLoggedIn ? (
                     <>
@@ -412,16 +420,22 @@ const Navbar = ({ initialCategories = [] }) => {
         <div className="border-t hidden lg:block bg-white">
           <div className="container mx-auto px-4 flex justify-between items-center h-16">
             <div className="flex gap-10 items-center h-full">
-              <div className="relative group h-full flex items-center">
-                <button className="bg-[#3BB77E] text-white px-6 py-2.5 rounded-md flex items-center gap-2 font-black text-sm hover:bg-[#29A56C] transition-colors shadow-sm">
+              <div className="relative group/nav h-full flex items-center">
+                <button 
+                  onClick={() => setIsNavCategoriesOpen(!isNavCategoriesOpen)}
+                  className="bg-[#3BB77E] text-white px-6 py-2.5 rounded-md flex items-center gap-2 font-black text-sm hover:bg-[#29A56C] transition-colors shadow-sm"
+                >
                   <FiGrid className="text-lg" /> Browse All Categories{" "}
-                  <IoIosArrowDown className="group-hover:rotate-180 transition-transform" />
+                  <IoIosArrowDown className={`transition-transform duration-300 ${isNavCategoriesOpen ? 'rotate-180' : 'group-hover/nav:rotate-180'}`} />
                 </button>
-                <div className="absolute top-[85%] left-0 w-full sm:w-[480px] bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-6 opacity-0 translate-y-4 pointer-events-none group-hover:opacity-100 group-hover:translate-y-0 group-hover:pointer-events-auto transition-all duration-300 z-50 overflow-hidden backdrop-blur-sm">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-1 px-4 max-h-[70vh] overflow-y-auto no-scrollbar">
+                <div className={`${isNavCategoriesOpen ? 'block translate-y-0 opacity-100 pointer-events-auto' : 'hidden md:block opacity-0 translate-y-4 pointer-events-none group-hover/nav:opacity-100 group-hover/nav:translate-y-0 group-hover/nav:pointer-events-auto'} absolute top-[85%] left-0 w-full sm:w-[480px] bg-white border border-gray-100 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-6 transition-all duration-300 z-50 overflow-hidden backdrop-blur-sm`}>
+                  {isNavCategoriesOpen && (
+                    <div className="fixed inset-0 z-[-1]" onClick={() => setIsNavCategoriesOpen(false)} />
+                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-1 px-4 max-h-[70vh] overflow-y-auto no-scrollbar relative z-10">
                     {data.categories.map((cat) => (
-                      <Link 
-                        key={cat.name} 
+                      <Link
+                        key={cat.name}
                         href={`/shop?category=${encodeURIComponent(cat.name)}`}
                         className="flex items-center gap-3 px-4 py-3 hover:bg-[#F2FBF6] rounded-xl group/item transition-all border border-transparent hover:border-[#DEF9EC]"
                       >
@@ -437,33 +451,33 @@ const Navbar = ({ initialCategories = [] }) => {
               <nav className="flex gap-8 font-bold text-[#253D4E] text-sm">
                 <Link
                   href="/"
-                  className="hover:text-[#3BB77E] transition-colors"
+                  className={`hover:text-[#3BB77E] transition-colors ${pathname === "/" ? "text-[#3BB77E]" : ""}`}
                 >
                   Home
                 </Link>
                 <Link
                   href="/about"
-                  className="hover:text-[#3BB77E] transition-colors"
+                  className={`hover:text-[#3BB77E] transition-colors ${pathname === "/about" ? "text-[#3BB77E]" : ""}`}
                 >
                   About
                 </Link>
                 <Link
                   href="/shop"
-                  className="hover:text-[#3BB77E] transition-colors"
+                  className={`hover:text-[#3BB77E] transition-colors ${pathname === "/shop" ? "text-[#3BB77E]" : ""}`}
                 >
                   Shop
                 </Link>
 
                 <Link
                   href="/blog"
-                  className="hover:text-[#3BB77E] transition-colors"
+                  className={`hover:text-[#3BB77E] transition-colors ${pathname === "/blog" ? "text-[#3BB77E]" : ""}`}
                 >
                   Blog
                 </Link>
 
                 <Link
                   href="/contact"
-                  className="hover:text-[#3BB77E] transition-colors"
+                  className={`hover:text-[#3BB77E] transition-colors ${pathname === "/contact" ? "text-[#3BB77E]" : ""}`}
                 >
                   Contact
                 </Link>
@@ -519,7 +533,7 @@ const Navbar = ({ initialCategories = [] }) => {
             <nav className="flex flex-col font-bold text-[#253D4E] overflow-y-auto flex-1 pb-[100px]">
               {/* Browse All Categories Dropdown */}
               <div className="border-b border-gray-50 py-3">
-                <div 
+                <div
                   className={`flex items-center justify-between cursor-pointer w-full text-left bg-[#3BB77E] text-white px-3 py-2.5 rounded-xl shadow-sm transition-all hover:bg-[#29A56C] ${isMobileCategoriesOpen ? 'ring-2 ring-green-100' : ''}`}
                   onClick={() => setIsMobileCategoriesOpen(!isMobileCategoriesOpen)}
                 >
@@ -529,15 +543,15 @@ const Navbar = ({ initialCategories = [] }) => {
                   </div>
                   <IoIosArrowDown className={`text-white/80 transition-transform duration-300 ${isMobileCategoriesOpen ? 'rotate-180' : ''}`} />
                 </div>
-                
-                <div 
+
+                <div
                   className={`overflow-hidden transition-all duration-300 ease-in-out bg-gray-50/50 rounded-xl mt-2 ${isMobileCategoriesOpen ? 'max-h-[800px] py-4 opacity-100' : 'max-h-0 py-0 opacity-0'}`}
                 >
                   <div className="px-3 grid grid-cols-2 gap-2">
                     {data?.categories?.length > 0 ? (
                       data.categories.map((cat) => (
-                        <Link 
-                          key={cat.name} 
+                        <Link
+                          key={cat.name}
                           href={`/shop?category=${encodeURIComponent(cat.name)}`}
                           onClick={() => {
                             setIsMenuOpen(false);

@@ -87,10 +87,7 @@ export const WishlistProvider = ({ children }) => {
       
       const now = Date.now();
       if (now - lastToastRef.current > 3000) {
-        toast.info("Prices for items in your wishlist have been updated!", {
-          className: "bg-[#253D4E] text-[#3BB77E] font-black",
-          autoClose: 4000
-        });
+        // Price update toast disabled to match industry standards for wishlists
         lastToastRef.current = now;
       }
     }

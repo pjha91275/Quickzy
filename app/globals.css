@@ -18,6 +18,31 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Force container centering across all pages for consistent tablet layout */
+.container {
+  width: 100% !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px !important;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1240px !important;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1440px !important;
+  }
+}
+
 /* Custom Animations */
 @keyframes heartPulse {
   0% { transform: scale(1); }

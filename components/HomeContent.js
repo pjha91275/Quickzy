@@ -11,6 +11,7 @@ import {
   FiHeart,
   FiPlus,
   FiMinus,
+  FiChevronDown,
 } from "react-icons/fi";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,19 +27,20 @@ export default function HomeContent({ products, categories, banners_db }) {
   // Separate hero and footer banners
   const heroBanners = banners_db?.filter(b => b.type === "hero") || [];
   const footerBanner = banners_db?.find(b => b.type === "footer");
-  
+
   const banners = heroBanners; // For carousel logic
 
   const { addToCart, cartItems, updateQuantity } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [animatingHeart, setAnimatingHeart] = React.useState(null);
-  
+
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [activePopularFilter, setActivePopularFilter] = React.useState("All");
   const [bannerSearchTerm, setBannerSearchTerm] = React.useState("");
   const [footerEmail, setFooterEmail] = React.useState("");
+  const [showMoreCategories, setShowMoreCategories] = React.useState(false);
   const { storeData, initializeStore } = useStore();
-  
+
   const [dataReady, setDataReady] = React.useState({
     popular: [],
     dailyBest: [],
@@ -51,7 +53,7 @@ export default function HomeContent({ products, categories, banners_db }) {
 
   // Integrated ProductCard component that matches shop style on mobile
   const ProductCard = ({ prod, isDailyBest, showProgress }) => (
-    <div 
+    <div
       onClick={() => router.push(`/product/${prod.id_custom || prod.id}`)}
       className={`bg-white border hover:shadow-xl transition-all relative group flex flex-col cursor-pointer ${isDailyBest ? 'rounded-[30px] p-6 h-[500px]' : 'rounded-2xl p-3 md:p-4 hover:border-green-300'}`}
     >
@@ -60,8 +62,8 @@ export default function HomeContent({ products, categories, banners_db }) {
           {prod.tag}
         </span>
       )}
-      
-      <button 
+
+      <button
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -106,7 +108,7 @@ export default function HomeContent({ products, categories, banners_db }) {
           const itemInCart = cartItems.find((i) => (i._id || i.id) === (prod._id || prod.id));
           return itemInCart ? (
             <div className="flex items-center justify-between bg-[#3BB77E] text-white rounded-xl px-2 py-2 md:px-4 md:py-2.5 shadow-sm relative z-20 min-w-[75px] md:min-w-[110px]">
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   updateQuantity(prod._id || prod.id, -1);
@@ -116,7 +118,7 @@ export default function HomeContent({ products, categories, banners_db }) {
                 <FiMinus size={14} strokeWidth={3} />
               </button>
               <span className="font-black text-sm md:text-base px-1">{itemInCart.quantity}</span>
-              <button 
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   updateQuantity(prod._id || prod.id, 1);
@@ -127,7 +129,7 @@ export default function HomeContent({ products, categories, banners_db }) {
               </button>
             </div>
           ) : (
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 addToCart(prod);
@@ -147,7 +149,7 @@ export default function HomeContent({ products, categories, banners_db }) {
           </div>
           <div className="text-gray-400 font-bold flex justify-between text-[11px]">
             <span>Sold: {prod.sold}/{prod.total}</span>
-            <span className="text-[#3BB77E]">{(prod.sold/prod.total*100).toFixed(0)}%</span>
+            <span className="text-[#3BB77E]">{(prod.sold / prod.total * 100).toFixed(0)}%</span>
           </div>
         </div>
       )}
@@ -198,20 +200,20 @@ export default function HomeContent({ products, categories, banners_db }) {
   const handleBannerSearch = () => {
     const term = bannerSearchTerm.trim().toLowerCase();
     if (!term) return (window.location.href = banners[currentSlide].shopLink);
-    
+
     const catMatch = categories.find(c => c.name.toLowerCase() === term);
     if (catMatch) return (window.location.href = `/shop?category=${encodeURIComponent(catMatch.name)}`);
 
     const prod = products.find(p => p.name.toLowerCase().includes(term));
     if (prod) return (window.location.href = `/product/${prod.id_custom || prod._id}`);
-    
+
     window.location.href = `/shop?search=${encodeURIComponent(bannerSearchTerm)}`;
   };
 
   const handleFooterLogin = () => {
     if (!footerEmail) return toast.warning("Please enter your email!");
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(footerEmail)) return toast.error("Invalid email address!");
-    
+
     localStorage.setItem("quickzy-login-email", footerEmail);
     window.dispatchEvent(new CustomEvent("open-auth", { detail: { step: 2 } }));
   };
@@ -225,8 +227,8 @@ export default function HomeContent({ products, categories, banners_db }) {
       </h3>
       <div className="space-y-6">
         {items.map(prod => (
-          <div 
-            key={prod._id || prod.id} 
+          <div
+            key={prod._id || prod.id}
             onClick={() => router.push(`/product/${prod.id_custom || prod.id}`)}
             className="flex gap-4 group items-center relative cursor-pointer"
           >
@@ -240,7 +242,7 @@ export default function HomeContent({ products, categories, banners_db }) {
                 </div>
               )}
             </div>
-              <div className="flex-grow">
+            <div className="flex-grow">
               <Link href={`/product/${prod.id_custom || prod.id}`}>
                 <h5 className="font-bold text-gray-700 text-[13px] group-hover:text-[#3BB77E] transition-colors line-clamp-2 leading-tight mb-1">{prod.name}</h5>
               </Link>
@@ -262,7 +264,7 @@ export default function HomeContent({ products, categories, banners_db }) {
               )}
             </div>
             <div className="flex flex-col items-end justify-between h-full py-1">
-              <button 
+              <button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -279,7 +281,7 @@ export default function HomeContent({ products, categories, banners_db }) {
                 const itemInCart = cartItems.find((i) => (i._id || i.id) === (prod._id || prod.id));
                 return itemInCart ? (
                   <div className="bg-[#3BB77E] text-white px-2 py-1 rounded-lg flex items-center justify-between shadow-sm mt-1 min-w-[70px]">
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -290,7 +292,7 @@ export default function HomeContent({ products, categories, banners_db }) {
                       <FiMinus size={10} strokeWidth={4} />
                     </button>
                     <span className="font-black text-[12px]">{itemInCart.quantity}</span>
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -302,7 +304,7 @@ export default function HomeContent({ products, categories, banners_db }) {
                     </button>
                   </div>
                 ) : (
-                  <button 
+                  <button
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
@@ -334,7 +336,7 @@ export default function HomeContent({ products, categories, banners_db }) {
             <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-[#253D4E] px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm w-max shrink-0">
               <img src="/logo.png" className="w-3.5 h-3.5" alt="" />{banners[currentSlide].tag}
             </div>
-            
+
             {/* 1st Banner: Minimal with spacing, Others: Balanced large text (reduced from 4xl to 1.95rem) */}
             {currentSlide !== 0 ? (
               <div className="mt-3 space-y-2">
@@ -366,11 +368,11 @@ export default function HomeContent({ products, categories, banners_db }) {
               <div className={`absolute inset-0 bg-gradient-to-r from-[${currentSlide === 3 ? '#E5E7EB' : (banners[currentSlide]?.bgColor?.replace('bg-[', '').replace(']', '') || '#DEF9EC')}] via-transparent to-transparent`} />
             </div>
           </div>
-          <div className="relative z-20 w-1/2 space-y-6 animate-fadeIn pb-4">
-            <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest shadow-sm">
+          <div className="relative z-20 w-1/2 space-y-2 lg:space-y-6 animate-fadeIn pb-4 pr-4">
+            <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-3 py-1 rounded-full text-[9px] md:text-xs font-black uppercase tracking-widest shadow-sm translate-y-2 lg:translate-y-0">
               <img src="/logo.png" className="w-4 h-4" alt="" />{banners[currentSlide].tag}
             </div>
-            <h1 className="text-5xl lg:text-[3.8rem] font-black text-[#253D4E] leading-[1.05] transition-all duration-300" dangerouslySetInnerHTML={{ __html: banners[currentSlide].title }}></h1>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-[3.8rem] font-black text-[#253D4E] leading-[1.05] transition-all duration-300" dangerouslySetInnerHTML={{ __html: banners[currentSlide].title }}></h1>
             <p className="text-gray-500 font-bold text-xl">{banners[currentSlide].subtitle}</p>
             <div onClick={e => e.stopPropagation()} className="bg-white rounded-full p-2 flex max-w-md shadow-2xl border-2 border-white focus-within:border-[#3BB77E] transition-all relative z-50">
               <input type="text" placeholder="Search..." className="flex-1 px-4 outline-none text-gray-700 font-bold text-base w-full min-w-0" value={bannerSearchTerm} onChange={e => setBannerSearchTerm(e.target.value)} onKeyDown={e => e.key === "Enter" && handleBannerSearch()} />
@@ -388,10 +390,10 @@ export default function HomeContent({ products, categories, banners_db }) {
       {/* Featured Categories */}
       <section>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h2 className="text-xl md:text-2xl font-bold text-gray-800">Featured Categories</h2>
-          <div className="flex gap-4 text-sm font-semibold text-gray-600 w-full sm:w-auto">
+          <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 whitespace-nowrap">Featured Categories</h2>
+          <div className="flex gap-4 text-[10px] sm:text-xs lg:text-sm font-semibold text-gray-600 w-full sm:w-auto overflow-hidden lg:overflow-visible">
             <div className="md:hidden w-full relative">
-              <select 
+              <select
                 onChange={(e) => window.location.href = `/shop?category=${encodeURIComponent(e.target.value)}`}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 font-bold text-[#253D4E] outline-none appearance-none"
                 defaultValue=""
@@ -405,32 +407,75 @@ export default function HomeContent({ products, categories, banners_db }) {
                 <FiArrowRight rotate={90} />
               </div>
             </div>
-            <div className="hidden md:flex gap-4 overflow-x-auto no-scrollbar pb-2">
+            {/* Desktop View (Show all 11) */}
+            <div className="hidden xl:flex gap-6 items-center">
               {categories.map((cat, i) => (
-                <Link key={i} href={`/shop?category=${encodeURIComponent(cat.name)}`} className="hover:text-green-600 whitespace-nowrap">{cat.name}</Link>
+                <Link key={i} href={`/shop?category=${encodeURIComponent(cat.name)}`} className="hover:text-green-600 whitespace-nowrap transition-colors">{cat.name}</Link>
+              ))}
+            </div>
+
+            {/* Tablet View (Show 6 + All Categories Dropdown) */}
+            <div className="hidden lg:flex xl:hidden gap-3 items-center relative z-[100]">
+              {categories.slice(0, 6).map((cat, i) => (
+                <Link key={i} href={`/shop?category=${encodeURIComponent(cat.name)}`} className="hover:text-green-600 whitespace-nowrap transition-colors">{cat.name}</Link>
+              ))}
+              <div className="relative">
+                <button 
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setShowMoreCategories(!showMoreCategories); }}
+                  className="flex items-center gap-1 hover:text-green-600 font-bold transition-colors py-2 bg-[#F2FBF6] px-3 rounded-full text-[#3BB77E] border border-[#DEF9EC] relative z-[120]"
+                >
+                  All Categories <FiChevronDown className={`transition-transform duration-300 ${showMoreCategories ? 'rotate-180' : ''}`} />
+                </button>
+                
+                {showMoreCategories && (
+                  <>
+                    <div className="fixed inset-0 z-[110]" onClick={() => setShowMoreCategories(false)} />
+                    <div className="absolute top-full right-0 mt-3 bg-white border border-gray-100 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-5 px-3 min-w-[320px] z-[130] animate-in fade-in slide-in-from-top-2">
+                      <div className="grid grid-cols-2 gap-2">
+                        {categories.map((cat, i) => (
+                          <Link 
+                            key={i} 
+                            href={`/shop?category=${encodeURIComponent(cat.name)}`} 
+                            className="px-4 py-2.5 hover:bg-[#F2FBF6] rounded-xl text-[#253D4E] hover:text-[#3BB77E] transition-all text-xs font-bold whitespace-nowrap border border-transparent hover:border-[#DEF9EC]"
+                            onClick={() => setShowMoreCategories(false)}
+                          >
+                            {cat.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Intermediate and mobile view (Wrapping) */}
+            <div className="hidden md:flex lg:hidden flex-wrap gap-2 items-center">
+              {categories.map((cat, i) => (
+                <Link key={i} href={`/shop?category=${encodeURIComponent(cat.name)}`} className="hover:text-green-600 whitespace-nowrap transition-colors">{cat.name}</Link>
               ))}
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-5 lg:grid-cols-11 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-11 gap-4">
           {categories.map((cat, idx) => (
-            <Link key={idx} href={`/shop?category=${encodeURIComponent(cat.name)}`} className={`${cat.bg} hover:shadow-lg transition-shadow border rounded-lg p-5 flex flex-col items-center justify-center text-center group`}>
-              <div className="w-16 h-16 mb-4 flex items-center justify-center overflow-hidden"><img src={cat.image || cat.img} alt={cat.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform" /></div>
-              <h6 className="font-bold text-gray-700 text-[13px] leading-tight mb-1">{cat.name}</h6>
-              <p className="text-[12px] text-gray-400">{cat.count} ITEMS</p>
+            <Link key={idx} href={`/shop?category=${encodeURIComponent(cat.name)}`} className={`${cat.bg} hover:shadow-lg transition-shadow border rounded-lg p-4 md:p-5 flex flex-col items-center justify-center text-center group min-h-[140px]`}>
+              <div className="w-12 h-12 md:w-14 md:h-14 mb-3 md:mb-4 flex items-center justify-center overflow-hidden shrink-0"><img src={cat.image || cat.img} alt={cat.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform" /></div>
+              <h6 className="font-bold text-gray-700 text-[11px] md:text-[12px] leading-tight mb-1">{cat.name}</h6>
+              <p className="text-[10px] md:text-[11px] text-gray-400 px-1">{cat.count} ITEMS</p>
             </Link>
           ))}
         </div>
       </section>
 
       {/* Promo Banners */}
-      <section className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
+      <section className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {[
-          { color: "bg-amber-100", title: "Premium Fresh Quality Products", cat: "Fruits", imgClass: "w-48 h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" },
-          { color: "bg-pink-100", title: "Latest Gadgets & Hearables", cat: "Electronics", imgClass: "w-48 h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" },
-          { color: "bg-blue-100", title: "Daily Household Essentials", cat: "Household Essentials", imgClass: "w-48 h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" }
+          { color: "bg-amber-100", title: "Premium Fresh Quality Products", cat: "Fruits", imgClass: "w-36 h-36 md:w-48 md:h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" },
+          { color: "bg-pink-100", title: "Latest Gadgets & Hearables", cat: "Electronics", imgClass: "w-36 h-36 md:w-48 md:h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" },
+          { color: "bg-blue-100", title: "Daily Household Essentials", cat: "Household Essentials", imgClass: "w-36 h-36 md:w-48 md:h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" }
         ].map(p => (
-          <div key={p.cat} className={`${p.color} rounded-2xl p-8 relative overflow-hidden h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition`}>
+          <div key={p.cat} className={`${p.color} rounded-2xl p-6 md:p-8 relative overflow-hidden h-52 md:h-64 flex items-center group cursor-pointer shadow-sm hover:shadow-md transition`}>
             <div className="relative z-10 max-w-[180px]">
               <h4 className="font-bold text-xl mb-4 text-gray-800 leading-tight">{p.title}</h4>
               <Link href={`/shop?category=${encodeURIComponent(p.cat)}`} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-xs font-bold inline-flex items-center gap-1 transition-colors">Shop Now <FiArrowRight /></Link>
@@ -448,7 +493,7 @@ export default function HomeContent({ products, categories, banners_db }) {
           <h2 className="text-xl md:text-2xl font-bold text-gray-800">Popular Products</h2>
           <div className="w-full sm:w-auto">
             <div className="md:hidden w-full relative">
-              <select 
+              <select
                 value={activePopularFilter}
                 onChange={(e) => setActivePopularFilter(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 font-bold text-[#253D4E] outline-none appearance-none"
@@ -468,7 +513,7 @@ export default function HomeContent({ products, categories, banners_db }) {
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-5 gap-6">
           {dataReady.popular.map(prod => <ProductCard key={prod._id || prod.id} prod={prod} />)}
         </div>
       </section>
@@ -476,18 +521,16 @@ export default function HomeContent({ products, categories, banners_db }) {
       {/* Daily Best Sells */}
       <section>
         <h2 className="text-3xl font-bold text-[#253D4E] mb-8">Daily Best Sells</h2>
-        <div className="flex flex-col lg:flex-row gap-6">
-          <Link href="/shop?category=Vegetables" className="lg:w-1/4 h-[500px] bg-cover bg-center rounded-[40px] p-10 flex flex-col justify-start relative overflow-hidden shadow-md group border" style={{ backgroundImage: "url('https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-2.jpg')" }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <Link href="/shop?category=Vegetables" className="h-[500px] bg-cover bg-center rounded-[40px] p-5 md:p-10 flex flex-col justify-center md:justify-start relative overflow-hidden shadow-md group border" style={{ backgroundImage: "url('https://res.cloudinary.com/dnafzpa8x/image/upload/v1773944030/quickzy/banners/hero-banner-2.jpg')" }}>
             <div className="relative z-20">
               <h6 className="text-white/80 font-bold mb-2 uppercase tracking-widest text-xs">Recommended</h6>
-              <h3 className="text-white text-[2.7rem] font-extrabold mb-8 leading-[1.1]">Premium and fresh Quality Products Guaranteed</h3>
-              <div className="bg-[#3BB77E] text-white px-6 py-2.5 rounded-lg text-sm font-black flex items-center gap-2 hover:bg-[#29A56C] transition shadow-xl mt-4 max-w-max">Order Now <FiArrowRight /></div>
+              <h3 className="text-white text-[46px] md:text-3xl lg:text-[28px] xl:text-[2.7rem] font-extrabold mb-5 md:mb-8 leading-[1.15] md:leading-[1.1] lg:leading-[1.25] xl:leading-[1.1] pr-2 md:pr-4">Premium and fresh <br className="sm:hidden" /> Quality Products Guaranteed</h3>
+              <div className="bg-[#3BB77E] text-white px-5 md:px-6 py-2 md:py-2.5 rounded-lg text-xs md:text-sm font-black flex items-center gap-2 hover:bg-[#29A56C] transition shadow-xl mt-4 max-w-max whitespace-nowrap lg:whitespace-nowrap">Order Now <FiArrowRight /></div>
             </div>
             <div className="absolute inset-0 bg-slate-900/30 group-hover:bg-slate-900/40 transition-colors z-10"></div>
           </Link>
-          <div className="lg:w-3/4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {dataReady.dailyBest.map(prod => <ProductCard key={prod._id || prod.id} prod={prod} isDailyBest showProgress />)}
-          </div>
+          {dataReady.dailyBest.map(prod => <ProductCard key={prod._id || prod.id} prod={prod} isDailyBest showProgress />)}
         </div>
       </section>
 
@@ -496,10 +539,10 @@ export default function HomeContent({ products, categories, banners_db }) {
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">Deals Of The Day</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {dataReady.deals.map((deal, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               onClick={() => router.push(`/product/${deal.id_custom || deal._id || deal.id}`)}
               className="relative rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow group border cursor-pointer"
             >
@@ -510,7 +553,7 @@ export default function HomeContent({ products, categories, banners_db }) {
                     {deal.tag}
                   </span>
                 )}
-                <button 
+                <button
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -549,15 +592,42 @@ export default function HomeContent({ products, categories, banners_db }) {
                       </div>
                     )}
                   </div>
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addToCart(deal);
-                    }}
-                    className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white px-4 py-2.5 rounded-xl transition-all font-black text-xs flex items-center gap-2"
-                  >
-                    Add <FiShoppingCart />
-                  </button>
+                  {(() => {
+                    const itemInCart = cartItems.find((i) => (i._id || i.id) === (deal._id || deal.id));
+                    return itemInCart ? (
+                      <div className="flex items-center justify-between bg-[#3BB77E] text-white rounded-xl px-4 py-2.5 shadow-sm relative z-20 min-w-[110px]">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(deal._id || deal.id, -1);
+                          }}
+                          className="hover:scale-110 transition-transform flex items-center justify-center p-0.5"
+                        >
+                          <FiMinus size={14} strokeWidth={3} />
+                        </button>
+                        <span className="font-black text-sm md:text-base px-1">{itemInCart.quantity}</span>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            updateQuantity(deal._id || deal.id, 1);
+                          }}
+                          className="hover:scale-110 transition-transform flex items-center justify-center p-0.5"
+                        >
+                          <FiPlus size={14} strokeWidth={3} />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(deal);
+                        }}
+                        className="bg-[#DEF9EC] text-[#3BB77E] hover:bg-[#3BB77E] hover:text-white px-4 py-2.5 rounded-xl transition-all font-black text-xs flex items-center gap-2 relative z-20"
+                      >
+                        Add <FiShoppingCart />
+                      </button>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
@@ -566,7 +636,7 @@ export default function HomeContent({ products, categories, banners_db }) {
       </section>
 
       {/* Column Lists */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         <ProductList title="Top Selling" items={dataReady.topSelling} />
         <ProductList title="Trending" items={dataReady.trending} />
         <ProductList title="Top Picks" items={dataReady.topPicks} />
@@ -575,10 +645,10 @@ export default function HomeContent({ products, categories, banners_db }) {
 
       <div className="rounded-[40px] mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[300px] md:min-h-[400px]">
         {/* Dynamic Footer Image from Atlas */}
-        <img 
-          src={footerBanner?.image || "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162639/quickzy/banners/footer-banner.jpg"} 
-          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 md:scale-100 scale-[2.2]" 
-          alt="" 
+        <img
+          src={footerBanner?.image || "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162639/quickzy/banners/footer-banner.jpg"}
+          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 md:scale-100 scale-[2.2]"
+          alt=""
         />
         {/* Clear overlay for text legibility */}
         <div className="absolute inset-0 bg-black/0 md:bg-black/10 transition-colors" />
@@ -597,7 +667,7 @@ export default function HomeContent({ products, categories, banners_db }) {
       </div>
 
       {/* Features */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         {[
           { img: "/best_price.png", title: "Best prices", desc: "Orders ₹500+" },
           { img: "/free_delivery.png", title: "Free delivery", desc: "24/7 help center" },
