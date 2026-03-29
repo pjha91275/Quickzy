@@ -127,25 +127,28 @@ export default function OrdersContent() {
               >
                 {/* Order Header */}
                 <div className="bg-gray-50/50 p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
-                   <div className="flex flex-wrap items-center gap-4 text-[10px] font-black uppercase tracking-widest text-gray-400">
+                   <div className="flex items-center justify-between w-full md:w-auto gap-4 text-[10px] font-black uppercase tracking-widest text-gray-400">
                       <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-100 text-[#253D4E]">
                          ID: <span className="text-[#3BB77E]">#{order._id.slice(-6)}</span>
                       </div>
                       <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-100 text-[#253D4E]">
                          <FiCalendar className="text-[#3BB77E]" /> {dateStr}
                       </div>
-                      
+                   </div>
+
+                   <div className="w-full md:w-auto">
                       {isDelivered ? (
-                        <div className="flex items-center gap-2 bg-[#3BB77E] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-white shadow-lg shadow-green-100">
+                        <div className="flex items-center justify-center gap-2 bg-[#3BB77E] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-white shadow-lg shadow-green-100">
                            <FiCheckCircle /> Delivered Sucessfully
                         </div>
                       ) : (
-                        <div className="flex items-center gap-2 bg-[#DEF9EC] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-[#3BB77E] animate-pulse">
+                        <div className="flex items-center justify-center gap-2 bg-[#DEF9EC] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-[#3BB77E] animate-pulse">
                            <FiTruck /> Arriving in {remainingMins} mins
                         </div>
                       )}
                    </div>
-                   <div className="flex items-center gap-6">
+
+                   <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-6 mt-2 md:mt-0">
                       <div className="text-[#253D4E] font-black text-xl">
                         ₹{order.totalAmount}
                       </div>

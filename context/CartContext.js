@@ -259,7 +259,8 @@ export const CartProvider = ({ children }) => {
     }
   }, [itemTotalCurrent, appliedCoupon]);
 
-  const grandTotal = Math.max(0, itemTotalCurrent + baseHandlingFee + baseDeliveryFee - discountAmount);
+  const totalItemsCount = cartItems?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
+  const grandTotal = Math.max(0, (itemTotalCurrent || 0) + (baseHandlingFee || 0) + (baseDeliveryFee || 0) - (discountAmount || 0));
 
   return (
     <CartContext.Provider
@@ -270,6 +271,7 @@ export const CartProvider = ({ children }) => {
         updateQuantity,
         clearCart,
         subtotal: itemTotalCurrent,
+        totalItemsCount,
         itemTotalCurrent,
         itemTotalOld,
         hasCartDiscount,

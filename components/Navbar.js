@@ -22,7 +22,7 @@ import LocationModal from "./LocationModal";
 import { useCart } from "@/context/CartContext";
 
 const Navbar = ({ initialCategories = [] }) => {
-  const { cartItems, subtotal } = useCart();
+  const { cartItems, subtotal, totalItemsCount } = useCart();
   const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
@@ -33,6 +33,7 @@ const Navbar = ({ initialCategories = [] }) => {
   const [isNavCategoriesOpen, setIsNavCategoriesOpen] = useState(false);
   const [authModalStep, setAuthModalStep] = useState(1);
   const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
+  const [isMobileAccountOpen, setIsMobileAccountOpen] = useState(false);
 
   const [guestAddress, setGuestAddress] = useState("");
   const [currentAddress, setCurrentAddress] = useState("Select Location");
@@ -184,13 +185,13 @@ const Navbar = ({ initialCategories = [] }) => {
         onClose={() => setIsLocationModalOpen(false)}
       />
       <header className="w-full bg-white border-b relative font-sans z-50">
-        <div className="container mx-auto p-4 flex flex-wrap md:flex-nowrap items-center justify-between md:justify-start gap-3 md:gap-2 lg:gap-3">
+        <div className="container mx-auto p-3.5 sm:p-4 flex flex-wrap md:flex-nowrap items-center justify-between md:justify-start gap-2 md:gap-2 lg:gap-3">
           {/* Left Side: Logo + Location */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2 shrink-0 group">
               <div className="flex flex-col">
                 <div className="flex items-center leading-none">
-                  <div className="w-10 h-10 md:w-16 md:h-16 bg-white flex items-center justify-center rounded-lg shadow-sm border border-gray-50 overflow-hidden shrink-0">
+                  <div className="w-[44px] h-[44px] md:w-16 md:h-16 bg-white flex items-center justify-center rounded-lg shadow-sm border border-gray-50 overflow-hidden shrink-0">
                     <img
                       src="/logo.png"
                       alt="Quickzy Logo"
@@ -283,7 +284,7 @@ const Navbar = ({ initialCategories = [] }) => {
           </div>
 
           {/* Right Side: Icons */}
-          <div className="flex justify-end gap-3 md:gap-4 lg:gap-4 xl:gap-6 items-center text-[#253D4E] shrink-0 ml-auto md:ml-0 md:flex-1">
+          <div className="flex justify-end gap-[7px] md:gap-4 lg:gap-4 xl:gap-6 items-center text-[#253D4E] shrink-0 ml-auto md:ml-0 md:flex-1">
             <Link
               href="/wishlist"
               className="hidden lg:flex items-center justify-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group h-[44px] sm:h-[48px]"
@@ -299,20 +300,20 @@ const Navbar = ({ initialCategories = [] }) => {
               </span>
             </Link>
             {cartItems.length === 0 ? (
-              <div className="flex items-center justify-center min-w-[90px] sm:min-w-[125px] lg:min-w-[115px] xl:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-4 xl:px-5 py-2.5 sm:py-3 bg-slate-50 rounded-xl text-slate-400 cursor-not-allowed border border-slate-100 shadow-inner group/cart whitespace-nowrap">
+              <div className="flex items-center justify-center min-w-[82px] sm:min-w-[125px] lg:min-w-[115px] xl:min-w-[125px] gap-1.5 px-2.5 sm:px-4 lg:px-4 xl:px-5 py-2 sm:py-3 bg-slate-50 rounded-xl text-slate-400 cursor-not-allowed border border-slate-100 shadow-inner group/cart whitespace-nowrap">
                 <FiShoppingCart className="text-xl sm:text-2xl group-hover/cart:rotate-12 transition-transform" />
                 <span className="text-xs sm:text-sm font-black tracking-tighter whitespace-nowrap">MY CART</span>
               </div>
             ) : (
               <Link
                 href="/cart"
-                className="flex items-center justify-center min-w-[90px] sm:min-w-[125px] lg:min-w-[115px] xl:min-w-[125px] gap-2 px-3 sm:px-4 lg:px-4 xl:px-5 py-2 sm:py-2.5 bg-[#3BB77E] text-white rounded-lg shadow-md hover:shadow-lg hover:bg-[#2e9262] transition-all cursor-pointer hover:-translate-y-0.5"
+                className="flex items-center justify-center min-w-[82px] sm:min-w-[125px] lg:min-w-[115px] xl:min-w-[125px] gap-1.5 px-2.5 sm:px-4 lg:px-4 xl:px-5 py-2 sm:py-2.5 bg-[#3BB77E] text-white rounded-lg shadow-md hover:shadow-lg hover:bg-[#2e9262] transition-all cursor-pointer hover:-translate-y-0.5"
               >
                 <div className="relative">
                   <FiShoppingCart className="text-xl sm:text-2xl" />
                 </div>
                 <div className="flex flex-col leading-none items-start">
-                  <span className="text-[10px] sm:text-[11px] font-bold text-green-100">{cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}</span>
+                  <span className="text-[10px] sm:text-[11px] font-bold text-green-100">{totalItemsCount} {totalItemsCount === 1 ? 'item' : 'items'}</span>
                   <span className="text-xs sm:text-sm font-black mt-0.5">₹{subtotal.toFixed(0)}</span>
                 </div>
               </Link>
@@ -322,19 +323,19 @@ const Navbar = ({ initialCategories = [] }) => {
               {!isLoggedIn ? (
                 <button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="flex items-center justify-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group outline-none h-[44px] sm:h-[48px]"
+                  className="flex items-center justify-center gap-1 cursor-pointer hover:-translate-y-1 transition-all group outline-none h-[42px] sm:h-[48px]"
                 >
-                  <FiUser className="text-[26px]" />
-                  <span className="hidden sm:block text-[15px] font-medium text-gray-500 group-hover:text-[#3BB77E]">
+                  <FiUser className="text-[24px] md:text-[26px]" />
+                  <span className="text-[13px] md:text-[15px] font-medium text-gray-500 group-hover:text-[#3BB77E]">
                     Login
                   </span>
                 </button>
               ) : (
                 <div 
                   onClick={() => setIsAccountDropdownOpen(!isAccountDropdownOpen)}
-                  className="flex items-center justify-center gap-1 cursor-pointer group h-[44px] sm:h-[48px]"
+                  className="flex items-center justify-center gap-1 cursor-pointer group h-[42px] sm:h-[48px]"
                 >
-                  <div className="w-[34px] h-[34px] rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-[13px] uppercase overflow-hidden border border-[#3BB77E]/20">
+                  <div className="w-[32px] h-[32px] md:w-[34px] md:h-[34px] rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-[12px] md:text-[13px] uppercase overflow-hidden border border-[#3BB77E]/20">
                     {session.user.image ? (
                       <img
                         src={session.user.image}
@@ -346,7 +347,7 @@ const Navbar = ({ initialCategories = [] }) => {
                       userInitials
                     )}
                   </div>
-                  <span className="hidden xl:block text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[100px]">
+                  <span className="text-[13px] md:text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[90px] md:max-w-[100px]">
                     {session.user.name || "My Account"}{" "}
                     <IoIosArrowDown className="inline text-[10px]" />
                   </span>
@@ -408,7 +409,7 @@ const Navbar = ({ initialCategories = [] }) => {
             </div>
 
             <button
-              className="lg:hidden p-2 text-2xl text-[#253D4E]"
+              className="lg:hidden p-1.5 text-[1.4rem] md:text-2xl text-[#253D4E]"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <FiX /> : <FiMenu />}
@@ -609,32 +610,103 @@ const Navbar = ({ initialCategories = [] }) => {
                 Contact
               </Link>
 
+              {/* Your Account Section - Refined Mobile UI */}
+              <div className="border-b border-gray-50 py-3">
+                {!isLoggedIn ? (
+                  /* Standard Login Button (No Dropdown for Logged Out) */
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setIsAuthModalOpen(true);
+                    }}
+                    className="bg-[#3BB77E] px-4 py-2.5 rounded-xl flex items-center justify-between gap-3 w-max min-w-[140px] text-white shadow-md shadow-green-100/30 active:scale-95 transition-all text-left"
+                  >
+                    <div className="flex items-center gap-2">
+                      <FiUser className="text-[20px] text-white" />
+                      <span className="font-extrabold text-[14px]">Login</span>
+                    </div>
+                    <IoIosArrowDown className="text-white/70 text-sm" />
+                  </button>
+                ) : (
+                  /* Logged In Dropdown logic */
+                  <>
+                    <div
+                      className={`flex items-center justify-between cursor-pointer w-max min-w-[160px] text-left bg-[#f8f9fa] border border-gray-200 text-[#253D4E] px-4 py-3 rounded-2xl shadow-sm transition-all hover:bg-gray-100 ${isMobileAccountOpen ? 'ring-2 ring-[#DEF9EC]' : ''}`}
+                      onClick={() => setIsMobileAccountOpen(!isMobileAccountOpen)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-[32px] h-[32px] rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-[12px] uppercase overflow-hidden border border-[#3BB77E]/20">
+                          {session.user.image ? (
+                            <img
+                              src={session.user.image}
+                              alt="User"
+                              className="w-full h-full object-cover"
+                              referrerPolicy="no-referrer"
+                            />
+                          ) : (
+                            userInitials
+                          )}
+                        </div>
+                        <span className="font-extrabold text-[14px] truncate max-w-[120px]">
+                          {session.user.name || "My Account"}
+                        </span>
+                      </div>
+                      <IoIosArrowDown className={`text-gray-400 transition-transform duration-300 ${isMobileAccountOpen ? 'rotate-180' : ''}`} />
+                    </div>
+
+                    <div
+                      className={`overflow-hidden transition-all duration-300 ease-in-out bg-white rounded-2xl mt-2 border border-transparent ${isMobileAccountOpen ? 'max-h-[500px] py-2 opacity-100' : 'max-h-0 py-0 opacity-0'}`}
+                    >
+                      <div className="flex flex-col gap-1 p-2">
+                        <Link
+                          href="/profile"
+                          onClick={() => setIsMenuOpen(false)}
+                          className="flex items-center gap-3 py-3.5 px-4 font-bold text-gray-600 hover:text-[#3BB77E] hover:bg-[#F2FBF6] rounded-xl transition-all"
+                        >
+                          <FiUser className="text-lg opacity-50" /> Profile Settings
+                        </Link>
+                        <Link
+                          href="/orders"
+                          onClick={() => setIsMenuOpen(false)}
+                          className="flex items-center gap-3 py-3.5 px-4 font-bold text-gray-600 hover:text-[#3BB77E] hover:bg-[#F2FBF6] rounded-xl transition-all"
+                        >
+                          <FiHeart className="text-lg opacity-50" /> Order History
+                        </Link>
+                        {session?.user?.role === "admin" && (
+                          <Link
+                            href="/admin"
+                            onClick={() => setIsMenuOpen(false)}
+                            className="flex items-center gap-3 py-3.5 px-4 font-black text-[#3BB77E] bg-[#DEF9EC] rounded-xl hover:bg-[#D1F2E0] transition-all"
+                          >
+                            <FiGrid className="text-lg" /> Admin Panel
+                          </Link>
+                        )}
+                        <button
+                          onClick={() => {
+                            setIsMenuOpen(false);
+                            signOut();
+                          }}
+                          className="flex items-center gap-3 py-3.5 px-4 font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all mt-1 border-t border-gray-50 pt-4"
+                        >
+                          <FiX className="text-lg opacity-50" /> Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+
               <div className="mt-8 pt-4 border-t border-gray-100 flex flex-col gap-2">
-                <p className="text-[11px] text-[#253D4E] font-black uppercase tracking-widest mb-2 px-2">Your Account</p>
+                <p className="text-[11px] text-[#253D4E] font-black uppercase tracking-widest mb-2">Favorites</p>
                 <Link
                   href="/wishlist"
                   onClick={() => setIsMenuOpen(false)}
-                  className="hover:text-[#3BB77E] py-3 px-2 rounded-xl transition-colors font-bold flex items-center gap-3 text-sm hover:bg-[#DEF9EC]"
+                  className="hover:text-[#3BB77E] py-3 rounded-xl transition-colors font-bold flex items-center gap-3 text-sm hover:bg-[#DEF9EC]"
                 >
                   <FiHeart className="text-gray-400 group-hover:text-[#3BB77E]" /> Wishlist
                 </Link>
-                <Link
-                  href="/orders"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="hover:text-[#3BB77E] py-3 px-2 rounded-xl transition-colors font-bold flex items-center gap-3 text-sm hover:bg-[#DEF9EC]"
-                >
-                  <FiShoppingCart className="text-gray-400 group-hover:text-[#3BB77E]" /> My Orders
-                </Link>
-                <Link
-                  href="/profile"
-                  onClick={() => setIsMenuOpen(false)}
-                  className="hover:text-[#3BB77E] py-3 px-2 rounded-xl transition-colors font-bold flex items-center gap-3 text-sm hover:bg-[#DEF9EC]"
-                >
-                  <FiUser className="text-gray-400 group-hover:text-[#3BB77E]" /> My Profile
-                </Link>
               </div>
-
-              <div className="mt-auto pt-10 px-2 lg:hidden">
+              <div className="mt-auto pt-10 lg:hidden">
                 <a href="tel:+911800419" className="flex items-center gap-4 group cursor-pointer w-max">
                   <div className="w-12 h-12 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] group-hover:scale-110 transition-transform">
                     <FiHeadphones className="text-xl" />
