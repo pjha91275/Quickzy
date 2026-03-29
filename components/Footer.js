@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { FiMapPin, FiPhoneCall, FiMail, FiClock } from "react-icons/fi";
+import { FiMapPin, FiPhoneCall, FiMail, FiClock, FiShoppingCart, FiZap } from "react-icons/fi";
 import { toast } from "react-toastify";
 import {
   FaFacebookF,
@@ -180,6 +180,21 @@ const Footer = () => {
             <FaYoutube />
           </a>
         </div>
+      </div>
+
+      {/* bottom signature */}
+      <div className="mt-12 py-12 border-t border-gray-100 text-center group">
+        <p className="text-[13px] md:text-sm font-black text-[#253D4E] tracking-tight flex items-center justify-center gap-2 cursor-default">
+          Built to Deliver in a Zap 
+          <span className="inline-flex items-center -mt-1 group-hover:animate-pulse">
+            <FiShoppingCart size={20} className="text-[#3BB77E] stroke-[2.5]" />
+            <FiZap size={18} className="text-amber-400 -ml-2 stroke-[2.5]" fill="currentColor" />
+          </span> 
+          by 
+          <span className="text-[#3BB77E] text-[16px] md:text-lg lg:text-xl ml-1 transition-transform group-hover:scale-110 duration-500">
+            Prince Jha
+          </span>
+        </p>
       </div>
     </footer>
   );

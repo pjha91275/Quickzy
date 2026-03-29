@@ -532,7 +532,7 @@ const Navbar = ({ initialCategories = [] }) => {
               {/* category dropdown */}
               <div className="border-b border-gray-50 py-3">
                 <div
-                  className={`flex items-center justify-between cursor-pointer w-full text-left bg-[#3BB77E] text-white px-3 py-2.5 rounded-xl shadow-sm transition-all hover:bg-[#29A56C] ${isMobileCategoriesOpen ? 'ring-2 ring-green-100' : ''}`}
+                  className={`flex items-center justify-between cursor-pointer w-full text-left bg-[#3BB77E] text-white pl-2 pr-3 py-2.5 rounded-xl shadow-sm transition-all hover:bg-[#29A56C] ${isMobileCategoriesOpen ? 'ring-2 ring-green-100' : ''}`}
                   onClick={() => setIsMobileCategoriesOpen(!isMobileCategoriesOpen)}
                 >
                   <div className="flex items-center gap-2">
@@ -578,7 +578,7 @@ const Navbar = ({ initialCategories = [] }) => {
                     setIsLocationModalOpen(true);
                     setIsMenuOpen(false);
                   }}
-                  className="flex items-center justify-between cursor-pointer w-full text-left bg-[#f8f9fa] border border-gray-200 text-[#253D4E] px-4 py-3 rounded-2xl shadow-sm transition-all hover:bg-gray-100 group/mobile-loc"
+                  className="flex items-center justify-between cursor-pointer w-full text-left bg-[#f8f9fa] border border-gray-200 text-[#253D4E] pl-2 pr-4 py-3 rounded-2xl shadow-sm transition-all hover:bg-gray-100 group/mobile-loc"
                 >
                   <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2">
@@ -629,90 +629,7 @@ const Navbar = ({ initialCategories = [] }) => {
                 Contact
               </Link>
 
-              {/* account section */}
-              <div className="border-b border-gray-50 py-3">
-                {!isLoggedIn ? (
-                  /* Standard Login Button (No Dropdown for Logged Out) */
-                  <button
-                    onClick={() => {
-                      setIsMenuOpen(false);
-                      setIsAuthModalOpen(true);
-                    }}
-                    className="bg-[#3BB77E] px-4 py-2.5 rounded-xl flex items-center justify-between gap-3 w-max min-w-[140px] text-white shadow-md shadow-green-100/30 active:scale-95 transition-all text-left"
-                  >
-                    <div className="flex items-center gap-2">
-                      <FiUser className="text-[20px] text-white" />
-                      <span className="font-extrabold text-[14px]">Login</span>
-                    </div>
-                    <IoIosArrowDown className="text-white/70 text-sm" />
-                  </button>
-                ) : (
-                  <>
-                    <div
-                      className={`flex items-center justify-between cursor-pointer w-max min-w-[160px] text-left bg-[#f8f9fa] border border-gray-200 text-[#253D4E] px-4 py-3 rounded-2xl shadow-sm transition-all hover:bg-gray-100 ${isMobileAccountOpen ? 'ring-2 ring-[#DEF9EC]' : ''}`}
-                      onClick={() => setIsMobileAccountOpen(!isMobileAccountOpen)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-[32px] h-[32px] rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-[12px] uppercase overflow-hidden border border-[#3BB77E]/20">
-                          {session.user.image ? (
-                            <img
-                              src={session.user.image}
-                              alt="User"
-                              className="w-full h-full object-cover"
-                              referrerPolicy="no-referrer"
-                            />
-                          ) : (
-                            userInitials
-                          )}
-                        </div>
-                        <span className="font-extrabold text-[14px] truncate max-w-[120px]">
-                          {session.user.name || "My Account"}
-                        </span>
-                      </div>
-                      <IoIosArrowDown className={`text-gray-400 transition-transform duration-300 ${isMobileAccountOpen ? 'rotate-180' : ''}`} />
-                    </div>
 
-                    <div
-                      className={`overflow-hidden transition-all duration-300 ease-in-out bg-white rounded-2xl mt-2 border border-transparent ${isMobileAccountOpen ? 'max-h-[500px] py-2 opacity-100' : 'max-h-0 py-0 opacity-0'}`}
-                    >
-                      <div className="flex flex-col gap-1 p-2">
-                        <Link
-                          href="/profile"
-                          onClick={() => setIsMenuOpen(false)}
-                          className="flex items-center gap-3 py-3.5 px-4 font-bold text-gray-600 hover:text-[#3BB77E] hover:bg-[#F2FBF6] rounded-xl transition-all"
-                        >
-                          <FiUser className="text-lg opacity-50" /> Profile Settings
-                        </Link>
-                        <Link
-                          href="/orders"
-                          onClick={() => setIsMenuOpen(false)}
-                          className="flex items-center gap-3 py-3.5 px-4 font-bold text-gray-600 hover:text-[#3BB77E] hover:bg-[#F2FBF6] rounded-xl transition-all"
-                        >
-                          <FiHeart className="text-lg opacity-50" /> Order History
-                        </Link>
-                        {session?.user?.role === "admin" && (
-                          <Link
-                            href="/admin"
-                            onClick={() => setIsMenuOpen(false)}
-                            className="flex items-center gap-3 py-3.5 px-4 font-black text-[#3BB77E] bg-[#DEF9EC] rounded-xl hover:bg-[#D1F2E0] transition-all"
-                          >
-                            <FiGrid className="text-lg" /> Admin Panel
-                          </Link>
-                        )}
-                        <button
-                          onClick={() => {
-                            setIsMenuOpen(false);
-                            signOut();
-                          }}
-                          className="flex items-center gap-3 py-3.5 px-4 font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all mt-1 border-t border-gray-50 pt-4"
-                        >
-                          <FiX className="text-lg opacity-50" /> Sign Out
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
 
               <div className="mt-8 pt-4 border-t border-gray-100 flex flex-col gap-2">
                 <p className="text-[11px] text-[#253D4E] font-black uppercase tracking-widest mb-2">Favorites</p>
@@ -724,7 +641,55 @@ const Navbar = ({ initialCategories = [] }) => {
                   <FiHeart className="text-gray-400 group-hover:text-[#3BB77E]" /> Wishlist
                 </Link>
               </div>
-              <div className="mt-auto pt-10 lg:hidden">
+
+              {/* account section moved to bottom */}
+              <div className="mt-4 border-t border-gray-50 pt-4 pb-2">
+                {!isLoggedIn ? (
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setIsAuthModalOpen(true);
+                    }}
+                    className="hover:text-[#3BB77E] py-3 transition-colors font-black flex items-center gap-3 w-full text-left pl-1"
+                  >
+                    <FiUser className="text-lg text-gray-400" />
+                    <span>Login / Register</span>
+                  </button>
+                ) : (
+                  <>
+                    <div
+                      className={`flex items-center gap-3 cursor-pointer w-full text-left py-2 transition-all group/acc-mob pl-1`}
+                      onClick={() => setIsMobileAccountOpen(!isMobileAccountOpen)}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-[32px] h-[32px] rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] font-extrabold text-[12px] uppercase overflow-hidden border border-[#3BB77E]/20">
+                          {session.user.image ? (
+                            <img src={session.user.image} alt="User" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                          ) : (
+                            userInitials
+                          )}
+                        </div>
+                        <span className="font-black text-[#253D4E] group-hover/acc-mob:text-[#3BB77E] transition-colors truncate max-w-[160px]">
+                          {session.user.name || "My Account"}
+                        </span>
+                        <IoIosArrowDown className={`text-gray-400 text-xs transition-transform duration-300 ${isMobileAccountOpen ? 'rotate-180' : ''}`} />
+                      </div>
+                    </div>
+
+                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isMobileAccountOpen ? 'max-h-[500px] py-2 opacity-100' : 'max-h-0 py-0 opacity-0'}`}>
+                      <div className="flex flex-col gap-1 pl-11">
+                        <Link href="/profile" onClick={() => setIsMenuOpen(false)} className="py-2 text-sm font-bold text-gray-500 hover:text-[#3BB77E]">Profile Settings</Link>
+                        <Link href="/orders" onClick={() => setIsMenuOpen(false)} className="py-2 text-sm font-bold text-gray-500 hover:text-[#3BB77E]">Order History</Link>
+                        {session?.user?.role === "admin" && (
+                          <Link href="/admin" onClick={() => setIsMenuOpen(false)} className="py-2 text-sm font-black text-[#3BB77E]">Admin Panel</Link>
+                        )}
+                        <button onClick={() => { setIsMenuOpen(false); signOut(); }} className="py-2 text-sm font-bold text-red-500 text-left">Sign Out</button>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="mt-auto pt-4 lg:hidden">
                 <a href="tel:+911800419" className="flex items-center gap-4 group cursor-pointer w-max">
                   <div className="w-12 h-12 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] group-hover:scale-110 transition-transform">
                     <FiHeadphones className="text-xl" />

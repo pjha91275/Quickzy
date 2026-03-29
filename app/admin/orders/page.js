@@ -14,7 +14,7 @@ export default async function OrdersPage() {
   const orders = await getOrdersAdmin();
 
   return (
-    <div className="max-w-7xl mx-auto pb-20 px-4 xl:px-0">
+    <div className="max-w-7xl mx-auto pb-20 px-0 min-[400px]:px-4 xl:px-0">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-6 mb-10">
         <div>
@@ -149,7 +149,7 @@ export default async function OrdersPage() {
         </div>
 
         {/* mobile card view */}
-        <div className="lg:hidden p-5 space-y-6">
+        <div className="lg:hidden px-1.5 min-[400px]:px-5 py-6 space-y-6">
           {orders.length === 0 && (
             <div className="py-20 text-center text-gray-300 font-bold">No live orders.</div>
           )}
@@ -158,13 +158,13 @@ export default async function OrdersPage() {
               dateStyle: "medium", timeStyle: "short"
             });
             return (
-              <div key={order._id} className="bg-white rounded-[2rem] min-[400px]:rounded-[2.5rem] border border-gray-100 shadow-xl p-4 min-[400px]:p-6 relative overflow-hidden">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="flex flex-col gap-1">
-                    <span className="text-[11px] font-black text-[#3BB77E] tracking-widest uppercase">#{String(order._id || "").slice(-6).toUpperCase()}</span>
-                    <span className="text-[10px] font-bold text-gray-400 flex items-center gap-2 uppercase tracking-widest leading-none"><FiClock className="text-[#3BB77E]/50" /> {date}</span>
+              <div key={order._id} className="bg-white rounded-[2rem] min-[400px]:rounded-[2.5rem] border border-gray-100 shadow-xl p-3 min-[380px]:p-4 min-[400px]:p-6 relative overflow-hidden">
+                <div className="flex flex-wrap justify-between items-start mb-6 gap-y-2">
+                  <div className="flex flex-col gap-1 min-w-0">
+                    <span className="text-[11px] font-black text-[#3BB77E] tracking-widest uppercase truncate max-w-[120px]">#{String(order._id || "").slice(-6).toUpperCase()}</span>
+                    <span className="text-[10px] font-bold text-gray-400 flex items-center gap-2 uppercase tracking-widest leading-none whitespace-nowrap"><FiClock className="text-[#3BB77E]/50" /> {date}</span>
                   </div>
-                  <p className="text-2xl font-black text-[#253D4E] tracking-tighter">₹{order.totalAmount}</p>
+                  <p className="text-xl min-[400px]:text-2xl font-black text-[#253D4E] tracking-tighter shrink-0 ml-auto pt-0.5">₹{order.totalAmount}</p>
                 </div>
 
                 <div className="space-y-4 pt-4 border-t border-gray-50">
@@ -177,7 +177,7 @@ export default async function OrdersPage() {
                       )}
                     </div>
                     <div className="flex flex-col min-w-0">
-                      <span className="text-sm font-black text-[#253D4E] truncate">{order.userEmail}</span>
+                      <span className="text-sm font-black text-[#253D4E] break-all">{order.userEmail}</span>
                       <span className="text-[11px] font-black text-gray-400 tracking-widest">+91 {order.phoneNumber}</span>
                     </div>
                   </div>
@@ -200,7 +200,7 @@ export default async function OrdersPage() {
                       <option value="Delivered">● &nbsp; Delivered</option>
                       <option value="Cancelled">● &nbsp; Cancelled</option>
                     </select>
-                    <button type="submit" className="bg-[#3BB77E] text-white p-3 min-[380px]:p-4 rounded-2xl shadow-lg shadow-green-100 active:scale-90 transition-all">
+                    <button type="submit" className="bg-[#3BB77E] text-white p-3 min-[380px]:p-4 rounded-2xl shadow-lg shadow-green-100 active:scale-90 transition-all shrink-0">
                       <FiCheckCircle className="text-lg" />
                     </button>
                   </form>

@@ -63,8 +63,8 @@ export default function Cart() {
   // Redirect or show login prompt if not authenticated
   if (status === "unauthenticated") {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center p-6 bg-gray-50/50">
-        <div className="bg-white max-w-md w-full rounded-[48px] p-12 text-center shadow-2xl shadow-gray-200/50 border border-gray-100 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="min-h-[50vh] flex items-center justify-center p-6 bg-gray-50/50 py-12 min-[400px]:py-20 lg:py-24">
+        <div className="bg-white max-w-md w-full rounded-[48px] p-8 min-[400px]:p-12 text-center shadow-2xl shadow-gray-200/50 border border-gray-100 flex flex-col items-center animate-in fade-in slide-in-from-bottom-8 duration-700">
           <div className="w-24 h-24 bg-[#DEF9EC] text-[#3BB77E] rounded-full flex items-center justify-center mb-10 ring-8 ring-[#DEF9EC]/50 shadow-inner">
             <FiShoppingBag size={42} className="animate-bounce" />
           </div>
@@ -76,9 +76,9 @@ export default function Cart() {
 
           <button
             onClick={() => window.dispatchEvent(new CustomEvent("open-auth"))}
-            className="w-full bg-[#3BB77E] text-white py-5 rounded-[22px] font-black text-xl hover:bg-[#29A56C] transition-all shadow-xl shadow-[#3BB77E]/30 flex items-center justify-center gap-3 active:scale-95 translate-y-0 hover:-translate-y-1"
+            className="w-full bg-[#3BB77E] text-white py-4 min-[400px]:py-5 rounded-[22px] font-black text-lg min-[400px]:text-xl hover:bg-[#29A56C] transition-all shadow-xl shadow-[#3BB77E]/30 flex items-center justify-center gap-2 min-[400px]:gap-3 active:scale-95 translate-y-0 hover:-translate-y-1"
           >
-            Login to Quickzy <FiArrowRight />
+            Login to Quickzy <FiArrowRight className="shrink-0" />
           </button>
 
           <div className="mt-10 text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] flex items-center gap-6 w-full">

@@ -58,8 +58,8 @@ export default async function BannersPage() {
                       <textarea name="title" defaultValue={stripHtml(b.title).trim()} className="bg-transparent font-black text-[#253D4E] text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
                       <input name="subtitle" defaultValue={b.subtitle || b.tag || ""} className="bg-transparent text-[11px] text-gray-400 font-bold border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all" placeholder="Subtitle / Tag" />
                       
-                      <div className="absolute -bottom-7 right-2 opacity-0 group-hover/edit:opacity-100 transition-opacity z-10 pointer-events-none group-focus-within/edit:pointer-events-auto group-focus-within/edit:opacity-100">
-                        <button type="submit" className="bg-[#3BB77E] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded shadow-lg hover:bg-[#29a56c] pointer-events-auto">
+                      <div className="opacity-0 max-h-0 group-focus-within/edit:max-h-10 group-focus-within/edit:opacity-100 group-hover/edit:max-h-10 group-hover/edit:opacity-100 transition-all duration-300 overflow-hidden flex justify-end mt-1">
+                        <button type="submit" className="bg-[#3BB77E] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-md hover:bg-[#29a56c] transition-colors cursor-pointer active:scale-95">
                           Save Edits
                         </button>
                       </div>

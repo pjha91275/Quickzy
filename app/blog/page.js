@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { FiClock, FiUser, FiArrowRight } from "react-icons/fi";
 import { fetchBlogPosts } from "@/actions/dbactions";
+import BlogNewsletter from "@/components/BlogNewsletter";
 
 export default async function BlogPage() {
   const blogs = await fetchBlogPosts();
@@ -55,17 +56,7 @@ export default async function BlogPage() {
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section className="pb-20 container mx-auto px-4">
-        <div className="bg-[#253D4E] rounded-[32px] p-12 text-center text-white">
-          <h2 className="text-3xl font-black mb-4">Join our Newsletter</h2>
-          <p className="text-gray-400 text-xs font-bold mb-8 uppercase tracking-widest">Weekly recipes and fresh commerce trends.</p>
-          <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
-            <input type="email" placeholder="Email Address" className="flex-1 bg-white/10 rounded-xl px-6 py-3 outline-none focus:ring-2 ring-[#3BB77E] font-bold" />
-            <button className="bg-[#3BB77E] px-8 py-3 rounded-xl font-black hover:bg-[#29A56C] transition-all">Subscribe</button>
-          </div>
-        </div>
-      </section>
+      <BlogNewsletter />
     </div>
   );
 }
