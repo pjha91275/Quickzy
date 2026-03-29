@@ -98,7 +98,7 @@ export default function HomeContent({ products, categories, banners_db }) {
                 ₹{prod.oldPrice}
                 <span className="absolute top-1/2 left-[-2px] w-[calc(100%+4px)] h-[1px] md:h-[1.5px] bg-[#888]"></span>
               </span>
-              <span className="bg-[#FF7F50] text-white text-[8px] md:text-[9px] px-1.5 py-0.5 md:px-2 rounded font-black italic uppercase">
+              <span className="bg-[#FF7F50] text-white text-[7px] md:text-[8px] px-1.5 py-0.5 md:px-2 rounded font-black italic uppercase whitespace-nowrap">
                 {prod.discount} OFF
               </span>
             </div>
@@ -328,7 +328,7 @@ export default function HomeContent({ products, categories, banners_db }) {
       {/* Hero Banner */}
       <section onClick={() => (window.location.href = banners[currentSlide].shopLink)} className={`rounded-3xl overflow-hidden relative cursor-pointer shadow-sm hover:shadow-md group transition-colors duration-700`}>
         {/* Mobile: Full background image with text overlay */}
-        <div className="md:hidden relative h-[250px] sm:h-[320px] w-full">
+        <div className="md:hidden relative h-[280px] sm:h-[320px] w-full">
           <img src={banners[currentSlide].image} className="absolute inset-0 w-full h-full object-cover" alt="" />
           {/* Specific overlays for brightness control: Hero 1 & 5 (2%), Hero 2-4 (1%) */}
           <div className={`absolute inset-0 transition-opacity duration-700 ${[1, 2, 3].includes(currentSlide) ? 'bg-black/[0.01]' : 'bg-black/[0.02]'}`} />
@@ -340,7 +340,7 @@ export default function HomeContent({ products, categories, banners_db }) {
             {/* 1st Banner: Minimal with spacing, Others: Balanced large text (reduced from 4xl to 1.95rem) */}
             {currentSlide !== 0 ? (
               <div className="mt-3 space-y-2">
-                <h1 className="text-[1.95rem] font-black text-white leading-tight text-shadow-strong pr-2 transition-all duration-500" dangerouslySetInnerHTML={{ __html: banners[currentSlide].title }}></h1>
+                <h1 className="text-[1.6rem] min-[400px]:text-[1.95rem] font-black text-white leading-tight text-shadow-strong pr-2 transition-all duration-500" dangerouslySetInnerHTML={{ __html: banners[currentSlide].title }}></h1>
                 <p className="text-white font-bold text-base text-shadow-medium transition-all duration-500">{banners[currentSlide].subtitle}</p>
               </div>
             ) : (
@@ -368,7 +368,7 @@ export default function HomeContent({ products, categories, banners_db }) {
               <div className={`absolute inset-0 bg-gradient-to-r from-[${currentSlide === 3 ? '#E5E7EB' : (banners[currentSlide]?.bgColor?.replace('bg-[', '').replace(']', '') || '#DEF9EC')}] via-transparent to-transparent`} />
             </div>
           </div>
-          <div className="relative z-20 w-1/2 space-y-2 lg:space-y-6 animate-fadeIn pb-4 pr-4">
+          <div className="relative z-20 w-3/4 md:w-1/2 space-y-2 lg:space-y-6 animate-fadeIn pb-4 pr-4">
             <div className="inline-flex items-center gap-2 bg-yellow-400 text-[#253D4E] px-3 py-1 rounded-full text-[9px] md:text-xs font-black uppercase tracking-widest shadow-sm translate-y-2 lg:translate-y-0">
               <img src="/logo.png" className="w-4 h-4" alt="" />{banners[currentSlide].tag}
             </div>
@@ -391,7 +391,7 @@ export default function HomeContent({ products, categories, banners_db }) {
       <section>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 whitespace-nowrap">Featured Categories</h2>
-          <div className="flex gap-4 text-[10px] sm:text-xs lg:text-sm font-semibold text-gray-600 w-full sm:w-auto overflow-hidden lg:overflow-visible">
+          <div className="flex gap-4 text-[10px] sm:text-xs lg:text-sm font-semibold text-gray-600 w-full sm:w-auto overflow-hidden md:overflow-visible">
             <div className="md:hidden w-full relative">
               <select
                 onChange={(e) => window.location.href = `/shop?category=${encodeURIComponent(e.target.value)}`}
@@ -407,15 +407,15 @@ export default function HomeContent({ products, categories, banners_db }) {
                 <FiArrowRight rotate={90} />
               </div>
             </div>
-            {/* Desktop View (Show all 11) */}
-            <div className="hidden xl:flex gap-6 items-center">
+            {/* Desktop View (Show all 11 with custom responsive gap) */}
+            <div className="hidden xl:flex 2xl:gap-7 xl:gap-3.5 items-center xl:text-[11px] 2xl:text-[13px] font-bold text-gray-500">
               {categories.map((cat, i) => (
                 <Link key={i} href={`/shop?category=${encodeURIComponent(cat.name)}`} className="hover:text-green-600 whitespace-nowrap transition-colors">{cat.name}</Link>
               ))}
             </div>
 
-            {/* Tablet View (Show 6 + All Categories Dropdown) */}
-            <div className="hidden lg:flex xl:hidden gap-3 items-center relative z-[100]">
+            {/* Tablet View (Show 6 + All Categories Dropdown for md-xl) */}
+            <div className="hidden md:flex xl:hidden gap-3 items-center relative z-[100]">
               {categories.slice(0, 6).map((cat, i) => (
                 <Link key={i} href={`/shop?category=${encodeURIComponent(cat.name)}`} className="hover:text-green-600 whitespace-nowrap transition-colors">{cat.name}</Link>
               ))}
@@ -430,7 +430,7 @@ export default function HomeContent({ products, categories, banners_db }) {
                 {showMoreCategories && (
                   <>
                     <div className="fixed inset-0 z-[110]" onClick={() => setShowMoreCategories(false)} />
-                    <div className="absolute top-full right-0 mt-3 bg-white border border-gray-100 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-5 px-3 min-w-[320px] z-[130] animate-in fade-in slide-in-from-top-2">
+                    <div className="absolute top-full right-0 mt-3 bg-white border border-gray-100 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-5 px-3 min-w-[320px] z-[1000] animate-in fade-in slide-in-from-top-2 pointer-events-auto">
                       <div className="grid grid-cols-2 gap-2">
                         {categories.map((cat, i) => (
                           <Link 
@@ -449,12 +449,6 @@ export default function HomeContent({ products, categories, banners_db }) {
               </div>
             </div>
 
-            {/* Intermediate and mobile view (Wrapping) */}
-            <div className="hidden md:flex lg:hidden flex-wrap gap-2 items-center">
-              {categories.map((cat, i) => (
-                <Link key={i} href={`/shop?category=${encodeURIComponent(cat.name)}`} className="hover:text-green-600 whitespace-nowrap transition-colors">{cat.name}</Link>
-              ))}
-            </div>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-11 gap-4">
@@ -469,7 +463,7 @@ export default function HomeContent({ products, categories, banners_db }) {
       </section>
 
       {/* Promo Banners */}
-      <section className="grid sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <section className="grid sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {[
           { color: "bg-amber-100", title: "Premium Fresh Quality Products", cat: "Fruits", imgClass: "w-36 h-36 md:w-48 md:h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" },
           { color: "bg-pink-100", title: "Latest Gadgets & Hearables", cat: "Electronics", imgClass: "w-36 h-36 md:w-48 md:h-48 right-0 bottom-0 bg-white p-3 rounded-tl-2xl" },
@@ -506,7 +500,7 @@ export default function HomeContent({ products, categories, banners_db }) {
                 <FiArrowRight rotate={90} />
               </div>
             </div>
-            <div className="hidden md:flex gap-4 text-sm font-semibold text-gray-600">
+            <div className="hidden md:flex flex-nowrap items-center gap-4 text-sm font-semibold text-gray-600 overflow-x-auto no-scrollbar scroll-smooth px-1 whitespace-nowrap">
               {["All", "Milk & Dairy", "Grocery", "Vegetables", "Snacks", "Beverages", "Household Essentials"].map(cat => (
                 <span key={cat} onClick={() => setActivePopularFilter(cat)} className={`cursor-pointer transition-all ${activePopularFilter === cat ? "text-green-600 underline" : "hover:text-green-600"}`}>{cat}</span>
               ))}

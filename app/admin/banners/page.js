@@ -66,10 +66,10 @@ export default async function BannersPage() {
                     </form>
                   </td>
                   <td className="p-5 align-middle">
-                    <span className={`text-[10px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg ${
+                    <span className={`text-[9.5px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg whitespace-nowrap ${
                       b.type === "hero" ? "bg-purple-50 text-purple-600 border border-purple-100" : "bg-blue-50 text-blue-600 border border-blue-100"
                     }`}>
-                      {b.type === "hero" ? "Hero Slider" : "Footer Wide"}
+                      {b.type === "hero" ? "Hero" : "Footer"}
                     </span>
                   </td>
                   <td className="p-5 align-middle">

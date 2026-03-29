@@ -23,6 +23,15 @@ body {
   width: 100% !important;
   margin-left: auto !important;
   margin-right: auto !important;
+  left: 0 !important;
+  right: 0 !important;
+}
+
+/* Ensure body doesn't cause shifting */
+body {
+  overflow-x: hidden;
+  position: relative;
+  width: 100%;
 }
 
 @media (min-width: 1024px) {

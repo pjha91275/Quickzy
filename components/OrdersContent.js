@@ -127,11 +127,11 @@ export default function OrdersContent() {
               >
                 {/* Order Header */}
                 <div className="bg-gray-50/50 p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
-                   <div className="flex items-center justify-between w-full md:w-auto gap-4 text-[10px] font-black uppercase tracking-widest text-gray-400">
-                      <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-100 text-[#253D4E]">
+                   <div className="flex items-center justify-between w-full md:w-auto gap-4 text-[10px] md:text-[12px] font-black uppercase tracking-widest text-gray-400">
+                      <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-gray-100 text-[#253D4E] shadow-sm">
                          ID: <span className="text-[#3BB77E]">#{order._id.slice(-6)}</span>
                       </div>
-                      <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-full border border-gray-100 text-[#253D4E]">
+                      <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-gray-100 text-[#253D4E] shadow-sm">
                          <FiCalendar className="text-[#3BB77E]" /> {dateStr}
                       </div>
                    </div>

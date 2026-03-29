@@ -6,7 +6,7 @@ const statusColors = {
   "Pending": "bg-slate-50 text-slate-500 border-slate-200",
   "Processing": "bg-[#DEF9EC] text-[#3BB77E] border-green-100",
   "Out for Delivery": "bg-amber-50 text-amber-600 border-amber-100",
-  "Delivered": "bg-green-600 text-white border-green-700 shadow-md",
+  "Delivered": "bg-green-600 text-white border-green-700",
   "Cancelled": "bg-red-50 text-red-600 border-red-100",
 };
 
@@ -25,12 +25,12 @@ export default async function OrdersPage() {
             Real-time management dashboard for store transactions.
           </p>
         </div>
-        <div className="bg-[#3BB77E] text-white px-6 py-4 rounded-[1.8rem] flex items-center gap-4 shadow-xl shadow-green-200/50 border border-white/10 self-start md:self-center transition-transform hover:scale-105 duration-300">
-          <div className="bg-white/10 p-3 rounded-2xl">
-            <FiShoppingBag className="text-2xl" />
+        <div className="bg-[#3BB77E] text-white px-5 py-3 rounded-[1.4rem] flex items-center gap-3 shadow-lg shadow-green-200/40 border border-white/10 self-start md:self-center transition-transform hover:scale-105 duration-300">
+          <div className="bg-white/10 p-2 rounded-xl">
+            <FiShoppingBag className="text-xl" />
           </div>
           <div className="flex flex-col">
-            <span className="font-black text-2xl leading-none">{orders.length}</span>
+            <span className="font-black text-xl leading-none">{orders.length}</span>
             <span className="text-[10px] uppercase font-black tracking-widest opacity-80 mt-1">Total Orders</span>
           </div>
         </div>
@@ -39,16 +39,16 @@ export default async function OrdersPage() {
       {/* Main Container - Responsive View */}
       <div className="bg-white/80 backdrop-blur-xl rounded-[2rem] md:rounded-[3rem] border border-white shadow-2xl shadow-gray-200/60 overflow-hidden">
         
-        {/* Desktop Table View - No-Overflow Optimized */}
+        {/* Desktop Table View - Layout Fix for No Overflow */}
         <div className="hidden lg:block overflow-x-auto">
           <table className="w-full text-left min-w-[1240px] table-fixed overflow-visible">
             <thead className="bg-[#f8f9fa]/80 border-b border-gray-100/50 backdrop-blur-sm sticky top-0 z-10">
               <tr>
-                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase w-[15%]">ID & Time</th>
-                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase w-[23%]">Customer Profile</th>
-                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase w-[24%]">Line Items</th>
-                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase text-center w-[16%]">Amount</th>
-                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase text-right w-[22%]">Processing</th>
+                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase w-[13%]">ID & Time</th>
+                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase w-[21%]">Customer</th>
+                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase w-[22%]">Items List</th>
+                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase text-center w-[19%]">Amount</th>
+                <th className="py-7 px-8 text-[11px] font-black tracking-[0.2em] text-gray-400 uppercase text-right w-[25%]">Fulfillment Sync</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50/50">
@@ -79,9 +79,13 @@ export default async function OrdersPage() {
                     <td className="py-8 px-8 align-top">
                       <div className="flex flex-col gap-4">
                         <div className="flex items-center gap-3 min-w-0">
-                           <div className="w-9 h-9 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 shrink-0 border border-gray-100 group-hover:bg-white transition-colors shadow-sm">
-                             <FiUser className="text-sm" />
-                           </div>
+                            <div className="w-9 h-9 rounded-2xl bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] shrink-0 border border-gray-100 group-hover:bg-white transition-all shadow-sm overflow-hidden">
+                               {order.userImage ? (
+                                 <img src={order.userImage} alt={order.userEmail} className="w-full h-full object-cover" />
+                               ) : (
+                                 <FiUser className="text-sm" />
+                               )}
+                            </div>
                            <div className="flex flex-col min-w-0">
                              <span className="text-sm font-black text-[#253D4E] truncate" title={order.userEmail}>{order.userEmail}</span>
                              <span className="text-[10px] font-black text-gray-400 uppercase tracking-tighter opacity-70">+91 {order.phoneNumber}</span>
@@ -106,34 +110,34 @@ export default async function OrdersPage() {
                       </div>
                     </td>
                     <td className="py-8 px-8 align-top text-center">
-                      <div className="flex flex-col items-center gap-3">
+                      <div className="flex flex-col items-center gap-3 bg-gray-50/40 p-4 rounded-3xl border border-gray-100/40 group-hover:bg-white transition-all">
                         <p className="font-black text-[#253D4E] text-2xl tracking-tighter">₹{order.totalAmount}</p>
-                        <span className={`text-[9px] font-black uppercase tracking-[0.15em] px-3 py-1.5 rounded-full border shadow-sm ${order.paymentMethod === 'COD' ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-blue-50 text-blue-600 border-blue-100'}`}>
-                          {order.paymentMethod} MODE
+                        <span className={`text-[9px] font-black uppercase tracking-[0.18em] px-3 py-1.5 rounded-full border shadow-sm ${order.paymentMethod === 'COD' ? 'bg-orange-50 text-orange-600 border-orange-100 shadow-orange-50/40' : 'bg-blue-50 text-blue-600 border-blue-100 shadow-blue-50/40'}`}>
+                          {order.paymentMethod} Payment
                         </span>
                       </div>
                     </td>
                     <td className="py-8 px-8 align-top text-right overflow-visible">
                       <form action={updateOrderStatusAdmin} className="flex flex-col gap-4 items-end overflow-visible">
                         <input type="hidden" name="id" value={order._id} />
-                        <div className="relative group/sel shadow-lg rounded-2xl overflow-visible">
+                        <div className="relative group/sel rounded-[2rem] overflow-visible">
                           <select 
                              name="status"
                              defaultValue={order.status}
-                             className={`text-[11px] font-black uppercase tracking-[0.25em] pl-6 pr-12 py-4 rounded-2xl outline-none cursor-pointer w-[190px] appearance-none border transition-all duration-300 active:scale-95 ${statusColors[order.status] || "bg-gray-100 text-gray-600 border-gray-200"}`}
+                             className={`text-[11px] font-black uppercase tracking-[0.28em] pl-7 pr-12 py-5 rounded-[2rem] outline-none cursor-pointer w-[220px] appearance-none border-2 transition-all duration-300 active:scale-95 ${statusColors[order.status] || "bg-gray-100 text-gray-600 border-gray-200"}`}
                           >
                              <option value="Pending" className="text-gray-700 bg-white">● &nbsp; Pending</option>
-                             <option value="Processing" className="text-[#3BB77E] bg-white">● &nbsp; Processing</option>
+                             <option value="Processing" className="text-[#3BB77E] bg-white font-black">● &nbsp; Processing</option>
                              <option value="Out for Delivery" className="text-amber-600 bg-white">● &nbsp; In Transit</option>
                              <option value="Delivered" className="text-green-700 bg-white">● &nbsp; Delivered</option>
                              <option value="Cancelled" className="text-red-700 bg-white">● &nbsp; Cancelled</option>
                           </select>
-                          <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
-                            <FiArrowRight className="text-xs" />
+                          <div className="absolute right-7 top-1/2 -translate-y-1/2 pointer-events-none opacity-50 bg-white/20 p-1.5 rounded-full">
+                            <FiArrowRight className="text-sm" />
                           </div>
                         </div>
-                        <button type="submit" className="text-[10px] text-[#3BB77E] font-black uppercase tracking-[0.4em] flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 pr-4 mt-2">
-                           <FiCheckCircle className="text-xs" /> Sync Status
+                        <button type="submit" className="text-[10px] text-[#3BB77E] font-black uppercase tracking-[0.45em] flex items-center gap-2.5 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-500 pr-6 mt-1">
+                           <FiCheckCircle className="text-sm" /> Save FulFillment
                         </button>
                       </form>
                     </td>
@@ -144,12 +148,10 @@ export default async function OrdersPage() {
           </table>
         </div>
 
-        {/* Mobile View - No changes needed, already card-based */}
+        {/* Mobile View remains the same clean card-based UI */}
         <div className="lg:hidden p-5 space-y-6">
            {orders.length === 0 && (
-             <div className="py-20 text-center text-gray-300 font-bold">
-               No live orders.
-             </div>
+             <div className="py-20 text-center text-gray-300 font-bold">No live orders.</div>
            )}
            {orders.map((order) => {
               const date = new Date(order.createdAt).toLocaleString("en-IN", {
@@ -167,9 +169,13 @@ export default async function OrdersPage() {
 
                    <div className="space-y-4 pt-4 border-t border-gray-50">
                       <div className="flex items-center gap-4 min-w-0">
-                         <div className="w-10 h-10 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100 shrink-0">
-                           <FiUser className="text-lg" />
-                         </div>
+                          <div className="w-10 h-10 rounded-2xl bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] border border-gray-100 shrink-0 overflow-hidden shadow-sm">
+                             {order.userImage ? (
+                               <img src={order.userImage} alt={order.userEmail} className="w-full h-full object-cover" />
+                             ) : (
+                               <FiUser className="text-lg" />
+                             )}
+                          </div>
                          <div className="flex flex-col min-w-0">
                             <span className="text-sm font-black text-[#253D4E] truncate">{order.userEmail}</span>
                             <span className="text-[11px] font-black text-gray-400 tracking-widest">+91 {order.phoneNumber}</span>
@@ -186,7 +192,7 @@ export default async function OrdersPage() {
                         <select 
                            name="status"
                            defaultValue={order.status}
-                           className={`text-[10px] font-black uppercase tracking-[0.2em] px-6 py-4 rounded-2xl outline-none shadow-md cursor-pointer flex-1 appearance-none border-2 transition-all ${statusColors[order.status] || "bg-gray-100 text-gray-600 border-gray-200"}`}
+                           className={`text-[10px] font-black uppercase tracking-[0.2em] px-6 py-4 rounded-2xl outline-none cursor-pointer flex-1 appearance-none border-2 transition-all ${statusColors[order.status] || "bg-gray-100 text-gray-600 border-gray-200"}`}
                         >
                            <option value="Pending">● &nbsp; Pending</option>
                            <option value="Processing">● &nbsp; Processing</option>

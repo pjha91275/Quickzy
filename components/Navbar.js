@@ -11,6 +11,7 @@ import {
   FiHeadphones,
   FiMenu,
   FiX,
+  FiMapPin,
 } from "react-icons/fi";
 import { IoIosArrowDown } from "react-icons/io";
 import { useSession, signOut } from "next-auth/react";
@@ -198,12 +199,12 @@ const Navbar = ({ initialCategories = [] }) => {
                       className="w-[85%] h-[85%] object-contain group-hover:scale-110 transition-transform"
                     />
                   </div>
-                  <div className="flex flex-col justify-center">
-                    <div className="text-xl md:text-2xl lg:text-xl xl:text-3xl font-black text-[#3BB77E] tracking-tight ml-2 -mt-0.5 leading-none">
+                  <div className="flex flex-col justify-center min-w-0">
+                    <div className="text-lg min-[400px]:text-xl md:text-2xl lg:text-xl xl:text-3xl font-black text-[#3BB77E] tracking-tight ml-2 -mt-0.5 leading-none truncate">
                       Quickzy
                     </div>
-                    <span className="text-[7.5px] sm:text-[8px] lg:text-[6.9px] lg:whitespace-normal lg:leading-tight lg:max-w-[85px] xl:text-[8px] xl:whitespace-nowrap xl:max-w-none text-gray-400 font-black ml-2 mt-0.5 block uppercase tracking-widest scale-95 origin-left">
-                      Fast. Fresh. <br /> Delivered in a Zap.
+                    <span className="text-[7px] min-[400px]:text-[8px] lg:text-[6.9px] lg:whitespace-normal lg:leading-tight lg:max-w-[85px] xl:text-[8px] xl:whitespace-nowrap xl:max-w-none text-gray-400 font-black ml-2 mt-0.5 block uppercase tracking-widest scale-95 min-[400px]:scale-100 origin-left max-w-none">
+                      Fast. Fresh. <br className="min-[350px]:block" /> Delivered in a Zap.
                     </span>
                   </div>
                 </div>
@@ -213,7 +214,7 @@ const Navbar = ({ initialCategories = [] }) => {
             {/* Location Trigger - Premium Blinkit Style */}
             <div
               onClick={() => setIsLocationModalOpen(true)}
-              className="hidden sm:flex flex-col justify-center cursor-pointer hover:bg-gray-50 px-3 py-2.5 rounded-2xl transition-all group/loc border-l border-gray-100 ml-1 w-[130px] lg:w-[170px] xl:w-[220px] shrink-0 overflow-hidden"
+              className="hidden lg:flex flex-col justify-center cursor-pointer hover:bg-gray-50 px-3 py-2.5 rounded-2xl transition-all group/loc border-l border-gray-100 ml-1 w-[130px] lg:w-[170px] xl:w-[220px] shrink-0 overflow-hidden"
             >
               <div className="flex items-center gap-1 leading-none mb-1">
                 <span className="text-[13px] font-black text-[#253D4E] uppercase tracking-tight truncate">
@@ -228,7 +229,7 @@ const Navbar = ({ initialCategories = [] }) => {
           </div>
 
           {/* Middle: Search Bar */}
-          <div className="flex w-full md:w-auto md:flex-[1.5] lg:flex-[2.2] xl:flex-[2] order-last md:order-none mt-3 md:mt-0 border-2 border-[#BCE3C9] rounded-md items-center h-[44px] sm:h-[48px] relative">
+          <div className="flex w-full md:w-auto md:flex-1 lg:flex-[2.2] xl:flex-[2] order-last md:order-none mt-3 md:mt-0 border-2 border-[#BCE3C9] rounded-md items-center h-[44px] sm:h-[48px] relative">
             <div className="px-2 border-r hidden lg:block text-[11px] xl:text-sm xl:px-4 font-bold text-gray-700 whitespace-nowrap">
               All Categories
             </div>
@@ -307,14 +308,14 @@ const Navbar = ({ initialCategories = [] }) => {
             ) : (
               <Link
                 href="/cart"
-                className="flex items-center justify-center min-w-[82px] sm:min-w-[125px] lg:min-w-[115px] xl:min-w-[125px] gap-1.5 px-2.5 sm:px-4 lg:px-4 xl:px-5 py-2 sm:py-2.5 bg-[#3BB77E] text-white rounded-lg shadow-md hover:shadow-lg hover:bg-[#2e9262] transition-all cursor-pointer hover:-translate-y-0.5"
+                className="flex items-center justify-center min-w-[70px] min-[400px]:min-w-[82px] sm:min-w-[125px] lg:min-w-[115px] xl:min-w-[125px] gap-1 min-[400px]:gap-1.5 px-2 min-[400px]:px-2.5 sm:px-4 lg:px-4 xl:px-5 py-2 sm:py-2.5 bg-[#3BB77E] text-white rounded-lg shadow-md hover:shadow-lg hover:bg-[#2e9262] transition-all cursor-pointer hover:-translate-y-0.5"
               >
                 <div className="relative">
-                  <FiShoppingCart className="text-xl sm:text-2xl" />
+                  <FiShoppingCart className="text-lg min-[400px]:text-xl sm:text-2xl" />
                 </div>
                 <div className="flex flex-col leading-none items-start">
-                  <span className="text-[10px] sm:text-[11px] font-bold text-green-100">{totalItemsCount} {totalItemsCount === 1 ? 'item' : 'items'}</span>
-                  <span className="text-xs sm:text-sm font-black mt-0.5">₹{subtotal.toFixed(0)}</span>
+                  <span className="text-[9px] min-[400px]:text-[10px] sm:text-[11px] font-bold text-green-100">{totalItemsCount} {totalItemsCount === 1 ? 'item' : 'items'}</span>
+                  <span className="text-[10px] min-[400px]:text-xs sm:text-sm font-black mt-0.5">₹{subtotal.toFixed(0)}</span>
                 </div>
               </Link>
             )}
@@ -347,7 +348,7 @@ const Navbar = ({ initialCategories = [] }) => {
                       userInitials
                     )}
                   </div>
-                  <span className="text-[12.5px] md:text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[65px] md:max-w-[110px] leading-none flex items-center gap-1">
+                  <span className="hidden min-[450px]:flex text-[12.5px] md:text-[15px] font-black text-[#253D4E] group-hover:text-[#3BB77E] truncate max-w-[65px] md:max-w-[110px] leading-none items-center gap-1 transition-all">
                     <span className="md:hidden">{session.user.name?.split(" ")[0] || "Account"}</span>
                     <span className="hidden md:inline">{session.user.name || "Account"}</span>
                     <IoIosArrowDown className="text-[10px] shrink-0" />
@@ -572,6 +573,28 @@ const Navbar = ({ initialCategories = [] }) => {
                       </div>
                     )}
                   </div>
+                </div>
+              </div>
+
+              {/* Location Selector in Mobile Menu (Visible for md & below) */}
+              <div className="lg:hidden border-b border-gray-50 py-3">
+                <div
+                  onClick={() => {
+                    setIsLocationModalOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center justify-between cursor-pointer w-full text-left bg-[#f8f9fa] border border-gray-200 text-[#253D4E] px-4 py-3 rounded-2xl shadow-sm transition-all hover:bg-gray-100 group/mobile-loc"
+                >
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2">
+                      <FiMapPin className="text-[#3BB77E] text-sm" />
+                      <span className="font-black text-[14px]">{(localStorage.getItem("quickzy-location-confirmed") && currentAddress !== "Select Location") ? "Delivery within 15 Mins" : "Select Location"}</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-gray-400 truncate mt-0.5 ml-5">
+                      {currentAddress === "Select Location" ? "Set your delivery address" : currentAddress}
+                    </span>
+                  </div>
+                  <IoIosArrowDown className="text-gray-400 text-sm group-hover/mobile-loc:translate-y-0.5 transition-transform" />
                 </div>
               </div>
 

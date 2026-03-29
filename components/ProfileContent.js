@@ -68,8 +68,8 @@ export default function ProfileContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F6FA] py-10 font-sans">
-      <div className="container mx-auto px-4 max-w-2xl">
+    <div className="bg-[#F4F6FA] py-12 md:py-20 font-sans">
+      <div className="mx-auto px-4 max-w-2xl lg:max-w-none lg:w-1/2">
         <h1 className="text-3xl font-black text-[#253D4E] mb-8">My Profile</h1>
 
         <div className="bg-white rounded-3xl shadow-sm border p-8 space-y-8">

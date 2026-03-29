@@ -144,9 +144,16 @@ export async function saveProductAdmin(formData) {
 
 export async function getOrdersAdmin() {
   await connectDb();
-  // Return plain objects to avoid serialization errors
+  const User = (await import("@/models/User")).default;
   const orders = await Order.find({}).sort({ createdAt: -1 }).lean();
-  return JSON.parse(JSON.stringify(orders));
+  
+  // Attach user image to each order manually since we don't have a ref in schema
+  const ordersWithUserImg = await Promise.all(orders.map(async (order) => {
+    const user = await User.findOne({ email: order.userEmail }).select("image").lean();
+    return { ...order, userImage: user?.image || "" };
+  }));
+
+  return JSON.parse(JSON.stringify(ordersWithUserImg));
 }
 
 export async function updateOrderStatusAdmin(formData) {
@@ -183,7 +190,7 @@ export async function toggleUserRoleAdmin(formData) {
   const User = (await import("@/models/User")).default;
   
   const targetUser = await User.findById(id);
-  if (targetUser && targetUser.email === "pjha91275@gmail.com") {
+  if (targetUser && targetUser.email === process.env.ADMIN_EMAIL) {
     // Genesis Admin Protection
     return { success: false, error: "Genesis Admin cannot be modified." };
   }

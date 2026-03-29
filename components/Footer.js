@@ -25,7 +25,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-white border-t pt-20 pb-10 mt-20">
-      <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-6 gap-8 text-sm text-gray-500 pb-8 border-b">
+      <div className="container mx-auto px-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-x-4 md:gap-x-8 gap-y-12 text-sm text-gray-500 pb-8 border-b">
         {/* Logo & Info */}
         <div className="col-span-2 lg:col-span-1">
           <Link href="/" className="flex items-center gap-2 mb-4 group cursor-pointer">
@@ -126,7 +126,7 @@ const Footer = () => {
         </div>
 
         {/* App & Payment */}
-        <div className="col-span-2 lg:col-span-1">
+        <div className="col-span-2 md:col-span-2 lg:col-span-1">
           <h4 className="font-bold text-lg text-[#253D4E] mb-6 underline decoration-[#3BB77E] decoration-2 underline-offset-8">
             Install App
           </h4>

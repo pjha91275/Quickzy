@@ -5,8 +5,8 @@ export async function POST(request) {
     const { name, email, subject, message } = await request.json();
 
     const brevoApiKey = process.env.BREVO_API_KEY;
-    const emailFrom = process.env.EMAIL_FROM; // e.g. "Quickzy <pjha91275@gmail.com>"
-    const recipientEmail = "pjha91275@gmail.com"; // User's personal email
+    const emailFrom = process.env.EMAIL_FROM; // e.g. "Quickzy <shopquickzy@gmail.com>"
+    const recipientEmail = process.env.ADMIN_EMAIL; // Recipient from env
 
     if (!brevoApiKey) {
       return NextResponse.json(
