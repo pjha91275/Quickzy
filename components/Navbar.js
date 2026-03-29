@@ -529,7 +529,7 @@ const Navbar = ({ initialCategories = [] }) => {
               </button>
             </div>
             <nav className="flex flex-col font-bold text-[#253D4E] overflow-y-auto flex-1 pb-[100px]">
-              // category dropdown
+              {/* category dropdown */}
               <div className="border-b border-gray-50 py-3">
                 <div
                   className={`flex items-center justify-between cursor-pointer w-full text-left bg-[#3BB77E] text-white px-3 py-2.5 rounded-xl shadow-sm transition-all hover:bg-[#29A56C] ${isMobileCategoriesOpen ? 'ring-2 ring-green-100' : ''}`}
@@ -571,7 +571,7 @@ const Navbar = ({ initialCategories = [] }) => {
                 </div>
               </div>
 
-              // location selector
+              {/* location selector */}
               <div className="lg:hidden border-b border-gray-50 py-3">
                 <div
                   onClick={() => {
@@ -629,7 +629,7 @@ const Navbar = ({ initialCategories = [] }) => {
                 Contact
               </Link>
 
-              // account section
+              {/* account section */}
               <div className="border-b border-gray-50 py-3">
                 {!isLoggedIn ? (
                   /* Standard Login Button (No Dropdown for Logged Out) */

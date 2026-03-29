@@ -330,14 +330,14 @@ export default function HomeContent({ products, categories, banners_db }) {
         {/* Mobile: Full background image with text overlay */}
         <div className="md:hidden relative h-[280px] sm:h-[320px] w-full">
           <img src={banners[currentSlide].image} className="absolute inset-0 w-full h-full object-cover" alt="" />
-          // overlay logic
+          {/* overlay logic */}
           <div className={`absolute inset-0 transition-opacity duration-700 ${[1, 2, 3].includes(currentSlide) ? 'bg-black/[0.01]' : 'bg-black/[0.02]'}`} />
           <div className={`relative z-20 h-full flex flex-col px-5 ${currentSlide === 0 ? 'justify-between pt-10 pb-9' : 'justify-start pt-6 pb-12'}`}>
             <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-[#253D4E] px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm w-max shrink-0">
               <img src="/logo.png" className="w-3.5 h-3.5" alt="" />{banners[currentSlide].tag}
             </div>
 
-            // banner text variants
+            {/* banner text variants */}
             {currentSlide !== 0 ? (
               <div className="mt-3 space-y-2">
                 <h1 className="text-[1.6rem] min-[400px]:text-[1.95rem] font-black text-white leading-tight text-shadow-strong pr-2 transition-all duration-500" dangerouslySetInnerHTML={{ __html: banners[currentSlide].title }}></h1>
@@ -638,15 +638,15 @@ export default function HomeContent({ products, categories, banners_db }) {
       </section>
 
       <div className="rounded-[40px] mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[300px] md:min-h-[400px]">
-        // background image
+        {/* background image */}
         <img
           src={footerBanner?.image || "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162639/quickzy/banners/footer-banner.jpg"}
           className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 md:scale-100 scale-[2.2]"
           alt=""
         />
-        // overlay
+        {/* overlay */}
         <div className="absolute inset-0 bg-black/0 md:bg-black/10 transition-colors" />
-        // mobile layout
+        {/* mobile layout */}
         <div className="relative z-10 flex flex-col justify-between h-full p-8 md:p-14 min-h-[300px] md:min-h-[400px]">
           <div className="max-w-[280px] md:max-w-lg">
             <h2 className="text-3xl md:text-5xl font-black text-white leading-tight transition-all text-shadow-strong">Stay home &amp; get <br />your daily <br /><span className="text-[#3BB77E]">needs from <br />our shop</span></h2>
