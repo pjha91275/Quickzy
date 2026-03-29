@@ -55,13 +55,21 @@ const Footer = () => {
             </li>
             <li className="flex gap-2 items-center">
               <FiPhoneCall className="text-[#3BB77E] shrink-0" />{" "}
-              <a href="tel:+911800419123" className="hover:text-[#3BB77E]">
+              <a 
+                href="tel:+911800419123" 
+                onClick={(e) => { e.preventDefault(); window.location.href = "tel:+911800419123"; }}
+                className="hover:text-[#3BB77E] text-[#253D4E]"
+              >
                 <strong>Call Us:</strong> +91 1800-419-123
               </a>
             </li>
             <li className="flex gap-2 items-center">
               <FiMail className="text-[#3BB77E] shrink-0" />{" "}
-              <a href="mailto:shopquickzy@gmail.com?subject=Quickzy Support Inquiry" className="hover:text-[#3BB77E] whitespace-nowrap">
+              <a 
+                href="mailto:shopquickzy@gmail.com?subject=Quickzy Support Inquiry" 
+                onClick={(e) => { e.preventDefault(); window.location.href = "mailto:shopquickzy@gmail.com?subject=Quickzy Support Inquiry"; }}
+                className="hover:text-[#3BB77E] whitespace-nowrap text-[#253D4E] cursor-pointer"
+              >
                 <strong>Email:</strong> shopquickzy@gmail.com
               </a>
             </li>

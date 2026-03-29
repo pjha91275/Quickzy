@@ -72,7 +72,7 @@ export default async function AdminDashboard() {
 
       {/* Recent Activity Section */}
       <div>
-        <h2 className="text-xl font-black text-[#253D4E] mb-6">Recent Orders</h2>
+        <h2 className="text-xl font-black text-[#253D4E] mb-6">Recent Orders(Top 5)</h2>
         
         {recentOrders.length === 0 ? (
           <div className="bg-gray-50 rounded-2xl p-10 text-center text-gray-400 font-bold border border-dashed border-gray-200">
