@@ -86,7 +86,13 @@ export default function AdminOrdersList({ initialOrders }) {
               const date = new Date(order.createdAt).toLocaleString("en-IN", {
                 dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata"
               });
-              const currentUIStatus = statusMap[order._id] || order.status;
+              let currentUIStatus = statusMap[order._id] || order.status;
+              
+              const isNaturalDelivery = isLockdown && (currentUIStatus === "Processing" || currentUIStatus === "Out for Delivery");
+              if (isNaturalDelivery) {
+                 currentUIStatus = "Delivered";
+              }
+              
               const hasChanged = statusMap[order._id] && statusMap[order._id] !== order.status;
 
               return (
@@ -137,14 +143,14 @@ export default function AdminOrdersList({ initialOrders }) {
                           onChange={(e) => handleStatusChange(order._id, e.target.value)}
                           className={`text-[9px] font-black uppercase tracking-[0.2em] pl-6 pr-10 py-3.5 rounded-[2rem] outline-none cursor-pointer w-full appearance-none border-2 transition-all ${statusColors[currentUIStatus]}`}
                         >
-                          <option value="Pending" disabled={isLockdown} className="bg-white text-gray-700">
-                             ● &nbsp; {isLockdown ? "Pending (Locked)" : "Pending"}
+                          <option value="Pending" disabled={isLockdown} className={isLockdown ? "bg-gray-100 text-gray-400 italic" : "bg-white text-gray-700"}>
+                             ● &nbsp; Pending {isLockdown && currentUIStatus !== "Pending" ? "(Locked)" : ""}
                           </option>
-                          <option value="Processing" disabled={isLockdown} className="bg-white text-[#3BB77E]">
-                             ● &nbsp; {isLockdown ? "Processing (Locked)" : "Processing"}
+                          <option value="Processing" disabled={isLockdown} className={isLockdown ? "bg-gray-100 text-gray-400 italic" : "bg-white text-[#3BB77E]"}>
+                             ● &nbsp; Processing {isLockdown && currentUIStatus !== "Processing" ? "(Locked)" : ""}
                           </option>
-                          <option value="Out for Delivery" disabled={isLockdown} className="bg-white text-amber-600">
-                             ● &nbsp; {isLockdown ? "Out for Delivery (Locked)" : "Out for Delivery"}
+                          <option value="Out for Delivery" disabled={isLockdown} className={isLockdown ? "bg-gray-100 text-gray-400 italic" : "bg-white text-amber-600"}>
+                             ● &nbsp; Out for Delivery {isLockdown && currentUIStatus !== "Out for Delivery" ? "(Locked)" : ""}
                           </option>
                           <option value="Delivered" className="bg-white text-green-700">● &nbsp; Delivered</option>
                           <option value="Cancelled" className="bg-white text-red-700">● &nbsp; Cancelled</option>
@@ -172,7 +178,13 @@ export default function AdminOrdersList({ initialOrders }) {
       <div className="lg:hidden px-4 py-8 space-y-6">
         {initialOrders.map((order) => {
           const { isLockdown } = getOrderStatusInfo(order);
-          const currentUIStatus = statusMap[order._id] || order.status;
+          let currentUIStatus = statusMap[order._id] || order.status;
+          
+          const isNaturalDelivery = isLockdown && (currentUIStatus === "Processing" || currentUIStatus === "Out for Delivery");
+          if (isNaturalDelivery) {
+             currentUIStatus = "Delivered";
+          }
+          
           const hasChanged = statusMap[order._id] && statusMap[order._id] !== order.status;
           return (
             <div key={order._id} className="bg-white rounded-[1.5rem] border border-gray-100 shadow-xl p-6 relative" onClick={() => setSelectedOrder(order)}>
@@ -201,14 +213,14 @@ export default function AdminOrdersList({ initialOrders }) {
                   onChange={(e) => handleStatusChange(order._id, e.target.value)}
                   className={`text-[9px] font-black uppercase tracking-[0.1em] px-5 py-4 rounded-2xl appearance-none border-2 transition-all ${statusColors[currentUIStatus]}`}
                 >
-                  <option value="Pending" disabled={isLockdown}>
-                    {isLockdown ? "Pending (Locked)" : "Pending"}
+                  <option value="Pending" disabled={isLockdown} className={isLockdown ? "bg-gray-100 text-gray-400 italic" : ""}>
+                    Pending {isLockdown && currentUIStatus !== "Pending" ? "(Locked)" : ""}
                   </option>
-                  <option value="Processing" disabled={isLockdown}>
-                    {isLockdown ? "Processing (Locked)" : "Processing"}
+                  <option value="Processing" disabled={isLockdown} className={isLockdown ? "bg-gray-100 text-gray-400 italic" : ""}>
+                    Processing {isLockdown && currentUIStatus !== "Processing" ? "(Locked)" : ""}
                   </option>
-                  <option value="Out for Delivery" disabled={isLockdown}>
-                    {isLockdown ? "Out for Delivery (Locked)" : "Out for Delivery"}
+                  <option value="Out for Delivery" disabled={isLockdown} className={isLockdown ? "bg-gray-100 text-gray-400 italic" : ""}>
+                    Out for Delivery {isLockdown && currentUIStatus !== "Out for Delivery" ? "(Locked)" : ""}
                   </option>
                   <option value="Delivered">Delivered</option>
                   <option value="Cancelled">Cancelled</option>
@@ -278,7 +290,9 @@ export default function AdminOrdersList({ initialOrders }) {
                                 <div className="w-8 xl:w-12 h-8 xl:h-12 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] shrink-0"><FiZap className="w-4 xl:w-6 h-4 xl:h-6"/></div>
                                 <div className="min-w-0">
                                    <h4 className="text-[7px] lg:text-[7px] xl:text-[9px] font-black text-gray-400 uppercase">Live State</h4>
-                                   <p className="text-[10px] lg:text-[10px] xl:text-sm font-black text-[#3BB77E] uppercase tracking-widest truncate">{selectedOrder.status}</p>
+                                   <p className="text-[10px] lg:text-[10px] xl:text-sm font-black text-[#3BB77E] uppercase tracking-widest truncate">
+                                      {getOrderStatusInfo(selectedOrder).isLockdown && (selectedOrder.status === "Processing" || selectedOrder.status === "Out for Delivery") ? "Delivered" : selectedOrder.status}
+                                   </p>
                                 </div>
                               </div>
                            </div>

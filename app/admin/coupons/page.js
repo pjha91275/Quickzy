@@ -61,9 +61,11 @@ export default async function CouponsPage() {
                   </td>
                   <td className="p-5 align-middle">
                     <p className="font-black text-[#253D4E] text-[15px]">
-                      {c.discountType === "percentage" ? `${c.discountValue}% OFF` : `₹${c.discountValue} OFF`}
+                      {c.freeDelivery && c.discountValue === 0 ? "Free Delivery" : (
+                        c.discountType === "percentage" ? `${c.discountValue}% OFF` : `₹${c.discountValue} OFF`
+                      )}
                     </p>
-                    <p className="text-xs text-gray-400 font-bold mt-0.5 capitalize">{c.discountType}</p>
+                    <p className="text-xs text-gray-400 font-bold mt-0.5 capitalize">{c.freeDelivery && c.discountValue === 0 ? "Shipping" : c.discountType}</p>
                   </td>
                   <td className="p-5 align-middle">
                     <span className="text-[#253D4E] font-black text-[13px]">
@@ -74,10 +76,20 @@ export default async function CouponsPage() {
                     <form action={toggleCouponStatusAdmin} className="inline-block relative z-10">
                       <input type="hidden" name="id" value={c._id} />
                       <input type="hidden" name="isActive" value={c.isActive ? "true" : "false"} />
-                      <button type="submit" title="Toggle Status" className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 mx-auto ${
-                        c.isActive ? "bg-green-50 text-[#3BB77E] hover:bg-red-50 hover:text-red-500" : "bg-red-50 text-red-500 hover:bg-green-50 hover:text-[#3BB77E]"
+                      <button type="submit" title="Toggle Status" className={`group relative px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 mx-auto overflow-hidden ${
+                        c.isActive ? "bg-green-50 text-[#3BB77E] hover:bg-rose-50" : "bg-rose-50 text-rose-500 hover:bg-green-50"
                       }`}>
-                        {c.isActive ? <><FiCheckCircle /> Active</> : <><FiXCircle /> Disabled</>}
+                        {c.isActive ? (
+                          <>
+                            <span className="flex items-center gap-1 group-hover:hidden"><FiCheckCircle /> Active</span>
+                            <span className="hidden group-hover:flex items-center gap-1 text-rose-500"><FiXCircle /> Disable</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="flex items-center gap-1 group-hover:hidden"><FiXCircle /> Disabled</span>
+                            <span className="hidden group-hover:flex items-center gap-1 text-[#3BB77E]"><FiCheckCircle /> Make Active</span>
+                          </>
+                        )}
                       </button>
                     </form>
                   </td>

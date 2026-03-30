@@ -70,7 +70,7 @@ export const saveCheckoutDetails = async (email, details) => {
 };
 
 // Validate if a coupon code can be applied
-export const validateCoupon = async (code, cartSubtotal, userEmail) => {
+export const validateCoupon = async (code, cartSubtotal, userEmail, cartItems = []) => {
   if (!code) return { success: false, message: "Please enter a code" };
   
   await connectDb();
@@ -85,6 +85,14 @@ export const validateCoupon = async (code, cartSubtotal, userEmail) => {
   
   if (coupon.minOrderAmount > 0 && cartSubtotal < coupon.minOrderAmount) {
     return { success: false, message: `Minimum order amount for this coupon is ₹${coupon.minOrderAmount}` };
+  }
+
+  // FRESHVEG specific logic: Must have at least one vegetable in the cart
+  if (coupon.code === "FRESHVEG" && cartItems.length > 0) {
+    const hasVegetable = cartItems.some(item => (item.category || "").toLowerCase().includes("vegetable"));
+    if (!hasVegetable) {
+      return { success: false, message: "FRESHVEG coupon requires at least one vegetable item in your cart!" };
+    }
   }
   
   // Check global usage limit

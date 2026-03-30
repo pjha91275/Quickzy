@@ -92,7 +92,15 @@ export default async function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 text-sm font-bold text-[#253D4E]">
-                  {recentOrders.map((order) => (
+                  {recentOrders.map((order) => {
+                    const orderDate = new Date(order.createdAt);
+                    const orderSeed = parseInt(order._id?.toString().slice(-2) || "0", 16) || 0;
+                    const deliveryMinutes = (orderSeed % (15 - 8 + 1)) + 8;
+                    const timeDiffMins = Math.floor(Math.max(0, new Date() - orderDate) / 60000);
+                    const isNaturallyDelivered = (order.status === 'Processing' || order.status === 'Out for Delivery') && (deliveryMinutes - timeDiffMins) <= 0;
+                    const displayStatus = isNaturallyDelivered ? 'Delivered' : (order.status || 'Pending');
+                    
+                    return (
                     <tr key={order._id?.toString()} className="hover:bg-gray-50/30 transition-colors">
                       <td className="p-4">#{order._id?.toString().slice(-6).toUpperCase()}</td>
                       <td className="p-4 text-gray-500">
@@ -106,17 +114,17 @@ export default async function AdminDashboard() {
                       <td className="p-4 text-[#3BB77E]">₹{order.totalAmount}</td>
                       <td className="p-4">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                          order.status === 'Delivered' ? 'bg-green-600 text-white' :
-                          order.status === 'Processing' ? 'bg-[#DEF9EC] text-[#3BB77E]' :
-                          order.status === 'Out for Delivery' ? 'bg-orange-100 text-orange-700' :
-                          order.status === 'Cancelled' ? 'bg-red-50 text-red-600' :
+                          displayStatus === 'Delivered' ? 'bg-green-600 text-white' :
+                          displayStatus === 'Processing' ? 'bg-[#DEF9EC] text-[#3BB77E]' :
+                          displayStatus === 'Out for Delivery' ? 'bg-orange-100 text-orange-700' :
+                          displayStatus === 'Cancelled' ? 'bg-red-50 text-red-600' :
                           'bg-slate-50 text-slate-500'
                         }`}>
-                          {order.status || 'Pending'}
+                          {displayStatus}
                         </span>
                       </td>
                     </tr>
-                  ))}
+                  )})}
                 </tbody>
               </table>
             </div>

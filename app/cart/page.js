@@ -40,7 +40,7 @@ export default function Cart() {
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
     setCouponLoading(true);
-    const res = await validateCoupon(couponCode, itemTotalCurrent, session?.user?.email);
+    const res = await validateCoupon(couponCode, itemTotalCurrent, session?.user?.email, cartItems);
     if (res.success) {
       saveCoupon(res.coupon);
       toast.success("Coupon applied successfully!");
@@ -406,7 +406,14 @@ export default function Cart() {
                 <p className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] mb-4">Available Offers</p>
                 <div className="space-y-4">
                   {availableCoupons.map((c, index) => {
-                    const isValidNow = itemTotalCurrent >= c.minOrderAmount;
+                    let isValidNow = itemTotalCurrent >= c.minOrderAmount;
+                    
+                    if (c.code === "FRESHVEG") {
+                      const hasVegetable = cartItems.some(item => (item.category || "").toLowerCase().includes("vegetable"));
+                      if (!hasVegetable) {
+                        isValidNow = false;
+                      }
+                    }
 
                     const themes = [
                       { bg: "bg-[#E8F8F0]", text: "text-[#10b981]", border: "border-[#D1FAE5]" },
@@ -427,7 +434,7 @@ export default function Cart() {
                               return;
                             }
                             setCouponLoading(true);
-                            const res = await validateCoupon(c.code, itemTotalCurrent, session?.user?.email);
+                            const res = await validateCoupon(c.code, itemTotalCurrent, session?.user?.email, cartItems);
                             setCouponLoading(false);
                             if (res.success) {
                               saveCoupon(res.coupon);
@@ -437,7 +444,11 @@ export default function Cart() {
                               toast.error(res.message);
                             }
                           } else {
-                            toast.info(`Add ₹${(c.minOrderAmount - itemTotalCurrent).toFixed(2)} more to unlock this coupon!`);
+                            if (c.code === "FRESHVEG" && itemTotalCurrent >= c.minOrderAmount) {
+                               toast.info(`Add at least one vegetable item to unlock this coupon!`);
+                            } else {
+                               toast.info(`Add ₹${(c.minOrderAmount - itemTotalCurrent).toFixed(2)} more to unlock this coupon!`);
+                            }
                           }
                         }}
                         className={`border rounded-xl p-4 transition-all ${isValidNow ? "cursor-pointer hover:shadow-md hover:bg-gray-50/50 border-gray-100" : "opacity-60 cursor-not-allowed bg-gray-50 border-gray-100"}`}
@@ -462,6 +473,7 @@ export default function Cart() {
                           </span>
                         </div>
                         <p className="text-[10px] text-gray-400 font-bold mt-3">
+                          {c.code === "FRESHVEG" ? "Requires at least 1 Vegetable in cart. " : ""}
                           {c.minOrderAmount > 0 ? `Valid on orders above ₹${c.minOrderAmount}` : "No minimum order value"}
                         </p>
                       </div>

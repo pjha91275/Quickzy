@@ -108,7 +108,7 @@ export default function OrdersContent() {
             const timeDiffMs = Math.max(0, now - orderDate);
             const timeDiffMins = Math.floor(timeDiffMs / 60000);
             const remainingMins = Math.max(0, deliveryMinutes - timeDiffMins);
-            const isDelivered = order.status === "Delivered" || (order.status === "Processing" && remainingMins <= 0);
+            const isDelivered = order.status === "Delivered" || ((order.status === "Processing" || order.status === "Out for Delivery") && remainingMins <= 0);
 
             const timeStr = orderDate.toLocaleTimeString("en-IN", {
               hour: "2-digit",
