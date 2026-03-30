@@ -5,8 +5,8 @@ export async function POST(request) {
     const { name, email, subject, message } = await request.json();
 
     const brevoApiKey = process.env.BREVO_API_KEY;
-    const emailFrom = process.env.EMAIL_FROM; // e.g. "Quickzy <shopquickzy@gmail.com>"
-    const recipientEmail = process.env.ADMIN_EMAIL; // Recipient from env
+    const emailFrom = process.env.EMAIL_FROM;
+    const recipientEmail = process.env.CONTACT_RECIPIENT || process.env.ADMIN_EMAIL;
 
     if (!brevoApiKey) {
       return NextResponse.json(
@@ -23,7 +23,7 @@ export async function POST(request) {
       },
       body: JSON.stringify({
         sender: {
-          name: "Quickzy Enquiry",
+          name: "Quickzy",
           email: emailFrom.match(/<([^>]+)>/)?.[1] || emailFrom,
         },
         to: [{ email: recipientEmail }],
@@ -67,7 +67,7 @@ export async function POST(request) {
       const errorData = await response.json();
       console.error("Brevo API Error:", errorData);
       return NextResponse.json(
-        { error: "Failed to send email" },
+        { error: errorData.message || "Failed to send email" },
         { status: 500 }
       );
     }
