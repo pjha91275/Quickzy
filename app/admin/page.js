@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import React from "react";
 import { RiMoneyRupeeCircleFill, RiShoppingBag3Fill, RiGroupFill, RiArchiveFill } from "react-icons/ri";
 import connectDb from "@/db/connectDb";

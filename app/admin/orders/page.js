@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import React from "react";
 import { getOrdersAdmin, updateOrderStatusAdmin } from "@/actions/adminactions";
 import { FiShoppingBag, FiClock, FiMapPin, FiPhone, FiTag, FiUser, FiArrowRight, FiCheckCircle, FiAlertCircle } from "react-icons/fi";

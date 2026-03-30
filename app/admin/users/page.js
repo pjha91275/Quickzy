@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import React from "react";
 import { getUsersAdmin, toggleUserRoleAdmin } from "@/actions/adminactions";
 import { FiUsers, FiMail, FiPhone, FiMapPin, FiShield, FiCalendar } from "react-icons/fi";
