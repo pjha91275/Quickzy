@@ -108,14 +108,17 @@ export default function OrdersContent() {
             const timeDiffMs = Math.max(0, now - orderDate);
             const timeDiffMins = Math.floor(timeDiffMs / 60000);
             const remainingMins = Math.max(0, deliveryMinutes - timeDiffMins);
-            const isDelivered = remainingMins <= 0;
+            const isCancelled = order.status === "Cancelled";
+            const isOutForDelivery = order.status === "Out for Delivery";
+            const isManuallyDelivered = order.status === "Delivered";
+            const isDelivered = isManuallyDelivered || (order.status === "Processing" && remainingMins <= 0);
 
             const timeStr = orderDate.toLocaleTimeString("en-IN", {
               hour: "2-digit",
               minute: "2-digit",
               timeZone: "Asia/Kolkata"
             });
-            const arrivalTime = new Date(orderDate.getTime() + deliveryMinutes * 60000).toLocaleTimeString("en-IN", {
+            const arrivalTime = new Date(orderDate.getTime() + deliveryMinutes * 60000).toLocaleString("en-IN", {
               hour: "2-digit",
               minute: "2-digit",
               timeZone: "Asia/Kolkata"
@@ -139,9 +142,21 @@ export default function OrdersContent() {
                    </div>
 
                    <div className="w-full md:w-auto">
-                      {isDelivered ? (
+                      {order.status === "Pending" ? (
+                         <div className="flex items-center justify-center gap-2 bg-slate-50 px-4 py-1.5 rounded-full border border-slate-200 text-slate-500 font-black shadow-sm">
+                            <FiClock className="animate-pulse" /> Order Pending
+                         </div>
+                      ) : order.status === "Cancelled" ? (
+                         <div className="flex items-center justify-center gap-2 bg-red-50 px-4 py-1.5 rounded-full border border-red-100 text-red-600 font-black shadow-lg shadow-red-50/40">
+                            <FiX /> Order Cancelled
+                         </div>
+                      ) : order.status === "Out for Delivery" ? (
+                        <div className="flex items-center justify-center gap-2 bg-orange-50 px-4 py-1.5 rounded-full border border-orange-100 text-orange-600 font-black shadow-lg shadow-orange-50/40">
+                           <FiTruck className="translate-x-1" /> Out for Delivery
+                        </div>
+                      ) : isDelivered ? (
                         <div className="flex items-center justify-center gap-2 bg-[#3BB77E] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-white shadow-lg shadow-green-100">
-                           <FiCheckCircle /> Delivered Sucessfully
+                           <FiCheckCircle /> Delivered Successfully
                         </div>
                       ) : (
                         <div className="flex items-center justify-center gap-2 bg-[#DEF9EC] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-[#3BB77E] animate-pulse">

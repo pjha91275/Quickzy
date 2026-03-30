@@ -82,18 +82,36 @@ export default async function UsersPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="p-4 align-top text-center">
-                      {user.role === "admin" && !isCurrentUser ? (
-                         <span className="text-xs text-gray-400 uppercase">Restricted</span>
+                    <td className="p-4 align-top text-center text-xs font-black">
+                      {user.email === process.env.ADMIN_EMAIL ? (
+                        <div className="bg-purple-600 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 justify-center shadow-lg shadow-purple-100">
+                           <FiShield size={12} /> Genesis Admin
+                        </div>
                       ) : (
                         <form action={toggleUserRoleAdmin}>
                           <input type="hidden" name="id" value={user._id} />
                           <input type="hidden" name="currentRole" value={user.role} />
-                          <button type="submit" className={`text-xs font-bold px-3 py-1.5 rounded border ${
-                            user.role === "admin" ? "text-red-600 border-red-200 hover:bg-red-50" : "text-gray-800 border-gray-300 hover:bg-gray-100"
-                          }`}>
-                            {user.role === "admin" ? (isCurrentUser ? "Give Up Admin" : "Revoke Admin") : "Make Admin"}
-                          </button>
+                          {user.role === "admin" ? (
+                            currentUserEmail === process.env.ADMIN_EMAIL ? (
+                              <button type="submit" className="text-red-500 border border-red-100 bg-red-50 px-4 py-2 rounded-xl hover:bg-red-500 hover:text-white transition-all uppercase tracking-widest text-[10px]">
+                                Revoke Admin
+                              </button>
+                            ) : (
+                              <span className="text-gray-400 uppercase tracking-widest text-[10px] opacity-50 flex items-center justify-center gap-1">
+                                <FiShield size={10} /> Admin
+                              </span>
+                            )
+                          ) : (
+                            currentUserEmail === process.env.ADMIN_EMAIL ? (
+                              <button type="submit" className="text-gray-700 border border-gray-200 px-4 py-2 rounded-xl hover:bg-gray-800 hover:text-white transition-all uppercase tracking-widest text-[10px]">
+                                Make Admin
+                              </button>
+                            ) : (
+                              <span className="text-gray-400 uppercase tracking-widest text-[10px] opacity-50">
+                                Customer
+                              </span>
+                            )
+                          )}
                         </form>
                       )}
                     </td>

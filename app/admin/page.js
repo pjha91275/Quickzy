@@ -106,10 +106,11 @@ export default async function AdminDashboard() {
                       <td className="p-4 text-[#3BB77E]">₹{order.totalAmount}</td>
                       <td className="p-4">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                          order.status === 'Delivered' ? 'bg-[#DEF9EC] text-[#3BB77E]' :
-                          order.status === 'Processing' ? 'bg-blue-50 text-blue-500' :
-                          order.status === 'Cancelled' ? 'bg-red-50 text-red-500' :
-                          'bg-orange-50 text-orange-500'
+                          order.status === 'Delivered' ? 'bg-green-600 text-white' :
+                          order.status === 'Processing' ? 'bg-[#DEF9EC] text-[#3BB77E]' :
+                          order.status === 'Out for Delivery' ? 'bg-orange-100 text-orange-700' :
+                          order.status === 'Cancelled' ? 'bg-red-50 text-red-600' :
+                          'bg-slate-50 text-slate-500'
                         }`}>
                           {order.status || 'Pending'}
                         </span>

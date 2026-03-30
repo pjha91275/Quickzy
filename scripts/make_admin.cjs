@@ -9,20 +9,25 @@ const UserSchema = new mongoose.Schema({
 const User = mongoose.models.User || mongoose.model("User", UserSchema);
 
 async function makeAdmin() {
+  const targetEmail = process.argv[2];
+  if (!targetEmail) {
+    console.log("Usage: node scripts/make_admin.cjs <email>");
+    process.exit(1);
+  }
+
   await mongoose.connect(process.env.MONGO_URI);
   console.log("Connected to MongoDB!");
   
-  // Replace with the user's actual email or just update the first user
   const user = await User.findOneAndUpdate(
-    {}, 
+    { email: targetEmail }, 
     { role: "admin" },
-    { new: true, sort: { createdAt: 1 } }
+    { new: true }
   );
 
   if (user) {
-    console.log(`Successfully made ${user.email} an admin!`);
+    console.log(`Success! ${user.email} is now an admin.`);
   } else {
-    console.log(`No users found in database.`);
+    console.log(`Error: User with email '${targetEmail}' not found in the database. Please ensure they have logged in at least once.`);
   }
   
   process.exit(0);
