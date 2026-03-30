@@ -44,7 +44,7 @@ export default async function UsersPage() {
                 let joinedDate = "Unknown";
                 if (user.createdAt) {
                   const d = new Date(user.createdAt);
-                  if (!isNaN(d.getTime())) joinedDate = d.toLocaleDateString("en-IN");
+                  if (!isNaN(d.getTime())) joinedDate = d.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
                 }
                 const isCurrentUser = currentUserEmail === user.email;
                 

@@ -95,7 +95,14 @@ export default async function AdminDashboard() {
                   {recentOrders.map((order) => (
                     <tr key={order._id?.toString()} className="hover:bg-gray-50/30 transition-colors">
                       <td className="p-4">#{order._id?.toString().slice(-6).toUpperCase()}</td>
-                      <td className="p-4 text-gray-500">{new Date(order.createdAt).toLocaleDateString()}</td>
+                      <td className="p-4 text-gray-500">
+                        {new Date(order.createdAt).toLocaleDateString("en-IN", { 
+                          timeZone: "Asia/Kolkata", 
+                          day: "2-digit", 
+                          month: "2-digit", 
+                          year: "numeric" 
+                        })}
+                      </td>
                       <td className="p-4 text-[#3BB77E]">₹{order.totalAmount}</td>
                       <td className="p-4">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${

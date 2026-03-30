@@ -62,7 +62,9 @@ export default async function OrdersPage() {
               )}
               {orders.map((order) => {
                 const date = new Date(order.createdAt).toLocaleString("en-IN", {
-                  dateStyle: "medium", timeStyle: "short"
+                  dateStyle: "medium", 
+                  timeStyle: "short",
+                  timeZone: "Asia/Kolkata"
                 });
                 return (
                   <tr key={order._id} className="hover:bg-[#DEF9EC]/10 transition-all duration-300 group">
@@ -156,7 +158,9 @@ export default async function OrdersPage() {
           )}
           {orders.map((order) => {
             const date = new Date(order.createdAt).toLocaleString("en-IN", {
-              dateStyle: "medium", timeStyle: "short"
+              dateStyle: "medium", 
+              timeStyle: "short",
+              timeZone: "Asia/Kolkata"
             });
             return (
               <div key={order._id} className="bg-white rounded-[2rem] min-[400px]:rounded-[2.5rem] border border-gray-100 shadow-xl p-3 min-[380px]:p-4 min-[400px]:p-6 relative overflow-hidden">

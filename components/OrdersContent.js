@@ -110,15 +110,17 @@ export default function OrdersContent() {
             const remainingMins = Math.max(0, deliveryMinutes - timeDiffMins);
             const isDelivered = remainingMins <= 0;
 
-            const timeStr = orderDate.toLocaleTimeString([], {
+            const timeStr = orderDate.toLocaleTimeString("en-IN", {
               hour: "2-digit",
               minute: "2-digit",
+              timeZone: "Asia/Kolkata"
             });
-            const arrivalTime = new Date(orderDate.getTime() + deliveryMinutes * 60000).toLocaleTimeString([], {
+            const arrivalTime = new Date(orderDate.getTime() + deliveryMinutes * 60000).toLocaleTimeString("en-IN", {
               hour: "2-digit",
               minute: "2-digit",
+              timeZone: "Asia/Kolkata"
             });
-            const dateStr = orderDate.toDateString();
+            const dateStr = orderDate.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" });
 
             return (
               <div
@@ -254,7 +256,7 @@ export default function OrdersContent() {
                     <div>
                        <h2 className="text-3xl font-black text-[#253D4E] mb-2">Order Summary</h2>
                        <p className="text-sm font-bold text-gray-400">Order ID: #{selectedInvoice._id.slice(-10)}</p>
-                       <p className="text-sm font-bold text-gray-400">Date: {new Date(selectedInvoice.createdAt).toDateString()}</p>
+                       <p className="text-sm font-bold text-gray-400">Date: {new Date(selectedInvoice.createdAt).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
                     </div>
                     <div className="text-right">
                        <p className="text-xs font-black text-[#3BB77E] uppercase tracking-widest mb-1">Delivered To</p>
