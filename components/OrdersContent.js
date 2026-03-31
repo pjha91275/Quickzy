@@ -128,11 +128,11 @@ export default function OrdersContent() {
                 key={order._id}
                 className="bg-white rounded-[32px] overflow-hidden border border-gray-100 shadow-xl shadow-gray-200/40 group mb-6"
               >
-                {/* Order Header */}
+                {/* Order header information */}
                 <div className="bg-gray-50/50 p-6 flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-100">
                    <div className="flex items-center justify-between w-full md:w-auto gap-4 text-[10px] md:text-[12px] font-black uppercase tracking-widest text-gray-400">
                       <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-gray-100 text-[#253D4E] shadow-sm">
-                         {/* STANDARDIZED ID: last 6 characters uppercase */}
+                         {/* Unique payment ID */}
                          ID: <span className="text-[#3BB77E]">#{order._id.slice(-6).toUpperCase()}</span>
                       </div>
                       <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-gray-100 text-[#253D4E] shadow-sm">
@@ -252,7 +252,7 @@ export default function OrdersContent() {
         )}
       </div>
 
-      {/* Invoice Modal */}
+      {/* Transaction Summary Overlay */}
       {selectedInvoice && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 print:static print:p-0 print:block">
            <div className="absolute inset-0 bg-[#253D4E]/60 backdrop-blur-md print:hidden" onClick={() => setSelectedInvoice(null)}></div>
@@ -282,7 +282,7 @@ export default function OrdersContent() {
                  <div className="flex justify-between mb-10 print:mt-10">
                     <div>
                        <h2 className="text-3xl font-black text-[#253D4E] mb-2">Order Summary</h2>
-                       {/* STANDARDIZED ID: Changed from slice(-10) to slice(-6).toUpperCase() */}
+                       {/* Normalized Invoice ID */}
                        <p className="text-sm font-bold text-gray-400 uppercase">Order ID: #{selectedInvoice._id.slice(-6).toUpperCase()}</p>
                        <p className="text-sm font-bold text-gray-400">Date: {new Date(selectedInvoice.createdAt).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })}</p>
                     </div>

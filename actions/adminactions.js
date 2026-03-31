@@ -5,7 +5,7 @@ import Order from "@/models/Order";
 import { revalidatePath } from "next/cache";
 import { v2 as cloudinary } from "cloudinary";
 
-// Cloudinary config
+/* Cloudinary integration settings */
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -32,7 +32,7 @@ export async function getProductsAdmin() {
 
   const products = await Product.find({}).lean();
 
-  // Manual sorting to handle specific category priorities
+  /* Category sorting and prioritization */
   products.sort((a, b) => {
     const indexA = categoryPriority.indexOf(a.category);
     const indexB = categoryPriority.indexOf(b.category);
@@ -45,7 +45,7 @@ export async function getProductsAdmin() {
       return 1;
     }
 
-    // Default to existing sorting (Newest first) within the same category or for unknown categories
+    /* Default sorting for remaining items */
     return b._id.toString().localeCompare(a._id.toString());
   });
 
@@ -79,20 +79,20 @@ export async function deleteProductAdmin(formData) {
     } catch (e) { }
   }
 
-  // update data
+  /* Force Next.js data refresh */
   revalidatePath("/admin/products");
   revalidatePath("/shop");
   revalidatePath("/");
   return { success: true };
 }
 
-// Algorithm: Sequential processing for Cloudinary cleanup
+/* Sequential Product Creation and Media Upload */
 export async function saveProductAdmin(formData) {
   try {
     await connectDb();
     const Category = (await import("@/models/Category")).default;
     
-    // get form data
+    /* Extract form data fields */
     const name = formData.get("name");
     const price = formData.get("price");
     const oldPrice = formData.get("oldPrice");
@@ -101,7 +101,7 @@ export async function saveProductAdmin(formData) {
     const discount = formData.get("discount");
     const imageFile = formData.get("image");
 
-    // handle new category creation
+    /* New category creation logic */
     const isNewCategory = category === "NEW_CATEGORY_TRIGGER";
     if (isNewCategory) {
       const newCatName = formData.get("newCategoryName");
@@ -111,13 +111,13 @@ export async function saveProductAdmin(formData) {
       category = newCatName; 
     }
 
-    // Naming Convention Logic (product-1, product-2...)
+    /* Dynamic product numbering (product-1, product-2...) */
     const productCount = await Product.countDocuments();
     const nextProductNum = productCount + 1;
     
     let imageUrl = "";
 
-    // upload product image
+    /* Cloudinary media stream upload */
     if (imageFile && imageFile.size > 0) {
       const arrayBuffer = await imageFile.arrayBuffer();
       const buffer = Buffer.from(arrayBuffer);
@@ -139,7 +139,7 @@ export async function saveProductAdmin(formData) {
       });
     }
 
-    // Save category to db if it's new, using the first product's image
+    /* Initialize new category with first product image */
     if (isNewCategory) {
        const newCatDoc = new Category({
          name: category,
@@ -150,7 +150,7 @@ export async function saveProductAdmin(formData) {
        await newCatDoc.save();
     }
 
-    // Price Validation
+    /* Minimum price validation (15 Rupees) */
     const nPrice = Number(price);
     const nOldPrice = Number(oldPrice) || 0;
     if (nPrice < 15) {
@@ -160,7 +160,7 @@ export async function saveProductAdmin(formData) {
        return { success: false, error: "MRP must be at least 15 Rupees." };
     }
 
-    // get next product id
+    /* Sequential ID generation */
     const lastProduct = await Product.findOne().sort({ id_custom: -1 });
     const nextId = lastProduct && lastProduct.id_custom ? lastProduct.id_custom + 1 : 1000;
 
@@ -177,7 +177,7 @@ export async function saveProductAdmin(formData) {
 
     await newProduct.save();
 
-    // Increment category count
+    /* Synchronize category product count */
     await Category.findOneAndUpdate(
       { name: category },
       { $inc: { count: 1 } }
@@ -199,7 +199,7 @@ export async function getOrdersAdmin() {
   const User = (await import("@/models/User")).default;
   const orders = await Order.find({}).sort({ createdAt: -1 }).lean();
   
-  // get user images for orders
+  /* Map user images to orders */
   const ordersWithUserImg = await Promise.all(orders.map(async (order) => {
     const user = await User.findOne({ email: order.userEmail }).select("image").lean();
     return { ...order, userImage: user?.image || "" };
@@ -223,7 +223,7 @@ export async function updateOrderStatusAdmin(formData) {
   }
   await Order.findByIdAndUpdate(id, updates);
 
-  // Invalidate cache
+  /* Clear server-side cache */
   revalidatePath("/admin/orders");
   revalidatePath("/orders");
   revalidatePath("/profile");
@@ -234,7 +234,7 @@ export async function updateOrderStatusAdmin(formData) {
 export async function getUsersAdmin() {
   await connectDb();
   const User = (await import("@/models/User")).default;
-  // Algorithm: Naive Shuffle (Randomized array sort) - used for product randomization
+  /* Algorithm: Randomized Shuffle for data distribution */
   const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
   const users = await User.find({}).sort({ createdAt: -1 }).lean();
   return JSON.parse(JSON.stringify(users));
@@ -251,7 +251,7 @@ export async function toggleUserRoleAdmin(formData) {
   
   const targetUser = await User.findById(id);
   if (targetUser && targetUser.email === process.env.ADMIN_EMAIL) {
-    // protect main admin
+    /* Protect primary admin account */
     return { success: false, error: "Genesis Admin cannot be modified." };
   }
 
@@ -314,11 +314,11 @@ export async function updateBannerAdmin(formData) {
   const updates = { title, subtitle, type, shopLink, bgColor };
 
   if (imageFile && imageFile.size > 0) {
-    // Determine public_id
+    /* Determine asset public ID */
     let publicId = "footer-banner";
     if (type !== "footer") {
        if (existing.image) {
-          // Extract existing id if it followed our convention: folder/public_id
+          /* Extract existing ID from URL */
           publicId = existing.image.split("/").pop().split(".")[0];
        } else {
           const count = await Banner.countDocuments({ type: "hero" });
@@ -382,7 +382,7 @@ export async function updateProductAdmin(formData) {
 
   const updates = { name, price: nPrice, oldPrice: nOldPrice, unit, category };
 
-  // Handle Category Count synchronization
+  /* Category product count update */
   if (category !== existing.category) {
     await Category.findOneAndUpdate({ name: existing.category }, { $inc: { count: -1 } });
     await Category.findOneAndUpdate({ name: category }, { $inc: { count: 1 } });
@@ -403,7 +403,7 @@ export async function updateProductAdmin(formData) {
       uploadStream.end(buffer);
     });
 
-    // Delete old image
+    /* Cleanup previous media */
     if (existing.image) {
       try {
         const fullPublicId = existing.image.split("/upload/").pop().replace(/v\d+\//, "").split(".")[0];
@@ -457,7 +457,7 @@ export async function saveBannerAdmin(formData) {
 
     let imageUrl = "";
 
-    // upload banner image
+    /* Media stream upload logic */
     if (imageFile && imageFile.size > 0) {
       if (imageFile.size > 2 * 1024 * 1024) {
         return { success: false, error: "Image exceeds 2MB limit." };

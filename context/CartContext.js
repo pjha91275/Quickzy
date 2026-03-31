@@ -21,10 +21,10 @@ export const CartProvider = ({ children }) => {
   const { storeData } = useStore();
   
   const hasLoaded = useRef(false);
-  const lastSyncRef = useRef(""); // To prevent infinite sync loops
+  const lastSyncRef = useRef(""); /* Prevent redundant sync cycles */
   const lastToastRef = useRef(0);
 
-  // Initial load from local storage or database
+  /* Load data from storage or database on mount */
   useEffect(() => {
     const loadAppData = async () => {
       const local = localStorage.getItem("quickzy-cart");
@@ -53,7 +53,7 @@ export const CartProvider = ({ children }) => {
     if (status !== "loading") loadAppData();
   }, [status, session?.user?.email]);
 
-  // Algorithm: Hash Map Lookup (O(1) average lookup for price synchronization)
+  /* Algorithm: Hash Map Lookup for price synchronization */
   const performSync = useCallback((currentCart, pool) => {
     if (!pool?.length || !currentCart?.length) return;
 
@@ -85,7 +85,7 @@ export const CartProvider = ({ children }) => {
     });
 
     if (updatesFound > 0) {
-      // Create a unique fingerprint of the current prices to avoid double-syncing
+      /* Generate sync fingerprint to prevent loops */
       const syncFingerprint = syncedItems.map(i => `${i._id}-${i.price}-${i.discount}`).join("|");
       if (syncFingerprint === lastSyncRef.current) return;
       
@@ -94,17 +94,17 @@ export const CartProvider = ({ children }) => {
       
       const now = Date.now();
       if (now - lastToastRef.current > 3000) {
-        // Price update toast disabled as per user request to avoid noise on reload
+        /* Rate limited price update notification */
         lastToastRef.current = now;
       }
     }
   }, []);
 
-  // Effect to watch pool changes and visibility transitions
+  /* Monitor store changes and page visibility */
   useEffect(() => {
     if (!hasLoaded.current || !storeData.fullPool?.length) return;
     
-    // Immediate check whenever pool or cart items change
+    /* Re-sync when store data updates */
     performSync(cartItems, storeData.fullPool);
 
     const handleVisibility = () => {
@@ -117,7 +117,7 @@ export const CartProvider = ({ children }) => {
     return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, [storeData.fullPool, cartItems, performSync]);
 
-  // Save changes to storage
+  /* Persist cart changes to storage */
   useEffect(() => {
     if (!hasLoaded.current) return;
     localStorage.setItem("quickzy-cart", JSON.stringify(cartItems));
@@ -262,7 +262,7 @@ export const CartProvider = ({ children }) => {
   }, [itemTotalCurrent, appliedCoupon]);
 
   const totalItemsCount = cartItems?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
-  // Enforce a minimum total of 15 Rupees if there are items in the cart
+  /* Minimum order value enforcement (15 Rupees) */
   const minPossibleTotal = cartItems.length > 0 ? 15 : 0;
   const grandTotal = Math.max(minPossibleTotal, (totalBeforeDiscount || 0) - (discountAmount || 0));
 

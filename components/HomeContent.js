@@ -548,7 +548,8 @@ export default function HomeContent({ products, categories, banners_db }) {
                 onChange={(e) => setActivePopularFilter(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 font-bold text-[#253D4E] outline-none appearance-none"
               >
-                {["All", "Milk & Dairy", "Grocery", "Vegetables", "Snacks", "Beverages", "Household Essentials"].map(cat => (
+                {/* Dynamic Category Selector (Mobile) */}
+                {["All", ...(categories?.map(c => c.name) || [])].map(cat => (
                   <option key={cat} value={cat}>{cat}</option>
                 ))}
               </select>
@@ -556,8 +557,9 @@ export default function HomeContent({ products, categories, banners_db }) {
                 <FiArrowRight rotate={90} />
               </div>
             </div>
+            {/* Dynamic Category Tabs (Desktop) */}
             <div className="hidden md:flex flex-nowrap items-center gap-4 text-sm font-semibold text-gray-600 overflow-x-auto no-scrollbar scroll-smooth px-1 whitespace-nowrap">
-              {["All", "Milk & Dairy", "Grocery", "Vegetables", "Snacks", "Beverages", "Household Essentials"].map(cat => (
+              {["All", ...(categories?.map(c => c.name) || [])].map(cat => (
                 <span key={cat} onClick={() => setActivePopularFilter(cat)} className={`cursor-pointer transition-all ${activePopularFilter === cat ? "text-green-600 underline" : "hover:text-green-600"}`}>{cat}</span>
               ))}
             </div>

@@ -14,7 +14,7 @@ export default function ProductsListContent({ initialProducts, categories }) {
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
   const [previews, setPreviews] = useState({});
 
-  // Algorithm: Data Synchronization logic (Syncing Admin List with StoreContext Global Promotions)
+  /* Algorithm: Map Syncing between admin list and global store */
   const performSync = useCallback((currentProducts, pool) => {
     if (!pool?.length || !currentProducts?.length) return;
 
@@ -85,7 +85,7 @@ export default function ProductsListContent({ initialProducts, categories }) {
     const res = await updateProductAdmin(formData);
     if (res.success) {
       toast.success("Product updated successfully");
-      // Clear preview
+      /* Reset image selection */
       const id = formData.get("id");
       setPreviews(prev => {
         const next = { ...prev };
@@ -108,7 +108,7 @@ export default function ProductsListContent({ initialProducts, categories }) {
         title="Delete Product?"
         message="This will remove this item from your catalog and users will no longer see it. Proceed?"
       />
-      {/* Header */}
+      {/* Header section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-black text-[#253D4E]">Products</h1>
@@ -119,7 +119,7 @@ export default function ProductsListContent({ initialProducts, categories }) {
         </Link>
       </div>
 
-      {/* Table Area */}
+      {/* Inventory listing table */}
       <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto no-scrollbar">
           <table className="w-full text-left border-collapse min-w-[900px]">
@@ -144,7 +144,7 @@ export default function ProductsListContent({ initialProducts, categories }) {
                     <form action={handleUpdateProduct} className="grid grid-cols-[100px_1fr_180px_150px_130px] items-center w-full group/edit">
                       <input type="hidden" name="id" value={p._id} />
                       
-                      {/* Image Column */}
+                      {/* Product thumbnail */}
                       <div className="p-5">
                         <label className="relative w-14 h-14 bg-white border border-gray-100 rounded-2xl p-2 flex items-center justify-center shrink-0 cursor-pointer overflow-hidden group/img hover:border-[#3BB77E] transition-all">
                           <input 
@@ -161,13 +161,13 @@ export default function ProductsListContent({ initialProducts, categories }) {
                         </label>
                       </div>
 
-                      {/* Details Column (Name & Unit) */}
+                      {/* Name and unit fields */}
                       <div className="p-5 pr-2">
                         <input name="name" defaultValue={p.name} className="bg-transparent font-black text-[#253D4E] text-[15px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1 w-full outline-none transition-all mb-1" placeholder="Product Name" />
                         <input name="unit" defaultValue={p.unit} className="bg-transparent text-[11px] text-gray-400 font-bold border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-0.5 w-full outline-none transition-all italic" placeholder="Unit (e.g. 1KG)" />
                       </div>
 
-                      {/* Category Column */}
+                      {/* Parent category selection */}
                       <div className="p-5">
                         <select name="category" defaultValue={p.category} className="w-full bg-transparent text-[10px] uppercase font-black tracking-widest px-2 py-1.5 rounded-lg border border-transparent hover:border-gray-200 focus:border-[#3BB77E] outline-none transition-all cursor-pointer">
                           {categories.map(cat => (
@@ -176,7 +176,7 @@ export default function ProductsListContent({ initialProducts, categories }) {
                         </select>
                       </div>
 
-                        {/* Price Column */}
+                      {/* Live pricing and MRP */}
                         <div className="p-5 flex flex-col gap-1.5 min-w-[150px]">
                            <div className="flex items-center gap-1 bg-transparent border border-transparent hover:border-gray-200 focus-within:border-[#3BB77E] focus-within:bg-white rounded px-2 py-1 transition-all">
                               <span className="font-black text-[#3BB77E] text-lg">₹</span>
@@ -188,7 +188,7 @@ export default function ProductsListContent({ initialProducts, categories }) {
                            </div>
                         </div>
 
-                      {/* Action Column */}
+                      {/* Edit controls */}
                       <div className="p-5 text-right flex items-center justify-end gap-2">
                         <div className="opacity-0 group-focus-within/edit:opacity-100 group-hover/edit:opacity-100 transition-all duration-300">
                           <button type="submit" className="bg-[#3BB77E] text-white text-[9px] font-black uppercase tracking-widest px-3 py-2 rounded-xl shadow-md hover:bg-[#29a56c] transition-colors cursor-pointer active:scale-95 whitespace-nowrap">

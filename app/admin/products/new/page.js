@@ -13,6 +13,7 @@ export default function NewProductPage() {
   const [showNewCat, setShowNewCat] = useState(false);
 
 
+  /* Algorithm: Form Submission and Server Action trigger */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -63,7 +64,7 @@ export default function NewProductPage() {
         </div>
       </div>
 
-      {/* Main Form */}
+      {/* Main inventory form */}
       <form onSubmit={handleSubmit} className="bg-white rounded-[2rem] p-6 md:p-10 border border-gray-100 shadow-sm space-y-8">
         
         {/* Basic Information */}
@@ -91,7 +92,7 @@ export default function NewProductPage() {
           </div>
         </div>
 
-        {/* Dynamic New Category Section */}
+        {/* Expanded Category Setup */}
         {showNewCat && (
           <div className="bg-[#F2FBF6] rounded-3xl p-6 border-2 border-dashed border-[#BCE3C9] animate-fadeIn space-y-6">
             <div className="flex items-center gap-3 text-[#3BB77E] mb-2">
@@ -108,7 +109,7 @@ export default function NewProductPage() {
           </div>
         )}
 
-        {/* Pricing & Units */}
+        {/* Commercial and inventory units */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
             <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Sale Price (₹) <span className="text-red-400">*</span></label>
@@ -124,13 +125,13 @@ export default function NewProductPage() {
           </div>
         </div>
 
-        {/* Badges/Discount */}
+        {/* Promotional highlight text */}
         <div className="space-y-2">
             <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Discount Badge Text (Optional)</label>
             <input type="text" name="discount" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30" placeholder="e.g. 10% OFF, BESTSELLER" />
         </div>
 
-        {/* Image Upload */}
+        {/* Media management and preview */}
         <div className="space-y-3 pt-4 border-t border-gray-100">
           <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Upload Visual Asset</label>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
@@ -140,7 +141,7 @@ export default function NewProductPage() {
                ) : (
                  <FiImage className="text-4xl opacity-50" />
                )}
-               {/* Note: This naturally maps into formData to be sent safely to the Next server */}
+               {/* Hidden image input for Cloudinary upload */}
                <input required type="file" name="image" accept="image/png, image/jpeg, image/webp" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
              </div>
              <div className="flex-1">
@@ -153,7 +154,7 @@ export default function NewProductPage() {
           </div>
         </div>
 
-        {/* Global Submit */}
+        {/* Final submission control */}
         <div className="pt-6">
           <button disabled={loading} type="submit" className="w-full bg-[#3BB77E] text-white py-5 rounded-2xl font-black text-xl hover:bg-[#29A56C] transition-all shadow-xl shadow-green-100 flex items-center justify-center gap-3 disabled:opacity-50 hover:-translate-y-1">
             {loading ? (

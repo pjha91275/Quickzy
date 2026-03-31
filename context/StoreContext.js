@@ -74,6 +74,7 @@ const applyGlobalPromotions = (items, homeCount, targetPercent = 35) => {
 
 export const StoreProvider = ({ children }) => {
   const [storeData, setStoreData] = useState({
+    isInitialized: false,
     fullPool: [],
     shopShuffled: [],
     recentlyAdded: [],
@@ -86,8 +87,11 @@ export const StoreProvider = ({ children }) => {
     categories: []
   });
 
-  // Algorithm: Data Partitioning & Shuffling (Preparing initial store state)
+  /* Algorithm: Data Partitioning & Shuffling (Initial store state) */
   const initializeStore = useCallback((products, categories) => {
+    /* Prevent re-shuffling on navigation - state only resets on hard reload */
+    if (storeData.isInitialized) return;
+
     setStoreData(prev => {
       if (!products?.length) return prev;
       
@@ -106,7 +110,8 @@ export const StoreProvider = ({ children }) => {
 
       const topRecentRaw = sortedByRecency.slice(0, numRecent);
       const recentIds = new Set(topRecentRaw.map(r => r._id || r.id));
-      const remainingShuffled = shuffleArray(cleanPool.filter(p => !recentIds.has(p._id || p.id)));
+      /* Take pool after removing top 3 recently added (Sorted by recency) */
+      const remainingShuffled = cleanPool.filter(p => !recentIds.has(p._id || p.id));
       const tempAvailable = [...remainingShuffled];
 
       const popularSetRaw = [];
@@ -156,7 +161,7 @@ export const StoreProvider = ({ children }) => {
       const topPicks = pricedHomePageItems.slice(numRecent + popularSetRaw.length + DAILY_SIZE + DEALS_SIZE + SELLING_SIZE + TRENDING_SIZE);
 
       return {
-        ...prev,
+        isInitialized: true,
         fullPool: finalPool,
         shopShuffled: shuffleArray(finalPool),
         recentlyAdded,

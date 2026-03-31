@@ -57,7 +57,7 @@ export default function NewBannerPage() {
 
       <form onSubmit={handleSubmit} className="bg-white rounded-[2rem] p-6 md:p-10 border border-gray-100 shadow-sm space-y-8">
         
-        {/* Basic Info */}
+        {/* Core banner classification */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Banner Type <span className="text-red-400">*</span></label>
@@ -72,7 +72,7 @@ export default function NewBannerPage() {
           </div>
         </div>
 
-        {/* Text Fields */}
+        {/* Promotional text and taglines */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Main Title <span className="text-red-400">*</span></label>
@@ -97,7 +97,7 @@ export default function NewBannerPage() {
             <input type="text" required name="bgColor" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30" placeholder="bg-[#DEF9EC] or bg-pink-50" />
         </div>
 
-        {/* Secure Cloudinary Image Upload Section */}
+        {/* Media upload and preview logic */}
         <div className="space-y-3 pt-4 border-t border-gray-100">
           <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Upload Transparent PNG/WebP <span className="text-red-400">*</span></label>
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
@@ -110,7 +110,7 @@ export default function NewBannerPage() {
                     <span className="font-bold opacity-50">Click to Browse</span>
                  </div>
                )}
-               {/* Note: This naturally maps into formData to be sent safely to the Next server */}
+               {/* Cloudinary media stream input */}
                <input required type="file" name="image" accept="image/png, image/jpeg, image/webp" onChange={handleImageChange} className="absolute inset-0 opacity-0 cursor-pointer" />
              </div>
              <div className="flex-1">
@@ -124,7 +124,7 @@ export default function NewBannerPage() {
           </div>
         </div>
 
-        {/* Global Submit */}
+        {/* Final submission control */}
         <div className="pt-6">
           <button disabled={loading} type="submit" className="w-full bg-[#3BB77E] text-white py-5 rounded-2xl font-black text-xl hover:bg-[#29A56C] transition-all shadow-xl shadow-green-100 flex items-center justify-center gap-3 disabled:opacity-50 hover:-translate-y-1">
             {loading ? (

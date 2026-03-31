@@ -158,6 +158,7 @@ export default function AdminOrdersList({ initialOrders }) {
                           <option value="Cancelled" className="bg-white text-red-700">● &nbsp; Cancelled</option>
                         </select>
                         <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
+                          {/* Visual indicator for lockdown state */}
                           {isLockdown || (order.status === "Cancelled" && order.cancelledBy === "user") ? <FiLock size={10} className={isLockdown && currentUIStatus !== "Cancelled" ? "text-white" : ""} /> : <FiArrowRight size={10} />}
                         </div>
                       </div>
@@ -240,7 +241,7 @@ export default function AdminOrdersList({ initialOrders }) {
         })}
       </div>
 
-      {/* Manifest Modal */}
+      {/* Full Order Details Overlay */}
       {selectedOrder && (
         <div className="fixed inset-0 z-[110] bg-gray-900/40 backdrop-blur-sm overflow-y-auto py-4 sm:py-8 no-scrollbar scroll-smooth">
           <div className="fixed inset-0" onClick={() => setSelectedOrder(null)} />

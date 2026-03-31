@@ -5,7 +5,7 @@ import ShopContent from "@/components/ShopContent.js";
 import { fetchProdAndCat } from "@/actions/dbactions";
 
 export default async function Shop({ searchParams }) {
-  // Ensure we track searchParams to trigger fresh re-fetching on navigation
+  /* Algorithm: Dynamic Param Tracking to trigger fresh data fetch */
   const params = await searchParams;
   const { products, categories } = await fetchProdAndCat();
 

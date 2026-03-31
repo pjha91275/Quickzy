@@ -30,7 +30,7 @@ export default function BannersPage() {
     }
   };
 
-  // remove html tags
+  /* Algorithm: HTML Stripper for cleaning banner text */
   const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, ' ') : '';
 
   const handleDelete = async () => {
@@ -99,7 +99,7 @@ export default function BannersPage() {
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
               <tr className="bg-[#F4F6FA] border-b border-gray-100">
-                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest rounded-tl-3xl">Visual</th>
+                {/* Visual Preview */}
                 <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest">Banner Info</th>
                 <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest">Type</th>
                 <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest">Link</th>
@@ -139,7 +139,7 @@ export default function BannersPage() {
                         </label>
                       </div>
 
-                      {/* Banner Info Column */}
+                      {/* Content details and taglines */}
                       <div className="p-5 min-w-[300px]">
                         <div className="flex flex-col gap-1">
                           <textarea name="title" defaultValue={b.title || ""} className="bg-transparent font-black text-[#253D4E] text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
@@ -157,7 +157,7 @@ export default function BannersPage() {
                         </select>
                       </div>
 
-                      {/* Link Column */}
+                      {/* Navigation destination */}
                       <div className="p-5">
                         <div className="flex items-center gap-2 bg-transparent border border-transparent hover:border-gray-200 focus-within:border-[#3BB77E] focus-within:bg-white group/link rounded px-2 py-1.5 transition-all">
                           <FiLink className="text-gray-400 shrink-0 text-xs" />
@@ -165,7 +165,7 @@ export default function BannersPage() {
                         </div>
                       </div>
 
-                      {/* Action Column */}
+                      {/* Action controls */}
                       <div className="p-5 text-right flex items-center justify-end gap-2">
                         <div className="opacity-0 group-focus-within/edit:opacity-100 group-hover/edit:opacity-100 transition-all duration-300">
                           <button type="submit" className="bg-[#3BB77E] text-white text-[9px] font-black uppercase tracking-widest px-3 py-2 rounded-xl shadow-md hover:bg-[#29a56c] transition-colors cursor-pointer active:scale-95 whitespace-nowrap">
