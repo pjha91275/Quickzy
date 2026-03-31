@@ -44,6 +44,7 @@ Quickzy leverages a modern, full-stack architecture designed for speed and relia
 *   **Checkout & Profile:** Streamlined checkout process and comprehensive order history with status tracking.
 
 ### **🛠 Admin Panel (Business Operations)**
+*   **Fully Responsive Dashboard:** Optimized for professional management across Mobile, Tablet (iPad Pro), and Desktop viewports.
 *   **Real-time Metrics:** A dashboard monitoring total sales (INR), order counts, user growth, and inventory levels.
 *   **Product & Banner Management:**
     *   Full CRUD for products with automated **Cloudinary Sequential Naming** (`product-50`, `product-51`).
