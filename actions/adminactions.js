@@ -14,6 +14,10 @@ cloudinary.config({
 
 export async function getProductsAdmin() {
   await connectDb();
+  const Category = (await import("@/models/Category")).default;
+  
+  /* DB Hygiene: Automatically purge existing categories with zero products */
+  await Category.deleteMany({ count: 0 });
 
   const categoryPriority = [
     "Milk & Dairy",

@@ -10,7 +10,8 @@ export const fetchProdAndCat = async () => {
   // Algorithm: Concurrency (Promise.all) for parallel data fetching
   const [products, categories] = await Promise.all([
     Product.find({}).sort({ _id: -1 }).lean(),
-    Category.find({}).lean()
+    /* Commercial Integrity: Only fetch categories that actually contain products */
+    Category.find({ count: { $gt: 0 } }).lean()
   ]);
 
   return JSON.parse(JSON.stringify({ products, categories }));
@@ -47,7 +48,8 @@ export const fetchAllData = async () => {
 
 export const fetchCategories = async () => {
   await connectDb();
-  const categories = await Category.find({}).lean();
+  /* Systemwide Hygiene: Only show categories with inventory to the end user */
+  const categories = await Category.find({ count: { $gt: 0 } }).lean();
   return JSON.parse(JSON.stringify(categories));
 };
 
