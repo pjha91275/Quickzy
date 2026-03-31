@@ -14,8 +14,41 @@ cloudinary.config({
 
 export async function getProductsAdmin() {
   await connectDb();
-  // avoid serialization errors
-  const products = await Product.find({}).sort({ _id: -1 }).lean();
+
+  const categoryPriority = [
+    "Milk & Dairy",
+    "Dairy",
+    "Fruits",
+    "Vegetables",
+    "Tea & Coffee",
+    "Snacks",
+    "Personal Care",
+    "Household Essentials",
+    "Beverages",
+    "Electronics",
+    "Stationery",
+    "Grocery"
+  ];
+
+  const products = await Product.find({}).lean();
+
+  // Manual sorting to handle specific category priorities
+  products.sort((a, b) => {
+    const indexA = categoryPriority.indexOf(a.category);
+    const indexB = categoryPriority.indexOf(b.category);
+
+    if (indexA !== -1 && indexB !== -1) {
+      if (indexA !== indexB) return indexA - indexB;
+    } else if (indexA !== -1) {
+      return -1;
+    } else if (indexB !== -1) {
+      return 1;
+    }
+
+    // Default to existing sorting (Newest first) within the same category or for unknown categories
+    return b._id.toString().localeCompare(a._id.toString());
+  });
+
   return JSON.parse(JSON.stringify(products));
 }
 
