@@ -204,15 +204,15 @@ export const CartProvider = ({ children }) => {
     const finalPricePerUnit = mrp * (1 - totalDiscountPercent / 100);
     
     return {
-      itemTotalCurrent: finalPricePerUnit * qty,
-      itemTotalOld: mrp * qty,
+      itemTotalCurrent: Math.max(15, finalPricePerUnit) * qty,
+      itemTotalOld: Math.max(15, mrp) * qty,
       hasDiscount: totalDiscountPercent > 0,
       originalDiscount: originalDiscountPercent,
       comboDiscount: comboDiscountPercent,
       totalDiscount: totalDiscountPercent,
       isCombo: qty >= 2,
       mrp: mrp,
-      unitPriceCurrent: finalPricePerUnit
+      unitPriceCurrent: Math.max(15, finalPricePerUnit)
     };
   };
 
@@ -262,7 +262,9 @@ export const CartProvider = ({ children }) => {
   }, [itemTotalCurrent, appliedCoupon]);
 
   const totalItemsCount = cartItems?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
-  const grandTotal = Math.max(0, (totalBeforeDiscount || 0) - (discountAmount || 0));
+  // Enforce a minimum total of 15 Rupees if there are items in the cart
+  const minPossibleTotal = cartItems.length > 0 ? 15 : 0;
+  const grandTotal = Math.max(minPossibleTotal, (totalBeforeDiscount || 0) - (discountAmount || 0));
 
   return (
     <CartContext.Provider

@@ -176,19 +176,17 @@ export default function ProductsListContent({ initialProducts, categories }) {
                         </select>
                       </div>
 
-                      {/* Price Column */}
-                      <div className="p-5">
-                        <div className="flex items-center gap-1 bg-transparent border border-transparent hover:border-gray-200 focus-within:border-[#3BB77E] focus-within:bg-white rounded px-2 py-1 transition-all">
-                           <span className="font-black text-[#3BB77E] text-lg">₹</span>
-                           <input name="price" type="number" step="0.01" defaultValue={p.price} className="bg-transparent font-black text-lg text-[#3BB77E] w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                        {/* Price Column */}
+                        <div className="p-5 flex flex-col gap-1.5 min-w-[150px]">
+                           <div className="flex items-center gap-1 bg-transparent border border-transparent hover:border-gray-200 focus-within:border-[#3BB77E] focus-within:bg-white rounded px-2 py-1 transition-all">
+                              <span className="font-black text-[#3BB77E] text-lg">₹</span>
+                              <input required name="price" type="number" min="15" defaultValue={p.price} className="bg-transparent font-black text-lg text-[#3BB77E] w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" />
+                           </div>
+                           <div className="flex items-center gap-1 bg-transparent border border-transparent hover:border-gray-200 focus-within:border-[#3BB77E] focus-within:bg-white rounded px-2 py-1 transition-all opacity-70">
+                              <span className="font-bold text-gray-400 text-xs">MRP ₹</span>
+                              <input name="oldPrice" type="number" min="15" defaultValue={p.oldPrice || ""} className="bg-transparent font-bold text-xs text-gray-400 w-full outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none" placeholder="0" />
+                           </div>
                         </div>
-                        {p.oldPrice > 0 && (
-                          <div className="flex items-center gap-2 px-2 mt-0.5 opacity-50">
-                            <span className="text-xs text-gray-400 line-through font-bold">₹{p.oldPrice}</span>
-                            <span className="text-[10px] font-black text-rose-500 bg-rose-50 px-1.5 rounded">-{p.discount}</span>
-                          </div>
-                        )}
-                      </div>
 
                       {/* Action Column */}
                       <div className="p-5 text-right flex items-center justify-end gap-2">

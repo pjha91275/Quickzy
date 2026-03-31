@@ -150,6 +150,16 @@ export async function saveProductAdmin(formData) {
        await newCatDoc.save();
     }
 
+    // Price Validation
+    const nPrice = Number(price);
+    const nOldPrice = Number(oldPrice) || 0;
+    if (nPrice < 15) {
+       return { success: false, error: "Price must be at least 15 Rupees." };
+    }
+    if (nOldPrice > 0 && nOldPrice < 15) {
+       return { success: false, error: "MRP must be at least 15 Rupees." };
+    }
+
     // get next product id
     const lastProduct = await Product.findOne().sort({ id_custom: -1 });
     const nextId = lastProduct && lastProduct.id_custom ? lastProduct.id_custom + 1 : 1000;
@@ -157,8 +167,8 @@ export async function saveProductAdmin(formData) {
     const newProduct = new Product({
       id_custom: nextId,
       name,
-      price: Number(price),
-      oldPrice: Number(oldPrice) || 0,
+      price: nPrice,
+      oldPrice: nOldPrice,
       unit,
       category,
       discount,
@@ -347,7 +357,6 @@ export async function updateBannerAdmin(formData) {
 export async function updateProductAdmin(formData) {
   const id = formData.get("id");
   const name = formData.get("name");
-  const price = Number(formData.get("price"));
   const unit = formData.get("unit");
   const category = formData.get("category");
   const imageFile = formData.get("image");
@@ -361,7 +370,17 @@ export async function updateProductAdmin(formData) {
 
   if (!existing) return { success: false, error: "Product not found" };
 
-  const updates = { name, price, unit, category };
+  const nPrice = Number(formData.get("price"));
+  const nOldPrice = Number(formData.get("oldPrice")) || 0;
+
+  if (nPrice < 15) {
+     return { success: false, error: "Price must be at least 15 Rupees." };
+  }
+  if (nOldPrice > 0 && nOldPrice < 15) {
+     return { success: false, error: "MRP must be at least 15 Rupees." };
+  }
+
+  const updates = { name, price: nPrice, oldPrice: nOldPrice, unit, category };
 
   // Handle Category Count synchronization
   if (category !== existing.category) {
