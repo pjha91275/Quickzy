@@ -685,22 +685,28 @@ export default function HomeContent({ products, categories, banners_db }) {
         <ProductList title="Recently added" items={dataReady.recentlyAdded} />
       </section>
 
-      <div className="rounded-[40px] mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[300px] md:min-h-[400px]">
+      <div 
+        onClick={() => router.push(footerBanner?.shopLink || "/shop")}
+        className="rounded-[40px] mt-10 relative overflow-hidden border border-gray-100 shadow-sm min-h-[300px] md:min-h-[400px] cursor-pointer group"
+      >
         {/* background image */}
         <img
           src={footerBanner?.image || "https://res.cloudinary.com/dnafzpa8x/image/upload/v1774162639/quickzy/banners/footer-banner.jpg"}
-          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 md:scale-100 scale-[2.2]"
+          className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 md:scale-100 scale-[2.2] group-hover:scale-[1.03]"
           alt=""
         />
         {/* overlay */}
-        <div className="absolute inset-0 bg-black/0 md:bg-black/10 transition-colors" />
+        <div className="absolute inset-0 bg-black/0 md:bg-black/5 group-hover:bg-black/10 transition-colors" />
         {/* mobile layout */}
         <div className="relative z-10 flex flex-col justify-between h-full p-8 md:p-14 min-h-[300px] md:min-h-[400px]">
           <div className="max-w-[280px] md:max-w-lg">
             <h2 className="text-3xl md:text-5xl font-black text-white leading-tight transition-all text-shadow-strong">Stay home &amp; get <br />your daily <br /><span className="text-[#3BB77E]">needs from <br />our shop</span></h2>
           </div>
           <div className="mt-8">
-            <div className="bg-white rounded-full p-1.5 md:p-2 flex max-w-sm md:max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all">
+            <div 
+              onClick={e => e.stopPropagation()}
+              className="bg-white rounded-full p-1.5 md:p-2 flex max-w-sm md:max-w-md shadow-xl border-2 border-white focus-within:border-[#3BB77E] transition-all"
+            >
               <input 
                 type="email" 
                 placeholder="Enter email" 

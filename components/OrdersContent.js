@@ -148,13 +148,13 @@ export default function OrdersContent() {
                          <div className="flex items-center justify-center gap-2 bg-red-50 px-4 py-1.5 rounded-full border border-red-100 text-red-600 font-black shadow-lg">
                             <FiX /> Order Cancelled
                          </div>
-                      ) : order.status === "Out for Delivery" ? (
-                        <div className="flex items-center justify-center gap-2 bg-orange-50 px-4 py-1.5 rounded-full border border-orange-100 text-orange-600 font-black shadow-lg">
-                           <FiTruck className="translate-x-1" /> Out for Delivery
-                        </div>
                       ) : isDelivered ? (
                         <div className="flex items-center justify-center gap-2 bg-[#3BB77E] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-white shadow-lg shadow-green-100">
                            <FiCheckCircle /> Delivered Successfully
+                        </div>
+                      ) : order.status === "Out for Delivery" ? (
+                        <div className="flex items-center justify-center gap-2 bg-orange-50 px-4 py-1.5 rounded-full border border-orange-100 text-orange-600 font-black shadow-lg">
+                           <FiTruck className="translate-x-1" /> Out for Delivery
                         </div>
                       ) : (
                         <div className="flex items-center justify-center gap-2 bg-[#DEF9EC] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-[#3BB77E] animate-pulse">

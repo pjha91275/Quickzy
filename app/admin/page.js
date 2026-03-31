@@ -98,7 +98,7 @@ export default async function AdminDashboard() {
                     const deliveryMinutes = (orderSeed % (15 - 8 + 1)) + 8;
                     const timeDiffMins = Math.floor(Math.max(0, new Date() - orderDate) / 60000);
                     const isNaturallyDelivered = (order.status === 'Processing' || order.status === 'Out for Delivery') && (deliveryMinutes - timeDiffMins) <= 0;
-                    const displayStatus = isNaturallyDelivered ? 'Delivered' : (order.status || 'Pending');
+                    const displayStatus = (isNaturallyDelivered || order.status === 'Delivered') ? 'Delivered Successfully' : (order.status || 'Pending');
                     
                     return (
                     <tr key={order._id?.toString()} className="hover:bg-gray-50/30 transition-colors">
@@ -114,7 +114,7 @@ export default async function AdminDashboard() {
                       <td className="p-4 text-[#3BB77E]">₹{order.totalAmount}</td>
                       <td className="p-4">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                          displayStatus === 'Delivered' ? 'bg-green-600 text-white' :
+                          displayStatus === 'Delivered Successfully' ? 'bg-green-600 text-white' :
                           displayStatus === 'Processing' ? 'bg-[#DEF9EC] text-[#3BB77E]' :
                           displayStatus === 'Out for Delivery' ? 'bg-orange-100 text-orange-700' :
                           displayStatus === 'Cancelled' ? 'bg-red-50 text-red-600' :

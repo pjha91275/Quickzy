@@ -70,7 +70,7 @@ export const saveCheckoutDetails = async (email, details) => {
 };
 
 // Validate if a coupon code can be applied
-export const validateCoupon = async (code, cartSubtotal, userEmail, cartItems = []) => {
+export const validateCoupon = async (code, cartTotal, userEmail, cartItems = []) => {
   if (!code) return { success: false, message: "Please enter a code" };
   
   await connectDb();
@@ -83,7 +83,7 @@ export const validateCoupon = async (code, cartSubtotal, userEmail, cartItems = 
     return { success: false, message: "Invalid or expired coupon" };
   }
   
-  if (coupon.minOrderAmount > 0 && cartSubtotal < coupon.minOrderAmount) {
+  if (coupon.minOrderAmount > 0 && cartTotal < coupon.minOrderAmount) {
     return { success: false, message: `Minimum order amount for this coupon is ₹${coupon.minOrderAmount}` };
   }
 

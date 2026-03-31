@@ -234,15 +234,17 @@ export const CartProvider = ({ children }) => {
   const handlingFeeCurrent = isFreeFees ? 0 : baseHandlingFee;
   const deliveryFeeCurrent = isFreeFees ? 0 : baseDeliveryFee;
 
+  const totalBeforeDiscount = itemTotalCurrent + baseHandlingFee + baseDeliveryFee;
+
   let discountAmount = 0;
   if (appliedCoupon) {
     if (appliedCoupon.discountType === "percentage") {
-      discountAmount = itemTotalCurrent * (appliedCoupon.discountValue / 100);
+      discountAmount = totalBeforeDiscount * (appliedCoupon.discountValue / 100);
     } else {
       discountAmount = appliedCoupon.discountValue;
     }
     if (isFreeFees) discountAmount += (baseHandlingFee + baseDeliveryFee);
-    const maxDiscount = itemTotalCurrent + (isFreeFees ? (baseHandlingFee + baseDeliveryFee) : 0);
+    const maxDiscount = totalBeforeDiscount;
     if (discountAmount > maxDiscount) discountAmount = maxDiscount;
   }
 
@@ -260,7 +262,7 @@ export const CartProvider = ({ children }) => {
   }, [itemTotalCurrent, appliedCoupon]);
 
   const totalItemsCount = cartItems?.reduce((acc, item) => acc + (item.quantity || 1), 0) || 0;
-  const grandTotal = Math.max(0, (itemTotalCurrent || 0) + (baseHandlingFee || 0) + (baseDeliveryFee || 0) - (discountAmount || 0));
+  const grandTotal = Math.max(0, (totalBeforeDiscount || 0) - (discountAmount || 0));
 
   return (
     <CartContext.Provider

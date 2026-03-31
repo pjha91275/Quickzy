@@ -40,7 +40,8 @@ export default function Cart() {
   const handleApplyCoupon = async () => {
     if (!couponCode.trim()) return;
     setCouponLoading(true);
-    const res = await validateCoupon(couponCode, itemTotalCurrent, session?.user?.email, cartItems);
+    const totalBeforeCoupon = itemTotalCurrent + handlingFeeCurrent + deliveryFeeCurrent;
+    const res = await validateCoupon(couponCode, totalBeforeCoupon, session?.user?.email, cartItems);
     if (res.success) {
       saveCoupon(res.coupon);
       toast.success("Coupon applied successfully!");
@@ -406,7 +407,8 @@ export default function Cart() {
                 <p className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] mb-4">Available Offers</p>
                 <div className="space-y-4">
                   {availableCoupons.map((c, index) => {
-                    let isValidNow = itemTotalCurrent >= c.minOrderAmount;
+                    const totalBeforeCoupon = itemTotalCurrent + handlingFeeCurrent + deliveryFeeCurrent;
+                    let isValidNow = totalBeforeCoupon >= c.minOrderAmount;
                     
                     if (c.code === "FRESHVEG") {
                       const hasVegetable = cartItems.some(item => (item.category || "").toLowerCase().includes("vegetable"));
@@ -434,7 +436,8 @@ export default function Cart() {
                               return;
                             }
                             setCouponLoading(true);
-                            const res = await validateCoupon(c.code, itemTotalCurrent, session?.user?.email, cartItems);
+                            const totalBeforeCoupon = itemTotalCurrent + handlingFeeCurrent + deliveryFeeCurrent;
+                            const res = await validateCoupon(c.code, totalBeforeCoupon, session?.user?.email, cartItems);
                             setCouponLoading(false);
                             if (res.success) {
                               saveCoupon(res.coupon);
@@ -444,10 +447,10 @@ export default function Cart() {
                               toast.error(res.message);
                             }
                           } else {
-                            if (c.code === "FRESHVEG" && itemTotalCurrent >= c.minOrderAmount) {
+                            if (c.code === "FRESHVEG" && totalBeforeCoupon >= c.minOrderAmount) {
                                toast.info(`Add at least one vegetable item to unlock this coupon!`);
                             } else {
-                               toast.info(`Add ₹${(c.minOrderAmount - itemTotalCurrent).toFixed(2)} more to unlock this coupon!`);
+                               toast.info(`Add ₹${(c.minOrderAmount - totalBeforeCoupon).toFixed(2)} more to unlock this coupon!`);
                             }
                           }
                         }}

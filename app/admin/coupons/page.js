@@ -1,13 +1,67 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { getCouponsAdmin, deleteCouponAdmin, toggleCouponStatusAdmin } from "@/actions/adminactions";
 import { FiPlus, FiTrash2, FiTag, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import DeleteConfirmation from "@/components/DeleteConfirmation";
+import { toast } from "react-toastify";
 
-export default async function CouponsPage() {
-  const coupons = await getCouponsAdmin();
+export default function CouponsPage() {
+  const [coupons, setCoupons] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
+
+  const loadCoupons = async () => {
+    setLoading(true);
+    const data = await getCouponsAdmin();
+    setCoupons(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadCoupons();
+  }, []);
+
+  const handleDelete = async () => {
+    if (!deleteModal.id) return;
+    const formData = new FormData();
+    formData.append("id", deleteModal.id);
+    const res = await deleteCouponAdmin(formData);
+    if (res.success) {
+      toast.success("Coupon deleted successfully");
+      loadCoupons();
+    } else {
+      toast.error("Failed to delete coupon");
+    }
+    setDeleteModal({ isOpen: false, id: null });
+  };
+
+  const handleToggle = async (id, currentStatus) => {
+    const formData = new FormData();
+    formData.append("id", id);
+    formData.append("isActive", currentStatus.toString());
+    await toggleCouponStatusAdmin(formData);
+    loadCoupons();
+  };
+
+  if (loading && coupons.length === 0) {
+    return (
+      <div className="min-h-[400px] flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-[#3BB77E] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
+      <DeleteConfirmation 
+        isOpen={deleteModal.isOpen}
+        onCancel={() => setDeleteModal({ isOpen: false, id: null })}
+        onConfirm={handleDelete}
+        title="Delete Coupon?"
+        message="This will permanently disable this discount code. Do you want to proceed?"
+      />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
         <div>
@@ -42,14 +96,14 @@ export default async function CouponsPage() {
                 const colorVariants = [
                   "bg-[#DEF9EC] text-[#3BB77E] border-green-100", // Green
                   "bg-blue-50 text-blue-500 border-blue-100", // Blue
-                  "bg-indigo-50 text-indigo-500 border-indigo-100", // Indigo instead of Orange
+                  "bg-indigo-50 text-indigo-500 border-indigo-100", // Indigo
                   "bg-purple-50 text-purple-500 border-purple-100", // Purple
                   "bg-pink-50 text-pink-500 border-pink-100", // Pink
                 ];
                 const theme = colorVariants[index % colorVariants.length];
                 
                 return (
-                <tr key={c._id} className="hover:bg-gray-50/50 transition-colors group">
+                <tr key={c._id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="p-5 align-middle">
                     <div className={`inline-flex items-center gap-2 px-4 py-2 border rounded-xl relative overflow-hidden ${theme}`}>
                        <FiTag className="text-lg shrink-0" />
@@ -73,33 +127,32 @@ export default async function CouponsPage() {
                     </span>
                   </td>
                   <td className="p-5 align-middle text-center">
-                    <form action={toggleCouponStatusAdmin} className="inline-block relative z-10">
-                      <input type="hidden" name="id" value={c._id} />
-                      <input type="hidden" name="isActive" value={c.isActive ? "true" : "false"} />
-                      <button type="submit" title="Toggle Status" className={`group relative px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 mx-auto overflow-hidden ${
+                    <button 
+                      onClick={() => handleToggle(c._id, c.isActive)}
+                      className={`group relative px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 mx-auto overflow-hidden ${
                         c.isActive ? "bg-green-50 text-[#3BB77E] hover:bg-rose-50" : "bg-rose-50 text-rose-500 hover:bg-green-50"
-                      }`}>
-                        {c.isActive ? (
-                          <>
-                            <span className="flex items-center gap-1 group-hover:hidden"><FiCheckCircle /> Active</span>
-                            <span className="hidden group-hover:flex items-center gap-1 text-rose-500"><FiXCircle /> Disable</span>
-                          </>
-                        ) : (
-                          <>
-                            <span className="flex items-center gap-1 group-hover:hidden"><FiXCircle /> Disabled</span>
-                            <span className="hidden group-hover:flex items-center gap-1 text-[#3BB77E]"><FiCheckCircle /> Make Active</span>
-                          </>
-                        )}
-                      </button>
-                    </form>
+                      }`}
+                    >
+                      {c.isActive ? (
+                        <>
+                          <span className="flex items-center gap-1 group-hover:hidden"><FiCheckCircle /> Active</span>
+                          <span className="hidden group-hover:flex items-center gap-1 text-rose-500"><FiXCircle /> Disable</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="flex items-center gap-1 group-hover:hidden"><FiXCircle /> Disabled</span>
+                          <span className="hidden group-hover:flex items-center gap-1 text-[#3BB77E]"><FiCheckCircle /> Make Active</span>
+                        </>
+                      )}
+                    </button>
                   </td>
                   <td className="p-5 text-right align-middle">
-                    <form action={deleteCouponAdmin} className="inline-block relative z-10">
-                      <input type="hidden" name="id" value={c._id} />
-                      <button type="submit" className="p-3 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer">
-                        <FiTrash2 className="text-xl" />
-                      </button>
-                    </form>
+                    <button 
+                      onClick={() => setDeleteModal({ isOpen: true, id: c._id })}
+                      className="p-3 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
+                    >
+                      <FiTrash2 className="text-xl" />
+                    </button>
                   </td>
                 </tr>
               )})}

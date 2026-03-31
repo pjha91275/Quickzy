@@ -9,7 +9,7 @@ export const fetchProdAndCat = async () => {
   await connectDb();
   // Algorithm: Concurrency (Promise.all) for parallel data fetching
   const [products, categories] = await Promise.all([
-    Product.find({}).lean(),
+    Product.find({}).sort({ _id: -1 }).lean(),
     Category.find({}).lean()
   ]);
 
@@ -32,7 +32,7 @@ export const fetchAllData = async () => {
   await connectDb();
   // Algorithm: Concurrency (Promise.all) for parallel data fetching
   const [products, categories, blogPosts, banners] = await Promise.all([
-    Product.find({}).lean(),
+    Product.find({}).sort({ _id: -1 }).lean(),
     Category.find({}).lean(),
     BlogPost.find({}).lean(),
     Banner.find({}).lean()
