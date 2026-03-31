@@ -5,12 +5,15 @@ import { saveProductAdmin } from "@/actions/adminactions";
 import { FiSave, FiImage, FiArrowLeft, FiPlus } from "react-icons/fi";
 import Link from "next/link";
 import { toast } from "react-toastify";
+import { useStore } from "@/context/StoreContext";
 
 export default function NewProductPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
   const [showNewCat, setShowNewCat] = useState(false);
+  const { storeData } = useStore();
+  const categories = storeData?.categories || [];
 
 
   /* Algorithm: Form Submission and Server Action trigger */
@@ -84,9 +87,12 @@ export default function NewProductPage() {
               className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30"
             >
               <option value="">Select a Category</option>
-              {["Milk & Dairy", "Fruits", "Vegetables", "Tea & Coffee", "Snacks", "Personal Care", "Household Essentials", "Beverages", "Electronics", "Stationery", "Grocery"].map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
+              {categories.map(c => {
+                const name = typeof c === 'string' ? c : (c.name || "Grocery");
+                return (
+                  <option key={name} value={name}>{name}</option>
+                );
+              })}
               <option value="NEW_CATEGORY_TRIGGER" className="text-[#3BB77E] font-black italic">+ Add New Category...</option>
             </select>
           </div>

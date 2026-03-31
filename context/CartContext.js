@@ -201,7 +201,9 @@ export const CartProvider = ({ children }) => {
     
     const comboDiscountPercent = qty >= 2 ? 10 : 0;
     const totalDiscountPercent = originalDiscountPercent + comboDiscountPercent;
-    const finalPricePerUnit = mrp * (1 - totalDiscountPercent / 100);
+    
+    /* Commercial Sync: Apply Math.floor to match StoreContext logic and avoid decimals */
+    const finalPricePerUnit = Math.floor(mrp * (1 - totalDiscountPercent / 100));
     
     return {
       itemTotalCurrent: Math.max(15, finalPricePerUnit) * qty,
