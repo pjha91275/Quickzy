@@ -68,3 +68,29 @@ export const fetchUserOrders = async (email) => {
     .lean();
   return JSON.parse(JSON.stringify(orders));
 };
+
+export const cancelOrderUser = async (id) => {
+  try {
+     await connectDb();
+     const order = await Order.findById(id);
+     if(!order) return { success: false, error: "Order not found" };
+     
+     // Only allow cancellation if order is not delivered
+     if(order.status === "Delivered") {
+        return { success: false, error: "Cannot cancel a delivered order" };
+     }
+     
+     order.status = "Cancelled";
+     order.cancelledBy = "user";
+     await order.save();
+     
+     const { revalidatePath } = await import("next/cache");
+     revalidatePath("/orders");
+     revalidatePath("/profile");
+     revalidatePath("/admin/orders");
+     
+     return { success: true };
+  } catch (error) {
+     return { success: false, error: error.message };
+  }
+};

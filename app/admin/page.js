@@ -98,7 +98,7 @@ export default async function AdminDashboard() {
                     const orderSeed = parseInt(order._id?.toString().slice(-2) || "0", 16) || 0;
                     const deliveryMinutes = (orderSeed % (15 - 8 + 1)) + 8;
                     const timeDiffMins = Math.floor(Math.max(0, new Date() - orderDate) / 60000);
-                    const isNaturallyDelivered = (order.status === 'Processing' || order.status === 'Out for Delivery') && (deliveryMinutes - timeDiffMins) <= 0;
+                    const isNaturallyDelivered = order.status === 'Processing' && (deliveryMinutes - timeDiffMins) <= 0;
                     const displayStatus = (isNaturallyDelivered || order.status === 'Delivered') ? 'Delivered Successfully' : (order.status || 'Pending');
                     
                     return (
@@ -117,7 +117,6 @@ export default async function AdminDashboard() {
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                           displayStatus === 'Delivered Successfully' ? 'bg-green-600 text-white' :
                           displayStatus === 'Processing' ? 'bg-[#DEF9EC] text-[#3BB77E]' :
-                          displayStatus === 'Out for Delivery' ? 'bg-orange-100 text-orange-700' :
                           displayStatus === 'Cancelled' ? 'bg-red-50 text-red-600' :
                           'bg-slate-50 text-slate-500'
                         }`}>

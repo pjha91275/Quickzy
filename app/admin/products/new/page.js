@@ -10,14 +10,8 @@ export default function NewProductPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
-  const [catPreview, setCatPreview] = useState(null);
   const [showNewCat, setShowNewCat] = useState(false);
 
-  const handleCatImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setCatPreview(URL.createObjectURL(e.target.files[0]));
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -48,8 +42,8 @@ export default function NewProductPage() {
         e.target.value = "";
         return;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Image size must be less than 5MB.");
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("Image size must be less than 2MB.");
         e.target.value = "";
         return;
       }
@@ -104,29 +98,11 @@ export default function NewProductPage() {
               <FiPlus className="text-xl" />
               <h3 className="font-black text-sm uppercase tracking-widest">Setup New Category</h3>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">New Category Name <span className="text-red-400">*</span></label>
                 <input required={showNewCat} type="text" name="newCategoryName" className="w-full bg-white border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30 shadow-sm" placeholder="e.g. Organic Grains" />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Category Icon/Image <span className="text-red-400">*</span></label>
-                <div className="relative group">
-                   <div className="w-full bg-white border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-gray-400 flex items-center gap-3 shadow-sm group-hover:bg-gray-50 transition-colors">
-                     {catPreview ? (
-                       <img src={catPreview} className="w-6 h-6 object-contain" />
-                     ) : <FiImage />}
-                     <span>{catPreview ? "Image Selected" : "Select Category Icon"}</span>
-                   </div>
-                   <input 
-                    required={showNewCat} 
-                    type="file" 
-                    name="newCategoryImage" 
-                    accept="image/*" 
-                    onChange={handleCatImageChange}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
-                   />
-                </div>
+                <p className="text-[10px] text-gray-400 font-bold ml-2 italic">Note: The visual asset of this first product will become the category cover.</p>
               </div>
             </div>
           </div>
@@ -170,7 +146,7 @@ export default function NewProductPage() {
              <div className="flex-1">
                <p className="text-lg font-black text-[#253D4E] mb-1">Click the box to upload</p>
                <p className="text-sm text-gray-400 font-bold leading-relaxed">
-                 Supports PNG, JPG, or WEBP. Max size 5MB. <br/>
+                 PNG, JPG, or WEBP Preferred. Max size 2MB. <br/>
                  The image will be securely uploaded to Cloudinary.
                </p>
              </div>

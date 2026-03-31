@@ -105,36 +105,16 @@ export async function saveProductAdmin(formData) {
     const isNewCategory = category === "NEW_CATEGORY_TRIGGER";
     if (isNewCategory) {
       const newCatName = formData.get("newCategoryName");
-      const newCatImageFile = formData.get("newCategoryImage");
-      
-      if (!newCatName || !newCatImageFile) {
-         return { success: false, error: "New Category name and image are required." };
+      if (!newCatName) {
+         return { success: false, error: "New Category name is required." };
       }
-
-      // upload image
-      const catBuf = Buffer.from(await newCatImageFile.arrayBuffer());
-      const catImageUrl = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "quickzy/categories" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result.secure_url);
-          }
-        );
-        stream.end(catBuf);
-      });
-
-      // save to db
-      const newCatDoc = new Category({
-        name: newCatName,
-        image: catImageUrl,
-        count: 0, 
-        bg: "bg-green-50" 
-      });
-      await newCatDoc.save();
       category = newCatName; 
     }
 
+    // Naming Convention Logic (product-1, product-2...)
+    const productCount = await Product.countDocuments();
+    const nextProductNum = productCount + 1;
+    
     let imageUrl = "";
 
     // upload product image
@@ -144,7 +124,12 @@ export async function saveProductAdmin(formData) {
       
       imageUrl = await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: "quickzy/products" },
+          { 
+            folder: "quickzy/products",
+            public_id: `product-${nextProductNum}`,
+            overwrite: true,
+            resource_type: "image"
+          },
           (error, result) => {
             if (error) reject(error);
             else resolve(result.secure_url);
@@ -152,6 +137,17 @@ export async function saveProductAdmin(formData) {
         );
         uploadStream.end(buffer);
       });
+    }
+
+    // Save category to db if it's new, using the first product's image
+    if (isNewCategory) {
+       const newCatDoc = new Category({
+         name: category,
+         image: imageUrl,
+         count: 0, 
+         bg: "bg-green-50" 
+       });
+       await newCatDoc.save();
     }
 
     // get next product id
@@ -209,7 +205,13 @@ export async function updateOrderStatusAdmin(formData) {
   if (!id || !status) return { success: false };
 
   await connectDb();
-  await Order.findByIdAndUpdate(id, { status });
+  const updates = { status };
+  if (status === "Cancelled") {
+    updates.cancelledBy = "admin";
+  } else {
+    updates.cancelledBy = null;
+  }
+  await Order.findByIdAndUpdate(id, updates);
 
   // Invalidate cache
   revalidatePath("/admin/orders");
@@ -302,12 +304,29 @@ export async function updateBannerAdmin(formData) {
   const updates = { title, subtitle, type, shopLink, bgColor };
 
   if (imageFile && imageFile.size > 0) {
+    // Determine public_id
+    let publicId = "footer-banner";
+    if (type !== "footer") {
+       if (existing.image) {
+          // Extract existing id if it followed our convention: folder/public_id
+          publicId = existing.image.split("/").pop().split(".")[0];
+       } else {
+          const count = await Banner.countDocuments({ type: "hero" });
+          publicId = `hero-banner-${count + 1}`;
+       }
+    }
+
     const arrayBuffer = await imageFile.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
     const imageUrl = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: "quickzy/banners" },
+        { 
+          folder: "quickzy/banners",
+          public_id: publicId,
+          overwrite: true,
+          resource_type: "image"
+        },
         (error, result) => {
           if (error) reject(error);
           else resolve(result.secure_url);
@@ -315,14 +334,6 @@ export async function updateBannerAdmin(formData) {
       );
       uploadStream.end(buffer);
     });
-
-    // Delete old image
-    if (existing.image) {
-      try {
-        const fullPublicId = existing.image.split("/upload/").pop().replace(/v\d+\//, "").split(".")[0];
-        await cloudinary.uploader.destroy(fullPublicId);
-      } catch (e) { }
-    }
 
     updates.image = imageUrl;
   }
@@ -420,12 +431,17 @@ export async function saveBannerAdmin(formData) {
     const type = formData.get("type");
     const imageFile = formData.get("image");
 
+    const bType = type || "hero";
+    const bannerCount = await Banner.countDocuments({ type: bType });
+    const nextNum = bannerCount + 1;
+    const publicId = bType === "footer" ? "footer-banner" : `hero-banner-${nextNum}`;
+
     let imageUrl = "";
 
     // upload banner image
     if (imageFile && imageFile.size > 0) {
-      if (imageFile.size > 5 * 1024 * 1024) {
-        return { success: false, error: "Image exceeds 5MB limit." };
+      if (imageFile.size > 2 * 1024 * 1024) {
+        return { success: false, error: "Image exceeds 2MB limit." };
       }
       const validTypes = ["image/jpeg", "image/png", "image/webp"];
       if (!validTypes.includes(imageFile.type)) {
@@ -437,7 +453,12 @@ export async function saveBannerAdmin(formData) {
       
       imageUrl = await new Promise((resolve, reject) => {
         const uploadStream = cloudinary.uploader.upload_stream(
-          { folder: "quickzy/banners" },
+          { 
+            folder: "quickzy/banners",
+            public_id: publicId,
+            overwrite: true,
+            resource_type: "image"
+          },
           (error, result) => {
             if (error) reject(error);
             else resolve(result.secure_url);

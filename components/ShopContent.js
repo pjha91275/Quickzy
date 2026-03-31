@@ -57,15 +57,23 @@ export default function ShopContent({ products, categories }) {
 
   const filteredProducts = React.useMemo(() => {
     // 1. First, apply Category Filter (if any)
-    let pool = storeData.shopShuffled || [];
+    // Use store pool if available, otherwise fallback to prop (e.g. on first load)
+    let pool = storeData.shopShuffled?.length > 0 ? storeData.shopShuffled : products.map(p => ({
+      ...p,
+      image: (p.image || "").startsWith("http") ? p.image : `https://res.cloudinary.com/dnafzpa8x/image/upload/${(p.image || "").startsWith("/") ? p.image.slice(1) : p.image || ""}`
+    }));
+
     if (selectedCategory && selectedCategory !== "All") {
       pool = pool.filter((p) => {
         const target = (selectedCategory || "").toString().toLowerCase().trim();
         const pCat = (p.category || "").toString().toLowerCase().trim();
-        if (!target || !pCat) return pCat === target; 
         
-        // Match if exact, or if one contains the other (e.g. "Dairy" and "Milk & Dairy")
-        return pCat === target || pCat.includes(target) || target.includes(pCat);
+        // Exact match covers 99% of cases
+        if (pCat === target) return true;
+        
+        // Fuzzy fallback for resilience
+        if (!target || !pCat) return pCat === target;
+        return pCat.includes(target) || target.includes(pCat);
       });
     }
 

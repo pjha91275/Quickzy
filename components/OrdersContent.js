@@ -109,7 +109,7 @@ export default function OrdersContent() {
             const timeDiffMs = Math.max(0, now - orderDate);
             const timeDiffMins = Math.floor(timeDiffMs / 60000);
             const remainingMins = Math.max(0, deliveryMinutes - timeDiffMins);
-            const isDelivered = order.status === "Delivered" || ((order.status === "Processing" || order.status === "Out for Delivery") && remainingMins <= 0);
+            const isDelivered = order.status === "Delivered" || (order.status === "Processing" && remainingMins <= 0);
 
             const timeStr = orderDate.toLocaleTimeString("en-IN", {
               hour: "2-digit",
@@ -153,10 +153,6 @@ export default function OrdersContent() {
                         <div className="flex items-center justify-center gap-2 bg-[#3BB77E] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-white shadow-lg shadow-green-100">
                            <FiCheckCircle /> Delivered Successfully
                         </div>
-                      ) : order.status === "Out for Delivery" ? (
-                        <div className="flex items-center justify-center gap-2 bg-orange-50 px-4 py-1.5 rounded-full border border-orange-100 text-orange-600 font-black shadow-lg">
-                           <FiTruck className="translate-x-1" /> Out for Delivery
-                        </div>
                       ) : (
                         <div className="flex items-center justify-center gap-2 bg-[#DEF9EC] px-4 py-1.5 rounded-full border border-[#3BB77E]/20 text-[#3BB77E] animate-pulse">
                            <FiTruck /> Arriving in {remainingMins} mins
@@ -164,18 +160,39 @@ export default function OrdersContent() {
                       )}
                    </div>
 
-                   <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-6 mt-2 md:mt-0">
-                      <div className="text-[#253D4E] font-black text-xl">
-                        ₹{formatCurrency(order.totalAmount)}
-                      </div>
-                      <button 
-                        onClick={() => setSelectedInvoice(order)}
-                        className="flex items-center gap-2 bg-white border-2 border-slate-100 hover:border-[#3BB77E] hover:text-[#3BB77E] transition-all px-4 py-2 rounded-xl text-xs font-black uppercase"
-                      >
-                         <FiFileText /> Invoice
-                      </button>
-                   </div>
-                </div>
+                    <div className="flex flex-wrap items-center justify-between md:justify-end w-full md:w-auto gap-4 mt-2 md:mt-0">
+                       <div className="text-[#253D4E] font-black text-xl">
+                         ₹{formatCurrency(order.totalAmount)}
+                       </div>
+                       <div className="flex items-center gap-3">
+                          {order.status !== "Delivered" && order.status !== "Cancelled" && (
+                            <button 
+                               onClick={async (e) => {
+                                  e.stopPropagation();
+                                  if(confirm("Are you sure you want to cancel this order?")) {
+                                     const { cancelOrderUser } = await import("@/actions/orderactions");
+                                     const res = await cancelOrderUser(order._id);
+                                     if(res.success) {
+                                        const { toast } = await import("react-toastify");
+                                        toast.success("Order cancelled successfully");
+                                        setRefresh(prev => prev + 1);
+                                     }
+                                  }
+                               }}
+                               className="flex items-center gap-2 bg-red-50 text-red-500 border-2 border-red-100 hover:bg-red-500 hover:text-white transition-all px-4 py-2 rounded-xl text-xs font-black uppercase"
+                            >
+                               <FiX /> Cancel
+                            </button>
+                          )}
+                          <button 
+                            onClick={() => setSelectedInvoice(order)}
+                            className="flex items-center gap-2 bg-white border-2 border-slate-100 hover:border-[#3BB77E] hover:text-[#3BB77E] transition-all px-4 py-2 rounded-xl text-xs font-black uppercase"
+                          >
+                             <FiFileText /> Invoice
+                          </button>
+                       </div>
+                    </div>
+                 </div>
 
                 <div className="p-6 space-y-4">
                    {order.items.map((item, idx) => (

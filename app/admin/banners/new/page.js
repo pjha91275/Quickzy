@@ -33,7 +33,13 @@ export default function NewBannerPage() {
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files[0]) {
-      setPreview(URL.createObjectURL(e.target.files[0]));
+      const file = e.target.files[0];
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("Banner image must be less than 2MB.");
+        e.target.value = "";
+        return;
+      }
+      setPreview(URL.createObjectURL(file));
     }
   };
 
@@ -111,8 +117,8 @@ export default function NewBannerPage() {
                <p className="text-lg font-black text-[#253D4E] mb-1">Visual Requirements</p>
                <p className="text-sm text-gray-400 font-bold leading-relaxed">
                  - Prefer transparent PNG or WEBP.<br/>
-                 - Max upload size is 5MB.<br/>
-                 - The image will automatically be uploaded securely to Cloudinary and tracked in MongoDB.
+                 - Max upload size is 2MB.<br/>
+                 - The image will automatically be uploaded securely to Cloudinary.
                </p>
              </div>
           </div>

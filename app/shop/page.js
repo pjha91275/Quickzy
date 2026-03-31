@@ -4,7 +4,9 @@ import { Suspense } from "react";
 import ShopContent from "@/components/ShopContent.js";
 import { fetchProdAndCat } from "@/actions/dbactions";
 
-export default async function Shop() {
+export default async function Shop({ searchParams }) {
+  // Ensure we track searchParams to trigger fresh re-fetching on navigation
+  const params = await searchParams;
   const { products, categories } = await fetchProdAndCat();
 
   return (
@@ -15,7 +17,7 @@ export default async function Shop() {
         </div>
       }
     >
-      <ShopContent products={products} categories={categories} />
+      <ShopContent products={products} categories={categories} searchParams={params} />
     </Suspense>
   );
 }
