@@ -58,15 +58,14 @@ export default function ShopContent({ products, categories }) {
   const filteredProducts = React.useMemo(() => {
     // 1. First, apply Category Filter (if any)
     let pool = storeData.shopShuffled || [];
-    if (selectedCategory !== "All") {
+    if (selectedCategory && selectedCategory !== "All") {
       pool = pool.filter((p) => {
-        const target = (selectedCategory || "").toLowerCase();
-        const pCat = (p.category || "").toLowerCase();
-        return (
-          pCat === target ||
-          target.includes(pCat) ||
-          pCat.includes(target)
-        );
+        const target = (selectedCategory || "").toString().toLowerCase().trim();
+        const pCat = (p.category || "").toString().toLowerCase().trim();
+        if (!target || !pCat) return pCat === target; 
+        
+        // Match if exact, or if one contains the other (e.g. "Dairy" and "Milk & Dairy")
+        return pCat === target || pCat.includes(target) || target.includes(pCat);
       });
     }
 

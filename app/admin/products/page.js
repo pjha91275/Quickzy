@@ -1,12 +1,13 @@
-export const dynamic = "force-dynamic";
-import React from "react";
-import { getProductsAdmin } from "@/actions/adminactions";
+import { getProductsAdmin, getCategoriesAdmin } from "@/actions/adminactions";
 import ProductsListContent from "@/components/ProductsListContent";
 
 export default async function ProductsPage() {
-  const products = await getProductsAdmin();
+  const [products, categories] = await Promise.all([
+    getProductsAdmin(),
+    getCategoriesAdmin(),
+  ]);
 
   return (
-    <ProductsListContent initialProducts={products} />
+    <ProductsListContent initialProducts={products} categories={categories} />
   );
 }

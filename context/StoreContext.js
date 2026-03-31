@@ -89,10 +89,14 @@ export const StoreProvider = ({ children }) => {
   // Algorithm: Data Partitioning & Shuffling (Preparing initial store state)
   const initializeStore = useCallback((products, categories) => {
     setStoreData(prev => {
-      // Avoid re-running if already done
-      if (!products?.length || prev.fullPool?.length > 0) return prev;
+      if (!products?.length) return prev;
+      
+      // Force re-initialization whenever products/categories prop changes to ensure sync
+      const cleanPool = normalizeProductData(products).map(p => ({
+        ...p,
+        category: (p.category || "Grocery").trim()
+      }));
 
-      const cleanPool = normalizeProductData(products);
       const numRecent = 3;
       const sortedByRecency = [...cleanPool].sort((a, b) => {
         if (a.createdAt && b.createdAt) return new Date(b.createdAt) - new Date(a.createdAt);
@@ -108,7 +112,7 @@ export const StoreProvider = ({ children }) => {
       const popularSetRaw = [];
       const catsShuffled = shuffleArray(categories || []);
       catsShuffled.forEach(cat => {
-        const idx = tempAvailable.findIndex(p => (p.category || "").toLowerCase() === (cat.name || "").toLowerCase());
+        const idx = tempAvailable.findIndex(p => (p.category || "").trim().toLowerCase() === (cat.name || "").trim().toLowerCase());
         if (idx > -1) {
           popularSetRaw.push(tempAvailable[idx]);
           tempAvailable.splice(idx, 1);

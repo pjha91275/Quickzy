@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { getBannersAdmin, deleteBannerAdmin, updateBannerTextAdmin } from "@/actions/adminactions";
+import { getBannersAdmin, deleteBannerAdmin, updateBannerAdmin } from "@/actions/adminactions";
 import { FiPlus, FiTrash2, FiImage, FiLink } from "react-icons/fi";
 import DeleteConfirmation from "@/components/DeleteConfirmation";
 import { toast } from "react-toastify";
@@ -10,6 +10,7 @@ export default function BannersPage() {
   const [banners, setBanners] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null });
+  const [previews, setPreviews] = useState({});
 
   const loadBanners = async () => {
     setLoading(true);
@@ -21,6 +22,13 @@ export default function BannersPage() {
   useEffect(() => {
     loadBanners();
   }, []);
+
+  const handleImageChange = (id, file) => {
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviews(prev => ({ ...prev, [id]: url }));
+    }
+  };
 
   // remove html tags
   const stripHtml = (html) => html ? html.replace(/<[^>]*>?/gm, ' ') : '';
@@ -39,12 +47,20 @@ export default function BannersPage() {
     setDeleteModal({ isOpen: false, id: null });
   };
 
-  const handleUpdateText = async (e) => {
-    const formData = new FormData(e.target);
-    const res = await updateBannerTextAdmin(formData);
+  const handleUpdateBanner = async (formData) => {
+    const res = await updateBannerAdmin(formData);
     if (res.success) {
-      toast.success("Banner updated");
+      toast.success("Banner updated successfully");
+      // Clear preview for this banner
+      const id = formData.get("id");
+      setPreviews(prev => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
       loadBanners();
+    } else {
+      toast.error(res.error || "Failed to update banner");
     }
   };
 
@@ -97,50 +113,74 @@ export default function BannersPage() {
                 </tr>
               ) : null}
               {banners.map((b) => (
-                <tr key={b._id} className="hover:bg-[#F2FBF6] transition-colors group">
-                  <td className="p-5">
-                    <div className={`w-32 h-20 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden ${b.bgColor || "bg-gray-50"}`}>
-                      {b.image ? (
-                        <img src={b.image} alt="Banner" className="w-full h-full object-cover" />
-                      ) : (
-                        <FiImage className="text-gray-300 text-2xl" />
-                      )}
-                    </div>
-                  </td>
-                  <td className="p-5 min-w-[300px] align-middle">
-                    <form action={handleUpdateText} className="flex flex-col gap-1 relative group/edit">
+                <tr key={b._id} className="hover:bg-[#F2FBF6] transition-colors group relative">
+                  <td colSpan="5" className="p-0">
+                    <form action={handleUpdateBanner} className="grid grid-cols-[160px_1fr_120px_1fr_100px] items-center w-full group/edit">
                       <input type="hidden" name="id" value={b._id} />
-                      <textarea name="title" defaultValue={stripHtml(b.title).trim()} className="bg-transparent font-black text-[#253D4E] text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
-                      {b.type !== "footer" && (
-                        <input name="subtitle" defaultValue={b.subtitle || b.tag || ""} className="bg-transparent text-[11px] text-gray-400 font-bold border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all" placeholder="Subtitle / Tag" />
-                      )}
                       
-                      <div className="opacity-0 max-h-0 group-focus-within/edit:max-h-10 group-focus-within/edit:opacity-100 group-hover/edit:max-h-10 group-hover/edit:opacity-100 transition-all duration-300 overflow-hidden flex justify-end mt-1">
-                        <button type="submit" className="bg-[#3BB77E] text-white text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded-lg shadow-md hover:bg-[#29a56c] transition-colors cursor-pointer active:scale-95">
-                          Save Edits
+                      {/* Visual (Image) Column */}
+                      <div className="p-5">
+                        <label className="relative w-32 h-20 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden cursor-pointer hover:border-[#3BB77E] transition-all group/img">
+                          <input 
+                            type="file" 
+                            name="image" 
+                            className="hidden" 
+                            accept="image/*" 
+                            onChange={(e) => handleImageChange(b._id, e.target.files[0])}
+                          />
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-black uppercase tracking-widest z-10 text-center">
+                            {previews[b._id] ? "Image Selected" : "Change Image"}
+                          </div>
+                          {previews[b._id] || b.image ? (
+                            <img src={previews[b._id] || b.image} alt="Banner" className="w-full h-full object-cover" />
+                          ) : (
+                            <FiImage className="text-gray-300 text-2xl" />
+                          )}
+                        </label>
+                      </div>
+
+                      {/* Banner Info Column */}
+                      <div className="p-5 min-w-[300px]">
+                        <div className="flex flex-col gap-1">
+                          <textarea name="title" defaultValue={b.title || ""} className="bg-transparent font-black text-[#253D4E] text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
+                          {b.type !== "footer" && (
+                            <input name="subtitle" defaultValue={b.subtitle || b.tag || ""} className="bg-transparent text-[11px] text-gray-400 font-bold border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all" placeholder="Subtitle / Tag" />
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Type Column */}
+                      <div className="p-5">
+                        <select name="type" defaultValue={b.type} className="bg-transparent text-[10px] uppercase font-black tracking-widest px-2 py-1.5 rounded-lg border border-transparent hover:border-gray-200 focus:border-[#3BB77E] outline-none transition-all cursor-pointer">
+                          <option value="hero">Hero</option>
+                          <option value="footer">Footer</option>
+                        </select>
+                      </div>
+
+                      {/* Link Column */}
+                      <div className="p-5">
+                        <div className="flex items-center gap-2 bg-transparent border border-transparent hover:border-gray-200 focus-within:border-[#3BB77E] focus-within:bg-white group/link rounded px-2 py-1.5 transition-all">
+                          <FiLink className="text-gray-400 shrink-0 text-xs" />
+                          <input name="shopLink" defaultValue={decodeURIComponent(b.shopLink || "/shop")} className="bg-transparent text-[12px] font-bold text-blue-500 w-full outline-none" placeholder="/shop" />
+                        </div>
+                      </div>
+
+                      {/* Action Column */}
+                      <div className="p-5 text-right flex items-center justify-end gap-2">
+                        <div className="opacity-0 group-focus-within/edit:opacity-100 group-hover/edit:opacity-100 transition-all duration-300">
+                          <button type="submit" className="bg-[#3BB77E] text-white text-[9px] font-black uppercase tracking-widest px-3 py-2 rounded-xl shadow-md hover:bg-[#29a56c] transition-colors cursor-pointer active:scale-95 whitespace-nowrap">
+                            Save Edits
+                          </button>
+                        </div>
+                        <button 
+                          type="button"
+                          onClick={() => setDeleteModal({ isOpen: true, id: b._id })}
+                          className="p-2 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
+                        >
+                          <FiTrash2 className="text-lg" />
                         </button>
                       </div>
                     </form>
-                  </td>
-                  <td className="p-5 align-middle">
-                    <span className={`text-[9.5px] uppercase font-black tracking-widest px-3 py-1.5 rounded-lg whitespace-nowrap ${
-                      b.type === "hero" ? "bg-purple-50 text-purple-600 border border-purple-100" : "bg-blue-50 text-blue-600 border border-blue-100"
-                    }`}>
-                      {b.type === "hero" ? "Hero" : "Footer"}
-                    </span>
-                  </td>
-                  <td className="p-5 align-middle">
-                    <div className="text-blue-500 font-bold text-[12px] flex items-center gap-1.5 max-w-[180px] sm:max-w-[200px] lg:max-w-[400px] overflow-x-auto pb-1.5 whitespace-nowrap">
-                      <FiLink className="shrink-0" /> {decodeURIComponent(b.shopLink || "/shop")}
-                    </div>
-                  </td>
-                  <td className="p-5 text-right">
-                    <button 
-                      onClick={() => setDeleteModal({ isOpen: true, id: b._id })}
-                      className="p-3 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
-                    >
-                      <FiTrash2 className="text-xl" />
-                    </button>
                   </td>
                 </tr>
               ))}

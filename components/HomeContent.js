@@ -374,8 +374,8 @@ export default function HomeContent({ products, categories, banners_db }) {
         {/* Mobile: Full background image with text overlay */}
         <div className="md:hidden relative h-[280px] sm:h-[320px] w-full">
           <img src={banners[currentSlide].image} className="absolute inset-0 w-full h-full object-cover" alt="" />
-          {/* overlay logic */}
-          <div className={`absolute inset-0 transition-opacity duration-700 ${[1, 2, 3].includes(currentSlide) ? 'bg-black/[0.01]' : 'bg-black/[0.02]'}`} />
+          {/* overlay logic - darkened for new banners for legibility */}
+          <div className={`absolute inset-0 transition-opacity duration-700 ${currentSlide >= 5 ? 'bg-black/40' : ([1, 2, 3].includes(currentSlide) ? 'bg-black/[0.01]' : 'bg-black/[0.02]')}`} />
           <div className={`relative z-20 h-full flex flex-col px-5 ${currentSlide === 0 ? 'justify-between pt-10 pb-9' : 'justify-start pt-6 pb-12'}`}>
             <div className="inline-flex items-center gap-1.5 bg-yellow-400 text-[#253D4E] px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm w-max shrink-0">
               <img src="/logo.png" className="w-3.5 h-3.5" alt="" />{banners[currentSlide].tag}
@@ -404,12 +404,20 @@ export default function HomeContent({ products, categories, banners_db }) {
         </div>
 
         {/* Desktop: Original two-column layout */}
-        <div className={`hidden md:flex ${currentSlide === 3 ? 'bg-[#E5E7EB]' : banners[currentSlide].bgColor} h-[350px] md:h-[450px] items-center px-16 relative`}>
+        <div className={`hidden md:flex ${currentSlide === 3 ? 'bg-[#E5E7EB]' : (banners[currentSlide].bgColor)} h-[350px] md:h-[450px] items-center px-16 relative`}>
           <div className="absolute inset-0 flex transition-opacity duration-700">
             <div className="w-1/2" />
-            <div className="w-1/2 relative">
-              <img src={banners[currentSlide].image} className="w-full h-full object-cover object-left" alt="" />
-              <div className={`absolute inset-0 bg-gradient-to-r from-[${currentSlide === 3 ? '#E5E7EB' : (banners[currentSlide]?.bgColor?.replace('bg-[', '').replace(']', '') || '#DEF9EC')}] via-transparent to-transparent`} />
+            <div className="w-1/2 relative h-full">
+              {/* For new banners (index >= 5), we remove the padding constraint and use object-right to ensure it covers the right portion completely */}
+              <div className={`absolute inset-0 ${currentSlide >= 5 ? '-right-16' : ''}`}>
+                <img 
+                  src={banners[currentSlide].image} 
+                  className={`w-full h-full object-cover ${currentSlide >= 5 ? 'object-center' : 'object-left'}`} 
+                  alt="" 
+                />
+                {/* Masking gradient - slightly different for new banners to preserve full-bleed look */}
+                <div className={`absolute inset-0 bg-gradient-to-r from-[${currentSlide === 3 ? '#E5E7EB' : (banners[currentSlide]?.bgColor?.replace('bg-[', '').replace(']', '') || '#DEF9EC')}] ${currentSlide >= 5 ? 'via-[#DEF9EC]/40 via-20%' : 'via-transparent'} to-transparent`} />
+              </div>
             </div>
           </div>
           <div className="relative z-20 w-3/4 md:w-1/2 space-y-2 lg:space-y-6 animate-fadeIn pb-4 pr-4">

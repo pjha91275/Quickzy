@@ -45,7 +45,7 @@ export default function NewBannerPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-black text-[#253D4E]">Upload New Banner</h1>
-          <p className="text-sm text-gray-500 font-medium">Create a new hero or footer promotion image</p>
+          <p className="text-sm text-gray-500 font-medium">Create a new slider hero promotion</p>
         </div>
       </div>
 
@@ -57,7 +57,6 @@ export default function NewBannerPage() {
             <label className="text-[11px] font-black text-gray-400 uppercase tracking-[2px] ml-2">Banner Type <span className="text-red-400">*</span></label>
             <select required name="type" className="w-full bg-[#F4F6FA] border-none rounded-2xl py-4 px-5 text-[15px] font-bold text-[#253D4E] outline-none focus:ring-2 focus:ring-[#3BB77E]/30">
               <option value="hero">Hero Slider (Top)</option>
-              <option value="footer">Footer Wide Banner (Bottom)</option>
             </select>
           </div>
           

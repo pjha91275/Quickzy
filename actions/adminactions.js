@@ -58,6 +58,14 @@ export async function deleteProductAdmin(formData) {
 
   await connectDb();
   const deleted = await Product.findByIdAndDelete(id);
+  const Category = (await import("@/models/Category")).default;
+
+  if (deleted && deleted.category) {
+    await Category.findOneAndUpdate(
+      { name: deleted.category },
+      { $inc: { count: -1 } }
+    );
+  }
 
   if (deleted && deleted.image) {
     try {
@@ -120,7 +128,7 @@ export async function saveProductAdmin(formData) {
       const newCatDoc = new Category({
         name: newCatName,
         image: catImageUrl,
-        count: 1, 
+        count: 0, 
         bg: "bg-green-50" 
       });
       await newCatDoc.save();
@@ -162,6 +170,12 @@ export async function saveProductAdmin(formData) {
     });
 
     await newProduct.save();
+
+    // Increment category count
+    await Category.findOneAndUpdate(
+      { name: category },
+      { $inc: { count: 1 } }
+    );
 
     revalidatePath("/admin/products");
     revalidatePath("/shop");
@@ -264,6 +278,115 @@ export async function deleteBannerAdmin(formData) {
   }
 
   revalidatePath("/admin/banners");
+  revalidatePath("/");
+  return { success: true };
+}
+
+export async function updateBannerAdmin(formData) {
+  const id = formData.get("id");
+  const title = formData.get("title");
+  const subtitle = formData.get("subtitle");
+  const type = formData.get("type");
+  const shopLink = formData.get("shopLink");
+  const bgColor = formData.get("bgColor");
+  const imageFile = formData.get("image");
+
+  if (!id) return { success: false, error: "ID missing" };
+
+  await connectDb();
+  const Banner = (await import("@/models/Banner")).default;
+  const existing = await Banner.findById(id);
+
+  if (!existing) return { success: false, error: "Banner not found" };
+
+  const updates = { title, subtitle, type, shopLink, bgColor };
+
+  if (imageFile && imageFile.size > 0) {
+    const arrayBuffer = await imageFile.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    
+    const imageUrl = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: "quickzy/banners" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result.secure_url);
+        }
+      );
+      uploadStream.end(buffer);
+    });
+
+    // Delete old image
+    if (existing.image) {
+      try {
+        const fullPublicId = existing.image.split("/upload/").pop().replace(/v\d+\//, "").split(".")[0];
+        await cloudinary.uploader.destroy(fullPublicId);
+      } catch (e) { }
+    }
+
+    updates.image = imageUrl;
+  }
+
+  await Banner.findByIdAndUpdate(id, updates);
+  revalidatePath("/admin/banners");
+  revalidatePath("/");
+  return { success: true };
+}
+
+export async function updateProductAdmin(formData) {
+  const id = formData.get("id");
+  const name = formData.get("name");
+  const price = Number(formData.get("price"));
+  const unit = formData.get("unit");
+  const category = formData.get("category");
+  const imageFile = formData.get("image");
+
+  if (!id) return { success: false, error: "ID missing" };
+
+  await connectDb();
+  const Product = (await import("@/models/Product")).default;
+  const Category = (await import("@/models/Category")).default;
+  const existing = await Product.findById(id);
+
+  if (!existing) return { success: false, error: "Product not found" };
+
+  const updates = { name, price, unit, category };
+
+  // Handle Category Count synchronization
+  if (category !== existing.category) {
+    await Category.findOneAndUpdate({ name: existing.category }, { $inc: { count: -1 } });
+    await Category.findOneAndUpdate({ name: category }, { $inc: { count: 1 } });
+  }
+
+  if (imageFile && imageFile.size > 0) {
+    const arrayBuffer = await imageFile.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    
+    const imageUrl = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: "quickzy/products" },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result.secure_url);
+        }
+      );
+      uploadStream.end(buffer);
+    });
+
+    // Delete old image
+    if (existing.image) {
+      try {
+        const fullPublicId = existing.image.split("/upload/").pop().replace(/v\d+\//, "").split(".")[0];
+        await cloudinary.uploader.destroy(fullPublicId);
+      } catch (e) { }
+    }
+
+    updates.image = imageUrl;
+  }
+
+  await Product.findByIdAndUpdate(id, updates);
+  revalidatePath("/admin/products");
+  revalidatePath("/shop");
   revalidatePath("/");
   return { success: true };
 }
@@ -421,4 +544,11 @@ export async function saveCouponAdmin(formData) {
   } catch (error) {
     return { success: false, error: error.message };
   }
+}
+
+export async function getCategoriesAdmin() {
+  await connectDb();
+  const Category = (await import("@/models/Category")).default;
+  const cats = await Category.find({}).sort({ name: 1 }).lean();
+  return JSON.parse(JSON.stringify(cats));
 }

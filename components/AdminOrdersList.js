@@ -251,12 +251,12 @@ export default function AdminOrdersList({ initialOrders }) {
 
       {/* Manifest Modal */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-[110] bg-gray-900/60 backdrop-blur-sm overflow-y-auto">
-          <div className="fixed inset-0 -z-10" onClick={() => setSelectedOrder(null)} />
-          <div className="relative w-full lg:max-w-5xl xl:max-w-7xl mx-auto flex flex-col items-center py-0 sm:py-8 lg:py-10">
-             <div className="w-full max-w-[98%] lg:max-w-5xl xl:max-w-6xl bg-[#F4F6FA] sm:rounded-[3rem] shadow-2xl border border-white/20 animate-fade-up h-auto min-h-fit">
+        <div className="fixed inset-0 z-[110] bg-gray-900/40 backdrop-blur-sm overflow-y-auto py-4 sm:py-8 no-scrollbar scroll-smooth">
+          <div className="fixed inset-0" onClick={() => setSelectedOrder(null)} />
+          <div className="relative w-[95%] sm:w-full lg:max-w-5xl xl:max-w-6xl mx-auto z-[120] h-min">
+             <div className="w-full bg-[#F4F6FA] rounded-[2rem] sm:rounded-[3rem] shadow-2xl border border-white/20 animate-fade-up h-auto overflow-hidden">
                 
-                <header className="bg-white border-b px-6 py-4 xl:px-10 xl:py-6 flex justify-between items-center sm:rounded-t-[3rem] relative z-20">
+                <header className="bg-white border-b px-5 py-4 xl:px-10 xl:py-6 flex justify-between items-center sm:rounded-t-[3rem] relative z-20">
                    <div className="flex items-center gap-3">
                       <div className="p-2 xl:p-2.5 bg-[#DEF9EC] text-[#3BB77E] rounded-xl"><FiShoppingBag className="w-4 h-4 xl:w-6 xl:h-6" /></div>
                       <div>
@@ -269,41 +269,41 @@ export default function AdminOrdersList({ initialOrders }) {
                    </button>
                 </header>
 
-                <div className="p-6 lg:p-8 xl:p-10 space-y-6 xl:space-y-10 relative z-10 h-auto">
-                   <div className="grid grid-cols-12 gap-6 lg:gap-8 xl:gap-10 items-start">
-                      <div className="col-span-12 lg:col-span-7 bg-white rounded-[2rem] xl:rounded-[3rem] p-6 xl:p-10 border shadow-sm space-y-6 xl:space-y-10">
+                <div className="p-4 sm:p-6 lg:p-8 xl:p-10 space-y-6 xl:space-y-10 relative z-10 h-auto">
+                   <div className="grid grid-cols-12 gap-6 xl:gap-10 items-start">
+                      <div className="col-span-12 xl:col-span-7 bg-white rounded-[2rem] xl:rounded-[3rem] p-6 xl:p-10 border shadow-sm space-y-6 xl:space-y-10">
                         <div className="flex items-center gap-4 xl:gap-8 pb-6 xl:pb-10 border-b border-gray-50">
                            <div className="w-14 xl:w-24 h-14 xl:h-24 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 border border-gray-100 shrink-0 overflow-hidden shadow-inner">
                               {selectedOrder.userImage ? <img src={selectedOrder.userImage} className="w-full h-full object-cover" /> : <FiUser className="w-8 xl:w-16 h-8 xl:h-16" />}
                            </div>
-                           <div className="min-w-0">
-                              <p className="font-black text-[#253D4E] text-xl lg:text-xl xl:text-4xl leading-tight truncate capitalize">{selectedOrder.userEmail.split('@')[0]}</p>
+                           <div className="min-w-0 flex-1">
+                              <p className="font-black text-[#253D4E] text-xl xl:text-4xl leading-tight truncate capitalize">{selectedOrder.userEmail.split('@')[0]}</p>
                               <div className="flex flex-col gap-1.5 xl:gap-3 mt-2 xl:mt-4">
-                                 <p className="text-[8px] lg:text-[8px] xl:text-[13px] font-bold text-[#3BB77E] flex items-center gap-2 break-all"><FiMail className="w-2.5 xl:w-4 h-2.5 xl:h-4"/> {selectedOrder.userEmail}</p>
-                                 <p className="text-[8px] lg:text-[8px] xl:text-[12px] font-black text-gray-400 flex items-center gap-2 tracking-widest"><FiPhone className="text-[#3BB77E] w-2.5 xl:w-4 h-2.5 xl:h-4"/> +91 {selectedOrder.phoneNumber}</p>
+                                 <p className="text-[10px] xl:text-[13px] font-bold text-[#3BB77E] flex items-center gap-2 break-all"><FiMail className="w-3 xl:w-4 h-3 xl:h-4"/> {selectedOrder.userEmail}</p>
+                                 <p className="text-[10px] xl:text-[12px] font-black text-gray-400 flex items-center gap-2 tracking-widest"><FiPhone className="text-[#3BB77E] w-3 xl:w-4 h-3 xl:h-4"/> +91 {selectedOrder.phoneNumber}</p>
                               </div>
                            </div>
                         </div>
 
                         <div className="space-y-6 xl:space-y-8">
                            <div className="bg-gray-50 p-6 xl:p-8 rounded-[2rem] xl:rounded-[3rem] border border-gray-100 relative overflow-hidden group">
-                              <h4 className="text-[7px] lg:text-[7px] xl:text-[11px] font-black text-gray-400 uppercase tracking-[3px] mb-2 xl:mb-4 flex items-center gap-2"><FiMapPin className="text-[#3BB77E]" /> Shipping Link</h4>
-                              <p className="text-xs lg:text-sm xl:text-xl font-black text-[#253D4E] leading-relaxed relative z-10">{selectedOrder.address}</p>
+                              <h4 className="text-[9px] xl:text-[11px] font-black text-gray-400 uppercase tracking-[3px] mb-2 xl:mb-4 flex items-center gap-2"><FiMapPin className="text-[#3BB77E]" /> Shipping Link</h4>
+                              <p className="text-xs xl:text-xl font-black text-[#253D4E] leading-relaxed relative z-10">{selectedOrder.address}</p>
                            </div>
 
                            <div className="grid grid-cols-2 gap-4 xl:gap-6">
                               <div className="bg-white p-4 xl:p-6 rounded-[1.5rem] xl:rounded-[2rem] border border-gray-100 flex items-center gap-3 xl:gap-5 shadow-sm">
                                 <div className="w-8 xl:w-12 h-8 xl:h-12 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] shrink-0"><FiClock className="w-4 xl:w-6 h-4 xl:h-6"/></div>
                                 <div className="min-w-0">
-                                   <h4 className="text-[7px] lg:text-[7px] xl:text-[9px] font-black text-gray-400 uppercase">Book Date</h4>
-                                   <p className="text-[10px] lg:text-[10px] xl:text-sm font-black text-[#253D4E] truncate">{new Date(selectedOrder.createdAt).toLocaleDateString("en-IN", { day: '2-digit', month: 'short' })}</p>
+                                   <h4 className="text-[8px] xl:text-[9px] font-black text-gray-400 uppercase">Book Date</h4>
+                                   <p className="text-[10px] xl:text-sm font-black text-[#253D4E] truncate">{new Date(selectedOrder.createdAt).toLocaleDateString("en-IN", { day: '2-digit', month: 'short' })}</p>
                                 </div>
                               </div>
                               <div className="bg-white p-4 xl:p-6 rounded-[1.5rem] xl:rounded-[2rem] border border-gray-100 flex items-center gap-3 xl:gap-5 shadow-sm">
                                 <div className="w-8 xl:w-12 h-8 xl:h-12 rounded-full bg-[#DEF9EC] flex items-center justify-center text-[#3BB77E] shrink-0"><FiZap className="w-4 xl:w-6 h-4 xl:h-6"/></div>
                                 <div className="min-w-0">
-                                   <h4 className="text-[7px] lg:text-[7px] xl:text-[9px] font-black text-gray-400 uppercase">Live State</h4>
-                                   <p className="text-[10px] lg:text-[10px] xl:text-sm font-black text-[#3BB77E] uppercase tracking-widest truncate">
+                                   <h4 className="text-[8px] xl:text-[9px] font-black text-gray-400 uppercase">Live State</h4>
+                                   <p className="text-[10px] xl:text-sm font-black text-[#3BB77E] uppercase tracking-widest truncate">
                                       {(getOrderStatusInfo(selectedOrder).isLockdown && (selectedOrder.status === "Processing" || selectedOrder.status === "Out for Delivery")) || selectedOrder.status === "Delivered" ? "Delivered Successfully" : selectedOrder.status}
                                    </p>
                                 </div>
@@ -312,35 +312,46 @@ export default function AdminOrdersList({ initialOrders }) {
                         </div>
                       </div>
 
-                      <div className="col-span-12 lg:col-span-5 space-y-6 lg:space-y-10">
+                      <div className="col-span-12 xl:col-span-5 space-y-6 lg:space-y-10">
                          <div className="bg-white rounded-[2rem] xl:rounded-[3rem] p-6 lg:p-8 border shadow-sm">
-                            <h3 className="text-[8px] lg:text-[8px] xl:text-[11px] font-black text-gray-400 uppercase tracking-[3px] mb-6 xl:mb-8 flex items-center gap-2"><FiPackage className="text-[#3BB77E]"/> Cart Items</h3>
+                            <h3 className="text-[10px] xl:text-[11px] font-black text-gray-400 uppercase tracking-[3px] mb-6 xl:mb-8 flex items-center gap-2"><FiPackage className="text-[#3BB77E]"/> Cart Items</h3>
                             <div className="space-y-4 xl:space-y-6">
                                {selectedOrder.items?.map((item, idx) => (
-                                 <div key={idx} className="flex gap-3 xl:gap-5 items-center bg-gray-50/50 p-4 xl:p-5 rounded-[1.5rem] lg:rounded-[2rem] border border-gray-50">
+                                 <div key={idx} className="flex gap-3 xl:gap-5 items-center bg-gray-50/50 p-4 xl:p-5 rounded-[1.5rem] lg:rounded-[2rem] border border-gray-50 overflow-hidden">
                                    <div className="w-12 xl:w-16 h-12 xl:h-16 bg-white rounded-xl xl:rounded-2xl border border-gray-100 p-2 shrink-0 shadow-sm text-center">
                                       <img src={item.image} className="w-full h-full object-contain mx-auto" />
                                    </div>
                                    <div className="flex-1 min-w-0">
-                                      <p className="font-black text-[#253D4E] text-[10px] lg:text-[10px] xl:text-sm truncate" title={item.name}>{item.name}</p>
-                                      <p className="text-[8px] lg:text-[8px] xl:text-[10px] font-bold text-[#3BB77E] mt-0.5 xl:mt-1">x{item.quantity} Qty</p>
+                                      <div className="overflow-x-auto no-scrollbar py-1">
+                                         <p className="font-black text-[#253D4E] text-[12px] xl:text-base whitespace-nowrap" title={item.name}>
+                                            {item.name}
+                                         </p>
+                                      </div>
+                                      <p className="text-[9px] xl:text-[12px] font-bold text-[#3BB77E] mt-0.5 xl:mt-1 tracking-wider uppercase">x{item.quantity} Qty</p>
                                    </div>
-                                   <p className="font-black text-[#253D4E] text-[10px] lg:text-[10px] xl:text-sm shrink-0">₹{formatCurrency(item.price * item.quantity)}</p>
+                                   <p className="font-black text-[#253D4E] text-[11px] xl:text-base shrink-0 bg-white px-3 py-1.5 rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                                      ₹{formatCurrency(item.price * item.quantity)}
+                                   </p>
                                  </div>
                                ))}
                             </div>
                          </div>
 
                          <div className="bg-[#253D4E] rounded-[2rem] xl:rounded-[3rem] p-6 xl:p-10 text-white shadow-2xl relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none"><FiCreditCard size={120} /></div>
+                             <div className="absolute top-0 right-0 p-6 opacity-10 pointer-events-none">
+                                <div className="hidden xl:block"><FiCreditCard size={120} /></div>
+                                <div className="hidden lg:xl:hidden lg:block"><FiCreditCard size={100} /></div>
+                                <div className="hidden md:lg:hidden md:block"><FiCreditCard size={30} /></div>
+                                <div className="md:hidden"><FiCreditCard size={60} /></div>
+                             </div>
                             <div className="relative z-10">
                                <div className="flex justify-between items-center mb-6 xl:mb-10 border-b border-white/10 pb-6 xl:pb-10">
                                   <div>
-                                     <span className="text-[7px] lg:text-[7px] xl:text-[10px] font-black text-white/40 uppercase tracking-[3px] xl:tracking-[5px] block mb-1 xl:mb-2">Invoice Amount</span>
+                                     <span className="text-[9px] xl:text-[10px] font-black text-white/40 uppercase tracking-[3px] xl:tracking-[5px] block mb-1 xl:mb-2">Invoice Amount</span>
                                      <span className="text-2xl lg:text-3xl xl:text-5xl font-black tracking-tighter text-[#3BB77E]">₹{formatCurrency(selectedOrder.totalAmount || 0)}</span>
                                   </div>
                                   <div className="bg-white/10 px-3 py-2 xl:px-6 xl:py-4 rounded-xl lg:rounded-2xl border border-white/10 text-center shrink-0">
-                                     <span className="text-[8px] lg:text-[8px] xl:text-[11px] font-black uppercase tracking-widest text-[#3BB77E] outline-none">{selectedOrder.paymentStatus || 'CREDITED'}</span>
+                                     <span className="text-[9px] xl:text-[11px] font-black uppercase tracking-widest text-[#3BB77E] outline-none">{selectedOrder.paymentStatus || 'CREDITED'}</span>
                                   </div>
                                </div>
                                <div className="grid grid-cols-2 gap-4 xl:gap-8">
