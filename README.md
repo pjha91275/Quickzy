@@ -47,7 +47,7 @@ Quickzy leverages a modern, full-stack architecture designed for speed and relia
 *   **Fully Responsive Dashboard:** Optimized for professional management across Mobile, Tablet (iPad Pro), and Desktop viewports.
 *   **Real-time Metrics:** A dashboard monitoring total sales (INR), order counts, user growth, and inventory levels.
 *   **Product & Banner Management:**
-    *   Full CRUD for products with automated **Cloudinary Sequential Naming** (`product-50`, `product-51`).
+    *   Full CRUD for products with automated **Cloudinary Sequential Naming** (`product-50`, `product-51`) and image identity persistence during updates.
     *   Dynamic category creation with real-time product count synchronization and automated 0-count garbage collection for UI hygiene.
     *   Hero and Footer banner control with live preview links.
 *   **Order Fulfillment:**
