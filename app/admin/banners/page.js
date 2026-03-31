@@ -100,11 +100,11 @@ export default function BannersPage() {
             <thead>
               <tr className="bg-[#F4F6FA] border-b border-gray-100">
                 {/* Visual Preview */}
-                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest w-[80px] md:w-[15%]">Visual</th>
-                <th className="p-5 pl-2 md:pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-auto md:w-[35%]">Banner Info</th>
-                <th className="p-5 pl-0 md:pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-[70px] md:w-[15%]">Type</th>
-                <th className="p-5 pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-auto md:w-[20%]">Link</th>
-                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest text-right rounded-tr-3xl w-[80px] md:w-[15%]">Action</th>
+                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest w-[80px] xl:w-[15%]">Visual</th>
+                <th className="p-5 pl-2 xl:pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-auto xl:w-[35%]">Banner Info</th>
+                <th className="p-5 pl-0 xl:pl-4 text-xs font-black text-gray-400 uppercase tracking-widest w-[70px] xl:w-[15%]">Type</th>
+                <th className="p-5 pl-10 xl:pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-auto xl:w-[20%]">Link</th>
+                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest text-right rounded-tr-3xl w-[80px] xl:w-[15%]">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -116,12 +116,12 @@ export default function BannersPage() {
               {banners.map((b) => (
                 <tr key={b._id} className="hover:bg-[#F2FBF6] transition-colors group relative">
                   <td colSpan="5" className="p-0">
-                    <form action={handleUpdateBanner} className="grid grid-cols-[80px_1fr_70px_1fr_80px] md:grid-cols-[15%_35%_15%_20%_15%] items-center w-full group/edit">
+                    <form action={handleUpdateBanner} className="grid grid-cols-[80px_1fr_70px_1fr_80px] xl:grid-cols-[15%_35%_15%_20%_15%] items-center w-full group/edit">
                       <input type="hidden" name="id" value={b._id} />
 
                       {/* Visual (Image) Column */}
                       <div className="p-5">
-                        <label className="relative w-16 h-12 md:w-32 md:h-20 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden cursor-pointer hover:border-[#3BB77E] transition-all group/img">
+                        <label className="relative w-16 h-12 xl:w-32 xl:h-20 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden cursor-pointer hover:border-[#3BB77E] transition-all group/img">
                           <input
                             type="file"
                             name="image"
@@ -141,18 +141,18 @@ export default function BannersPage() {
                       </div>
 
                       {/* Content details and taglines */}
-                      <div className="p-2 py-3 md:p-5 md:min-w-[300px] md:max-h-none md:overflow-visible">
+                      <div className="p-2 py-3 overflow-auto max-h-[100px] no-scrollbar xl:p-5 xl:min-w-[300px] xl:max-h-none xl:overflow-visible">
                         <div className="flex flex-col gap-1">
-                          <textarea name="title" defaultValue={stripHtml(b.title || "")} className="bg-transparent font-black text-[#253D4E] text-[7px] md:text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
+                          <textarea name="title" defaultValue={stripHtml(b.title || "")} className="bg-transparent font-black text-[#253D4E] text-[9px] xl:text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
                           {b.type !== "footer" && (
-                            <input name="subtitle" defaultValue={stripHtml(b.subtitle || b.tag || "")} className="bg-transparent text-[6px] md:text-[11px] text-gray-400 font-bold border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all" placeholder="Subtitle / Tag" />
+                            <input name="subtitle" defaultValue={stripHtml(b.subtitle || b.tag || "")} className="bg-transparent text-[8px] xl:text-[11px] text-gray-400 font-bold border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all" placeholder="Subtitle / Tag" />
                           )}
                         </div>
                       </div>
 
                       {/* Type Column */}
-                      <div className="px-0 py-5 md:p-5 flex justify-start pr-0">
-                        <select name="type" defaultValue={b.type} className="bg-transparent text-[10px] uppercase font-black tracking-widest px-1 pr-0 py-1.5 rounded-lg border border-transparent hover:border-gray-200 focus:border-[#3BB77E] outline-none transition-all cursor-pointer">
+                      <div className="px-0 py-5 xl:p-5 flex justify-start pr-0">
+                        <select name="type" defaultValue={b.type} className="bg-transparent text-[10px] uppercase font-black tracking-widest pl-0 pr-1 py-1.5 rounded-lg border border-transparent hover:border-gray-200 focus:border-[#3BB77E] outline-none transition-all cursor-pointer">
                           <option value="hero">Hero</option>
                           <option value="footer">Footer</option>
                         </select>
