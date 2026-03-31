@@ -18,7 +18,8 @@ const normalizeProductData = (pool) => {
   if (!pool || pool.length === 0) return [];
   return pool.map(p => {
     const rawImg = p.image || p.img;
-    const basePrice = parseFloat(p.originalPrice || p.price || 0);
+    const rawPrice = parseFloat(p.originalPrice || p.price || 0);
+    const basePrice = Math.max(15, rawPrice); // Commercial Integrity: 15 INR Floor
     return {
       ...p,
       image: getAbsoluteUrl(rawImg),
@@ -59,6 +60,10 @@ const applyGlobalPromotions = (items, homeCount, targetPercent = 35) => {
       const discPercent = getRandDiscount();
       const oldPrice = p.price;
       const newPrice = Math.floor(oldPrice * (1 - discPercent / 100));
+      
+      // Commercial Logic: Any discount pushing price below 15 INR is rejected
+      if (newPrice < 15) return p;
+
       return {
         ...p,
         price: newPrice,
@@ -89,13 +94,10 @@ export const StoreProvider = ({ children }) => {
 
   /* Algorithm: Data Partitioning & Shuffling (Initial store state) */
   const initializeStore = useCallback((products, categories) => {
-    /* Prevent re-shuffling on navigation - state only resets on hard reload */
-    if (storeData.isInitialized) return;
-
     setStoreData(prev => {
+      /* Prevent re-shuffling on navigation - state only resets on hard reload */
+      if (prev.isInitialized) return prev;
       if (!products?.length) return prev;
-      
-      // Force re-initialization whenever products/categories prop changes to ensure sync
       const cleanPool = normalizeProductData(products).map(p => ({
         ...p,
         category: (p.category || "Grocery").trim()
@@ -110,8 +112,8 @@ export const StoreProvider = ({ children }) => {
 
       const topRecentRaw = sortedByRecency.slice(0, numRecent);
       const recentIds = new Set(topRecentRaw.map(r => r._id || r.id));
-      /* Take pool after removing top 3 recently added (Sorted by recency) */
-      const remainingShuffled = cleanPool.filter(p => !recentIds.has(p._id || p.id));
+      /* Take pool after removing top 3 recently added (Sorted by recency) and SHUFFLE for variety */
+      const remainingShuffled = shuffleArray(cleanPool.filter(p => !recentIds.has(p._id || p.id)));
       const tempAvailable = [...remainingShuffled];
 
       const popularSetRaw = [];

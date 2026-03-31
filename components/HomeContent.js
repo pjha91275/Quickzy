@@ -21,8 +21,6 @@ import { toast } from "react-toastify";
 import { useStore } from "@/context/StoreContext";
 import { signIn, useSession } from "next-auth/react";
 
-// Algorithm: Naive Shuffle (Randomized array sort)
-const shuffleArray = (array) => [...array].sort(() => Math.random() - 0.5);
 
 export default function HomeContent({ products, categories, banners_db }) {
   // get banner types
