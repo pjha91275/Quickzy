@@ -74,7 +74,7 @@ export default function BannersPage() {
 
   return (
     <div>
-      <DeleteConfirmation 
+      <DeleteConfirmation
         isOpen={deleteModal.isOpen}
         onCancel={() => setDeleteModal({ isOpen: false, id: null })}
         onConfirm={handleDelete}
@@ -96,14 +96,15 @@ export default function BannersPage() {
       {/* Table Area */}
       <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto no-scrollbar">
-          <table className="w-full text-left border-collapse min-w-[700px]">
+          <table className="w-full text-left border-collapse min-w-[400px] table-fixed">
             <thead>
               <tr className="bg-[#F4F6FA] border-b border-gray-100">
                 {/* Visual Preview */}
-                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest">Banner Info</th>
-                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest">Type</th>
-                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest">Link</th>
-                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest text-right rounded-tr-3xl">Action</th>
+                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest w-[80px] md:w-[15%]">Visual</th>
+                <th className="p-5 pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-auto md:w-[35%]">Banner Info</th>
+                <th className="p-5 pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-[70px] md:w-[15%]">Type</th>
+                <th className="p-5 pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-auto md:w-[20%]">Link</th>
+                <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest text-right rounded-tr-3xl w-[80px] md:w-[15%]">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
@@ -115,17 +116,17 @@ export default function BannersPage() {
               {banners.map((b) => (
                 <tr key={b._id} className="hover:bg-[#F2FBF6] transition-colors group relative">
                   <td colSpan="5" className="p-0">
-                    <form action={handleUpdateBanner} className="grid grid-cols-[160px_1fr_120px_1fr_100px] items-center w-full group/edit">
+                    <form action={handleUpdateBanner} className="grid grid-cols-[80px_1fr_70px_1fr_80px] md:grid-cols-[15%_35%_15%_20%_15%] items-center w-full group/edit">
                       <input type="hidden" name="id" value={b._id} />
-                      
+
                       {/* Visual (Image) Column */}
                       <div className="p-5">
-                        <label className="relative w-32 h-20 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden cursor-pointer hover:border-[#3BB77E] transition-all group/img">
-                          <input 
-                            type="file" 
-                            name="image" 
-                            className="hidden" 
-                            accept="image/*" 
+                        <label className="relative w-16 h-12 md:w-32 md:h-20 rounded-2xl flex items-center justify-center shrink-0 border border-gray-100 overflow-hidden cursor-pointer hover:border-[#3BB77E] transition-all group/img">
+                          <input
+                            type="file"
+                            name="image"
+                            className="hidden"
+                            accept="image/*"
                             onChange={(e) => handleImageChange(b._id, e.target.files[0])}
                           />
                           <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-black uppercase tracking-widest z-10 text-center">
@@ -140,11 +141,11 @@ export default function BannersPage() {
                       </div>
 
                       {/* Content details and taglines */}
-                      <div className="p-5 min-w-[300px]">
+                      <div className="p-2 py-3 max-h-[55px] overflow-auto no-scrollbar md:p-5 md:min-w-[300px] md:max-h-none md:overflow-visible">
                         <div className="flex flex-col gap-1">
-                          <textarea name="title" defaultValue={b.title || ""} className="bg-transparent font-black text-[#253D4E] text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
+                          <textarea name="title" defaultValue={stripHtml(b.title || "")} className="bg-transparent font-black text-[#253D4E] text-[7px] md:text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
                           {b.type !== "footer" && (
-                            <input name="subtitle" defaultValue={b.subtitle || b.tag || ""} className="bg-transparent text-[11px] text-gray-400 font-bold border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all" placeholder="Subtitle / Tag" />
+                            <input name="subtitle" defaultValue={stripHtml(b.subtitle || b.tag || "")} className="bg-transparent text-[6px] md:text-[11px] text-gray-400 font-bold border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all" placeholder="Subtitle / Tag" />
                           )}
                         </div>
                       </div>
@@ -172,7 +173,7 @@ export default function BannersPage() {
                             Save Edits
                           </button>
                         </div>
-                        <button 
+                        <button
                           type="button"
                           onClick={() => setDeleteModal({ isOpen: true, id: b._id })}
                           className="p-2 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
