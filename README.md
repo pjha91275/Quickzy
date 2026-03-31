@@ -38,7 +38,7 @@ Quickzy leverages a modern, full-stack architecture designed for speed and relia
     *   Price-range sliders and recency-based "New Products" sidebar.
     *   **Commercial Floor:** Enforced 15 Rupee minimum for all products and cart totals to maintain commercial integrity.
 *   **State Management:**
-    *   **Cart Context:** Persisted cart logic with dynamic totals and discount calculations.
+    *   **Cart Context:** Persisted cart logic with dynamic totals, integer-bound discount calculations, and 15 INR price protection.
     *   **Wishlist Context:** Interactive heart-pop animations and real-time wish-state tracking.
     *   **Idempotent Store:** Data only reshuffles on a hard reload, maintaining placement stability during navigation.
 *   **Checkout & Profile:** Streamlined checkout process and comprehensive order history with status tracking.
@@ -48,7 +48,7 @@ Quickzy leverages a modern, full-stack architecture designed for speed and relia
 *   **Real-time Metrics:** A dashboard monitoring total sales (INR), order counts, user growth, and inventory levels.
 *   **Product & Banner Management:**
     *   Full CRUD for products with automated **Cloudinary Sequential Naming** (`product-50`, `product-51`).
-    *   Dynamic category creation with real-time product count synchronization.
+    *   Dynamic category creation with real-time product count synchronization and automated 0-count garbage collection for UI hygiene.
     *   Hero and Footer banner control with live preview links.
 *   **Order Fulfillment:**
     *   Administrative override for order statuses (Processing, Delivered, Cancelled).

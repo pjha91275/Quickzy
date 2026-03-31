@@ -65,6 +65,12 @@ export async function deleteProductAdmin(formData) {
       { name: deleted.category },
       { $inc: { count: -1 } }
     );
+    
+    /* Garbage Collection: Remove category if no products remain */
+    const remaining = await Product.countDocuments({ category: deleted.category });
+    if (remaining === 0) {
+      await Category.findOneAndDelete({ name: deleted.category });
+    }
   }
 
   if (deleted && deleted.image) {
@@ -382,9 +388,16 @@ export async function updateProductAdmin(formData) {
 
   const updates = { name, price: nPrice, oldPrice: nOldPrice, unit, category };
 
-  /* Category product count update */
+  /* Category product count update and automatic cleanup */
   if (category !== existing.category) {
     await Category.findOneAndUpdate({ name: existing.category }, { $inc: { count: -1 } });
+    
+    /* Self-Cleaning: Delete old category if it is now empty */
+    const oldCatCheck = await Product.countDocuments({ category: existing.category });
+    if (oldCatCheck <= 1) { // Current product is moving away, so 1 means it becomes empty
+      await Category.findOneAndDelete({ name: existing.category });
+    }
+    
     await Category.findOneAndUpdate({ name: category }, { $inc: { count: 1 } });
   }
 
