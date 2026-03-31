@@ -101,8 +101,8 @@ export default function BannersPage() {
               <tr className="bg-[#F4F6FA] border-b border-gray-100">
                 {/* Visual Preview */}
                 <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest w-[80px] md:w-[15%]">Visual</th>
-                <th className="p-5 pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-auto md:w-[35%]">Banner Info</th>
-                <th className="p-5 pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-[70px] md:w-[15%]">Type</th>
+                <th className="p-5 pl-2 md:pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-auto md:w-[35%]">Banner Info</th>
+                <th className="p-5 pl-0 md:pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-[70px] md:w-[15%]">Type</th>
                 <th className="p-5 pl-10 text-xs font-black text-gray-400 uppercase tracking-widest w-auto md:w-[20%]">Link</th>
                 <th className="p-5 text-xs font-black text-gray-400 uppercase tracking-widest text-right rounded-tr-3xl w-[80px] md:w-[15%]">Action</th>
               </tr>
@@ -141,7 +141,7 @@ export default function BannersPage() {
                       </div>
 
                       {/* Content details and taglines */}
-                      <div className="p-2 py-3 max-h-[55px] overflow-auto no-scrollbar md:p-5 md:min-w-[300px] md:max-h-none md:overflow-visible">
+                      <div className="p-2 py-3 md:p-5 md:min-w-[300px] md:max-h-none md:overflow-visible">
                         <div className="flex flex-col gap-1">
                           <textarea name="title" defaultValue={stripHtml(b.title || "")} className="bg-transparent font-black text-[#253D4E] text-[7px] md:text-[13px] border border-transparent hover:border-gray-200 focus:border-[#3BB77E] focus:bg-white rounded px-2 py-1.5 w-full outline-none focus:ring-4 focus:ring-[#3BB77E]/10 transition-all resize-none h-[40px] leading-tight" placeholder="Title (Plain Text)"></textarea>
                           {b.type !== "footer" && (
@@ -151,16 +151,16 @@ export default function BannersPage() {
                       </div>
 
                       {/* Type Column */}
-                      <div className="p-5">
-                        <select name="type" defaultValue={b.type} className="bg-transparent text-[10px] uppercase font-black tracking-widest px-2 py-1.5 rounded-lg border border-transparent hover:border-gray-200 focus:border-[#3BB77E] outline-none transition-all cursor-pointer">
+                      <div className="px-0 py-5 md:p-5 flex justify-start pr-0">
+                        <select name="type" defaultValue={b.type} className="bg-transparent text-[10px] uppercase font-black tracking-widest px-1 pr-0 py-1.5 rounded-lg border border-transparent hover:border-gray-200 focus:border-[#3BB77E] outline-none transition-all cursor-pointer">
                           <option value="hero">Hero</option>
                           <option value="footer">Footer</option>
                         </select>
                       </div>
 
                       {/* Navigation destination */}
-                      <div className="p-5">
-                        <div className="flex items-center gap-2 bg-transparent border border-transparent hover:border-gray-200 focus-within:border-[#3BB77E] focus-within:bg-white group/link rounded px-2 py-1.5 transition-all">
+                      <div className="p-2 py-5 md:p-5 overflow-x-auto no-scrollbar">
+                        <div className="flex items-center gap-2 bg-transparent border border-transparent hover:border-gray-200 focus-within:border-[#3BB77E] focus-within:bg-white group/link rounded px-2 py-1.5 transition-all min-w-[120px] md:min-w-0">
                           <FiLink className="text-gray-400 shrink-0 text-xs" />
                           <input name="shopLink" defaultValue={decodeURIComponent(b.shopLink || "/shop")} className="bg-transparent text-[12px] font-bold text-blue-500 w-full outline-none" placeholder="/shop" />
                         </div>
