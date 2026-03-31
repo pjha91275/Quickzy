@@ -409,9 +409,20 @@ export async function updateProductAdmin(formData) {
     const arrayBuffer = await imageFile.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
+    /* Deterministic Naming: Reuse existing publicId to preserve naming identity */
+    let publicId = `product-${existing.id_custom}`;
+    if (existing.image) {
+      publicId = existing.image.split("/").pop().split(".")[0];
+    }
+
     const imageUrl = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
-        { folder: "quickzy/products" },
+        { 
+          folder: "quickzy/products",
+          public_id: publicId,
+          overwrite: true,
+          resource_type: "image"
+        },
         (error, result) => {
           if (error) reject(error);
           else resolve(result.secure_url);
@@ -419,14 +430,6 @@ export async function updateProductAdmin(formData) {
       );
       uploadStream.end(buffer);
     });
-
-    /* Cleanup previous media */
-    if (existing.image) {
-      try {
-        const fullPublicId = existing.image.split("/upload/").pop().replace(/v\d+\//, "").split(".")[0];
-        await cloudinary.uploader.destroy(fullPublicId);
-      } catch (e) { }
-    }
 
     updates.image = imageUrl;
   }
