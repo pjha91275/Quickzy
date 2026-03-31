@@ -17,6 +17,7 @@ import { FiHeart } from "react-icons/fi";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
 import { validateCoupon, getActiveCoupons } from "@/actions/useractions";
+import { formatCurrency } from "@/lib/utils";
 
 export default function Cart() {
   const router = useRouter();
@@ -193,12 +194,12 @@ export default function Cart() {
                           return (
                             <div className="flex flex-col items-center">
                               <span className="text-xl font-black text-[#253D4E]">
-                                ₹{unitPriceCurrent.toFixed(2)}
+                                ₹{formatCurrency(unitPriceCurrent)}
                               </span>
                               {hasDiscount && (
                                 <div className="flex flex-col items-center gap-1 mt-1">
                                   <span className="text-[#adadad] text-[11px] font-black line-through decoration-[1.5px] px-1">
-                                    ₹{mrp.toFixed(2)}
+                                    ₹{formatCurrency(mrp)}
                                   </span>
                                   <span className={`${isCombo ? "bg-[#7C3AED]" : "bg-[#FF7F50]"} text-white text-[10px] px-3 py-1 rounded-lg font-black italic uppercase shadow-md leading-none whitespace-nowrap`}>
                                     {isCombo ? `Combo Saving ${totalDiscount.toFixed(0)}% OFF` : `${totalDiscount.toFixed(0)}% OFF`}
@@ -238,7 +239,7 @@ export default function Cart() {
                       <td className="py-6 px-4 text-center text-[#3BB77E] font-black text-xl">
                         {(() => {
                           const { itemTotalCurrent } = getProductPrices(item);
-                          return `₹${itemTotalCurrent.toFixed(2)}`;
+                          return `₹${formatCurrency(itemTotalCurrent)}`;
                         })()}
                       </td>
                       <td className="py-6 px-4 text-center">
@@ -281,11 +282,11 @@ export default function Cart() {
                 <div className="flex flex-col items-end">
                   <div className="flex items-center gap-2">
                     <span className="text-[#3BB77E] font-black text-xl">
-                      ₹{itemTotalCurrent.toFixed(2)}
+                      ₹{formatCurrency(itemTotalCurrent)}
                     </span>
                     {hasCartDiscount && (
                       <span className="text-gray-400 font-bold text-xs line-through decoration-[1px]">
-                        ₹{itemTotalOld.toFixed(2)}
+                        ₹{formatCurrency(itemTotalOld)}
                       </span>
                     )}
                   </div>
@@ -299,10 +300,10 @@ export default function Cart() {
                 <div className="flex flex-col items-end">
                   <div className="flex items-center gap-2">
                     <span className="text-[#3BB77E] font-black text-base">
-                      {handlingFeeCurrent === 0 ? "FREE" : `₹${handlingFeeCurrent.toFixed(2)}`}
+                      {handlingFeeCurrent === 0 ? "FREE" : `₹${formatCurrency(handlingFeeCurrent)}`}
                     </span>
                     <span className="text-gray-400 font-bold text-xs line-through decoration-[1px]">
-                      ₹{handlingFeeOld.toFixed(2)}
+                      ₹{formatCurrency(handlingFeeOld)}
                     </span>
                   </div>
                 </div>
@@ -313,10 +314,10 @@ export default function Cart() {
                 <div className="flex flex-col items-end">
                   <div className="flex items-center gap-2">
                     <span className="text-[#3BB77E] font-black text-base">
-                      {deliveryFeeCurrent === 0 ? "FREE" : `₹${deliveryFeeCurrent.toFixed(2)}`}
+                      {deliveryFeeCurrent === 0 ? "FREE" : `₹${formatCurrency(deliveryFeeCurrent)}`}
                     </span>
                     <span className="text-gray-400 font-bold text-xs line-through decoration-[1px]">
-                      ₹{deliveryFeeOld.toFixed(2)}
+                      ₹{formatCurrency(deliveryFeeOld)}
                     </span>
                   </div>
                 </div>
@@ -330,7 +331,7 @@ export default function Cart() {
                       <FiRefreshCw className="text-[#3BB77E] animate-spin-slow" /> {appliedCoupon.code}
                     </span>
                   </div>
-                  <span className="font-black text-[#3BB77E] text-xl">-₹{discountAmount.toFixed(2)}</span>
+                  <span className="font-black text-[#3BB77E] text-xl">-₹{formatCurrency(discountAmount)}</span>
                 </div>
               )}
 
@@ -341,7 +342,7 @@ export default function Cart() {
                 <div className="flex justify-between items-center">
                   <span className="font-black text-white text-xl">Total</span>
                   <span className="text-[#3BB77E] font-black text-3xl drop-shadow-sm">
-                    ₹{total.toFixed(2)}
+                    ₹{formatCurrency(total)}
                   </span>
                 </div>
               </div>
@@ -372,7 +373,7 @@ export default function Cart() {
                     <FiRefreshCw className="animate-spin-slow" /> {appliedCoupon.code}
                   </p>
                   <p className="text-[#253D4E] text-xs font-bold mt-1">
-                    Saving you ₹{discountAmount.toFixed(2)}!
+                    Saving you ₹{formatCurrency(discountAmount)}!
                   </p>
                 </div>
                 <button onClick={() => saveCoupon(null)} className="text-red-500 font-bold hover:underline text-xs">
@@ -450,7 +451,7 @@ export default function Cart() {
                             if (c.code === "FRESHVEG" && totalBeforeCoupon >= c.minOrderAmount) {
                                toast.info(`Add at least one vegetable item to unlock this coupon!`);
                             } else {
-                               toast.info(`Add ₹${(c.minOrderAmount - totalBeforeCoupon).toFixed(2)} more to unlock this coupon!`);
+                               toast.info(`Add ₹${formatCurrency(c.minOrderAmount - totalBeforeCoupon)} more to unlock this coupon!`);
                             }
                           }
                         }}

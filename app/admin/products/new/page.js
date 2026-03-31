@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { saveProductAdmin } from "@/actions/adminactions";
-import { FiSave, FiImage, FiArrowLeft } from "react-icons/fi";
+import { FiSave, FiImage, FiArrowLeft, FiPlus } from "react-icons/fi";
 import Link from "next/link";
 import { toast } from "react-toastify";
 

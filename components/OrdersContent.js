@@ -17,6 +17,7 @@ import {
 import { useSession } from "next-auth/react";
 import { fetchUserOrders } from "@/actions/orderactions";
 import Link from "next/link";
+import { formatCurrency } from "@/lib/utils";
 
 export default function OrdersContent() {
   const { data: session, status } = useSession();
@@ -165,7 +166,7 @@ export default function OrdersContent() {
 
                    <div className="flex items-center justify-between md:justify-end w-full md:w-auto gap-6 mt-2 md:mt-0">
                       <div className="text-[#253D4E] font-black text-xl">
-                        ₹{order.totalAmount}
+                        ₹{formatCurrency(order.totalAmount)}
                       </div>
                       <button 
                         onClick={() => setSelectedInvoice(order)}
@@ -193,7 +194,7 @@ export default function OrdersContent() {
                             <p className="text-[10px] text-gray-400 font-bold uppercase mt-0.5">{item.category} • {item.unit || "Single Unit"}</p>
                          </div>
                          <div className="text-right">
-                            <p className="font-black text-[#253D4E]">₹{item.price}</p>
+                            <p className="font-black text-[#253D4E]">₹{formatCurrency(item.price)}</p>
                             <p className="text-[10px] text-gray-400 font-bold">Qty: {item.quantity || 1}</p>
                          </div>
                       </div>
@@ -292,7 +293,7 @@ export default function OrdersContent() {
                                   <p className="text-[10px] text-gray-400 font-bold">{item.category}</p>
                                </td>
                                <td className="p-4 text-center font-bold text-sm">{item.quantity || 1}</td>
-                               <td className="p-4 text-right font-black text-sm">₹{item.price}</td>
+                               <td className="p-4 text-right font-black text-sm">₹{formatCurrency(item.price)}</td>
                             </tr>
                           ))}
                        </tbody>
@@ -302,12 +303,12 @@ export default function OrdersContent() {
                  <div className="flex flex-col items-end space-y-3">
                     <div className="flex justify-between w-full max-w-[200px] text-xs font-bold text-gray-400">
                        <span>Subtotal</span>
-                       <span>₹{(selectedInvoice.totalAmount - 25 + (selectedInvoice.discount || 0)).toFixed(2)}</span>
+                       <span>₹{formatCurrency(selectedInvoice.totalAmount - 25 + (selectedInvoice.discount || 0))}</span>
                     </div>
                     {selectedInvoice.discount > 0 && (
                       <div className="flex justify-between w-full max-w-[200px] text-xs font-bold text-[#3BB77E]">
                          <span>Discount</span>
-                         <span>-₹{selectedInvoice.discount}</span>
+                         <span>-₹{formatCurrency(selectedInvoice.discount)}</span>
                       </div>
                     )}
                     <div className="flex justify-between w-full max-w-[200px] text-xs font-bold text-gray-400">
@@ -316,7 +317,7 @@ export default function OrdersContent() {
                     </div>
                     <div className="flex justify-between w-full max-w-[240px] pt-4 border-t border-slate-100">
                        <span className="font-black text-[#253D4E]">Total Paid</span>
-                       <span className="text-2xl font-black text-[#3BB77E]">₹{selectedInvoice.totalAmount}</span>
+                       <span className="text-2xl font-black text-[#3BB77E]">₹{formatCurrency(selectedInvoice.totalAmount)}</span>
                     </div>
                     <p className="text-right text-[10px] font-black text-slate-300 uppercase italic">Paid via {selectedInvoice.paymentMethod}</p>
                  </div>

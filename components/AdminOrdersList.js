@@ -8,6 +8,7 @@ import {
   FiZap, FiAlertTriangle, FiArrowUpRight, FiLock
 } from "react-icons/fi";
 import { toast } from "react-toastify";
+import { formatCurrency } from "@/lib/utils";
 
 const statusColors = {
   "Pending": "bg-slate-50 text-slate-500 border-slate-200",
@@ -131,7 +132,7 @@ export default function AdminOrdersList({ initialOrders }) {
                   </td>
                   <td className="py-8 px-8 align-top text-center">
                     <div className="flex flex-col items-center gap-2 bg-gray-50/40 p-3 rounded-2xl border border-gray-100/40 group-hover:bg-white transition-all">
-                      <p className="font-black text-[#253D4E] text-lg">₹{order.totalAmount}</p>
+                      <p className="font-black text-[#253D4E] text-lg">₹{formatCurrency(order.totalAmount)}</p>
                       <span className="text-[8px] font-black uppercase bg-white px-2 py-1 rounded shadow-sm border border-gray-100">{order.paymentMethod}</span>
                     </div>
                   </td>
@@ -197,7 +198,7 @@ export default function AdminOrdersList({ initialOrders }) {
               <div className="flex justify-between items-start mb-6">
                  <div>
                     <span className="text-[10px] font-black text-[#3BB77E] tracking-widest uppercase mb-1 block">#{String(order._id || "").slice(-6).toUpperCase()}</span>
-                    <p className="text-xl font-black text-[#253D4E] tracking-tighter">₹{order.totalAmount}</p>
+                    <p className="text-xl font-black text-[#253D4E] tracking-tighter">₹{formatCurrency(order.totalAmount)}</p>
                  </div>
                  <div className={`p-2 rounded-xl border ${statusColors[currentUIStatus]}`}>
                     {isLockdown ? <FiLock size={18} /> : <FiZap size={18} />}
@@ -324,7 +325,7 @@ export default function AdminOrdersList({ initialOrders }) {
                                       <p className="font-black text-[#253D4E] text-[10px] lg:text-[10px] xl:text-sm truncate" title={item.name}>{item.name}</p>
                                       <p className="text-[8px] lg:text-[8px] xl:text-[10px] font-bold text-[#3BB77E] mt-0.5 xl:mt-1">x{item.quantity} Qty</p>
                                    </div>
-                                   <p className="font-black text-[#253D4E] text-[10px] lg:text-[10px] xl:text-sm shrink-0">₹{item.price * item.quantity}</p>
+                                   <p className="font-black text-[#253D4E] text-[10px] lg:text-[10px] xl:text-sm shrink-0">₹{formatCurrency(item.price * item.quantity)}</p>
                                  </div>
                                ))}
                             </div>
@@ -336,7 +337,7 @@ export default function AdminOrdersList({ initialOrders }) {
                                <div className="flex justify-between items-center mb-6 xl:mb-10 border-b border-white/10 pb-6 xl:pb-10">
                                   <div>
                                      <span className="text-[7px] lg:text-[7px] xl:text-[10px] font-black text-white/40 uppercase tracking-[3px] xl:tracking-[5px] block mb-1 xl:mb-2">Invoice Amount</span>
-                                     <span className="text-2xl lg:text-3xl xl:text-5xl font-black tracking-tighter text-[#3BB77E]">₹{selectedOrder.totalAmount}</span>
+                                     <span className="text-2xl lg:text-3xl xl:text-5xl font-black tracking-tighter text-[#3BB77E]">₹{formatCurrency(selectedOrder.totalAmount || 0)}</span>
                                   </div>
                                   <div className="bg-white/10 px-3 py-2 xl:px-6 xl:py-4 rounded-xl lg:rounded-2xl border border-white/10 text-center shrink-0">
                                      <span className="text-[8px] lg:text-[8px] xl:text-[11px] font-black uppercase tracking-widest text-[#3BB77E] outline-none">{selectedOrder.paymentStatus || 'CREDITED'}</span>

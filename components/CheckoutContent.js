@@ -16,6 +16,7 @@ import { createOrder, initiateRazorpayOrder } from "@/actions/orderactions";
 import { saveCheckoutDetails } from "@/actions/useractions";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { formatCurrency } from "@/lib/utils";
 
 export default function CheckoutContent() {
   const { data: session, update, status } = useSession();
@@ -339,11 +340,11 @@ export default function CheckoutContent() {
                       </div>
                       <div className="flex flex-col items-end shrink-0">
                         <span className="font-black text-xs text-[#3BB77E]">
-                          ₹{itemTotalCurrent.toFixed(2)}
+                          ₹{formatCurrency(itemTotalCurrent)}
                         </span>
                         {hasDiscount && (
                           <span className="text-[9px] text-white/40 font-black line-through">
-                            ₹{itemTotalOld.toFixed(2)}
+                            ₹{formatCurrency(itemTotalOld)}
                           </span>
                         )}
                       </div>
@@ -357,8 +358,8 @@ export default function CheckoutContent() {
                 <div className="flex justify-between text-[12px] font-black uppercase tracking-[2px] text-white">
                   <span>Item(s) Total</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[#3BB77E] text-[15px]">₹{itemTotalCurrent.toFixed(2)}</span>
-                    {hasCartDiscount && <span className="line-through text-white/40 font-black text-[12px]">₹{itemTotalOld.toFixed(2)}</span>}
+                    <span className="text-[#3BB77E] text-[15px]">₹{formatCurrency(itemTotalCurrent)}</span>
+                    {hasCartDiscount && <span className="line-through text-white/40 font-black text-[12px]">₹{formatCurrency(itemTotalOld)}</span>}
                   </div>
                 </div>
 
@@ -367,9 +368,9 @@ export default function CheckoutContent() {
                   <span>Handling Fee</span>
                   <div className="flex items-center gap-2">
                     <span className="text-[#3BB77E] text-[15px]">
-                      {handlingFeeCurrent === 0 ? "FREE" : `₹${handlingFeeCurrent.toFixed(2)}`}
+                      {handlingFeeCurrent === 0 ? "FREE" : `₹${formatCurrency(handlingFeeCurrent)}`}
                     </span>
-                    <span className="line-through text-white/40 font-black text-[12px]">₹{handlingFeeOld.toFixed(2)}</span>
+                    <span className="line-through text-white/40 font-black text-[12px]">₹{formatCurrency(handlingFeeOld)}</span>
                   </div>
                 </div>
 
@@ -378,9 +379,9 @@ export default function CheckoutContent() {
                   <span>Delivery Fee</span>
                   <div className="flex items-center gap-2">
                     <span className="text-[#3BB77E] text-[15px]">
-                      {deliveryFeeCurrent === 0 ? "FREE" : `₹${deliveryFeeCurrent.toFixed(2)}`}
+                      {deliveryFeeCurrent === 0 ? "FREE" : `₹${formatCurrency(deliveryFeeCurrent)}`}
                     </span>
-                    <span className="line-through text-white/40 font-black text-[12px]">₹{deliveryFeeOld.toFixed(2)}</span>
+                    <span className="line-through text-white/40 font-black text-[12px]">₹{formatCurrency(deliveryFeeOld)}</span>
                   </div>
                 </div>
 
@@ -388,7 +389,7 @@ export default function CheckoutContent() {
                   <div className="flex flex-col gap-1 py-3 px-4 rounded-xl bg-green-500/10 border border-green-500/20">
                     <div className="flex justify-between text-[13px] font-black uppercase tracking-[2px] text-[#3BB77E]">
                       <span>Coupon: {appliedCoupon.code}</span>
-                      <span className="whitespace-nowrap">-₹{discountAmount.toFixed(2)}</span>
+                      <span className="whitespace-nowrap">-₹{formatCurrency(discountAmount)}</span>
                     </div>
                   </div>
                 )}
@@ -396,7 +397,7 @@ export default function CheckoutContent() {
                 <div className="flex justify-between items-center pt-4 border-t border-white/5">
                   <span className="font-black text-white text-lg">Grand Total</span>
                   <span className="text-3xl font-black text-[#3BB77E] drop-shadow-md">
-                    ₹{total.toFixed(2)}
+                    ₹{formatCurrency(total)}
                   </span>
                 </div>
               </div>

@@ -5,6 +5,7 @@ import connectDb from "@/db/connectDb";
 import Order from "@/models/Order";
 import Product from "@/models/Product";
 import User from "@/models/User";
+import { formatCurrency } from "@/lib/utils";
 
 const StatCard = ({ title, value, icon, colorClass }) => (
   <div className="p-6 rounded-2xl border bg-white flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
@@ -47,7 +48,7 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mb-10">
         <StatCard
           title="Total Sales"
-          value={`₹${totalSales.toLocaleString()}`}
+          value={`₹${formatCurrency(totalSales)}`}
           icon={<RiMoneyRupeeCircleFill className="text-[#3BB77E]" />}
           colorClass="bg-[#DEF9EC] shadow-inner"
         />
@@ -111,7 +112,7 @@ export default async function AdminDashboard() {
                           year: "numeric" 
                         })}
                       </td>
-                      <td className="p-4 text-[#3BB77E]">₹{order.totalAmount}</td>
+                      <td className="p-4 text-[#3BB77E]">₹{formatCurrency(order.totalAmount)}</td>
                       <td className="p-4">
                         <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                           displayStatus === 'Delivered Successfully' ? 'bg-green-600 text-white' :
