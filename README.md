@@ -3,7 +3,7 @@
 **Quickzy** is a high-performance, **Quick Commerce** (Q-Commerce) platform built to deliver essentials in under 15 minutes. It bridges the gap between traditional e-commerce and instant grocery delivery through a premium, responsive user interface and a robust administrative backend.
 
 > [!NOTE] 
-> This project is a **Close-to-Production** level application. While it implements complex business logic, real-time data syncing, and administrative control, it is currently a "dummy" implementation for demonstration purposes and is not yet a live commercial entity.
+> This project is a **Sophisticated Full-Stack E-commerce Model** designed to explore integrated architectural patterns, administrative orchestration, and real-time business logic. It provides a more comprehensive study of full-stack development than standard portfolio projects, while focusing on core application patterns rather than high-scale commercial throughput.
 
 ---
 
@@ -12,7 +12,7 @@
 Quickzy leverages a modern, full-stack architecture designed for speed and reliability:
 
 ### **Frontend**
-*   **Framework:** [Next.js 15 (App Router)](https://nextjs.org/) - Utilizing Server Components and Client Components for optimized rendering.
+*   **Framework:** [Next.js 16 (App Router)](https://nextjs.org/) with **React 19** and **JavaScript** - Utilizing Server Components, Client Components, and Turbopack for high-fidelity rendering.
 *   **Styling:** [Tailwind CSS 4](https://tailwindcss.com/) - Leveraging the latest utility-first features for premium design.
 *   **Icons:** React Icons (Fi, Ri, Hi) for a consistent, professional aesthetic.
 *   **Notifications:** React Toastify for real-time user feedback.
@@ -25,14 +25,14 @@ Quickzy leverages a modern, full-stack architecture designed for speed and relia
 
 ### **Storage & Infrastructure**
 *   **Media Management:** [Cloudinary](https://cloudinary.com/) - Dynamic asset hosting with optimized delivery and sequential naming conventions.
-*   **Email Service:** Brevo (formerly Sendinblue) for transactional magic link authentication.
+*   **Email Service:** Brevo (formerly Sendinblue) for transactional magic link authentication and platform contact form communications.
 
 ---
 
 ## ✨ Features
 
 ### **🛒 Storefront (Customer Experience)**
-*   **Dynamic Discovery:** A rich homepage featuring Hero Banners, Featured Categories, Popular Products (1-per-category rule), and "Deals of the Day."
+*   **Dynamic Discovery:** A rich, high-fidelity homepage featuring Hero Banners, Featured Categories, Popular Products (atleast 1-per-category), Daily Best Sells, Deals Of The Day, Top Selling, Trending, Top Picks, and Recently Added sections.
 *   **Advanced Shopping:**
     *   Fuzzy search and category filtering in the Shop.
     *   Price-range sliders and recency-based "New Products" sidebar.
@@ -41,11 +41,11 @@ Quickzy leverages a modern, full-stack architecture designed for speed and relia
     *   **Cart Context:** Persisted cart logic with dynamic totals, integer-bound discount calculations, and 15 INR price protection.
     *   **Wishlist Context:** Interactive heart-pop animations and real-time wish-state tracking.
     *   **Idempotent Store:** Data only reshuffles on a hard reload, maintaining placement stability during navigation.
-*   **Checkout & Profile:** Streamlined checkout process and comprehensive order history with status tracking.
+*   **Checkout, Profile & Order History:** Integrated checkout orchestration, personal profile management, and comprehensive order history with status tracking.
 
 ### **🛠 Admin Panel (Business Operations)**
-*   **Fully Responsive Dashboard:** Optimized for professional management across Mobile, Tablet (iPad Pro), and Desktop viewports.
-*   **Real-time Metrics:** A dashboard monitoring total sales (INR), order counts, user growth, and inventory levels.
+*   **Fully Responsive Dashboard:** Optimized for professional management across Mobile, Tablet, and Desktop viewports.
+*   **Real-time Metrics:** A dashboard monitoring total sales (INR), order counts, product counts, and total users.
 *   **Product & Banner Management:**
     *   Full CRUD for products with automated **Cloudinary Sequential Naming** (`product-50`, `product-51`) and image identity persistence during updates.
     *   Dynamic category creation with real-time product count synchronization and automated 0-count garbage collection for UI hygiene.
