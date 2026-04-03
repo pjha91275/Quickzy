@@ -3,7 +3,7 @@
 **Quickzy** is a high-performance, **Quick Commerce** (Q-Commerce) platform built to deliver essentials in under 15 minutes. It bridges the gap between traditional e-commerce and instant grocery delivery through a premium, responsive user interface and a robust administrative backend.
 
 > [!NOTE] 
-> This is a **Sophisticated Full-Stack Q-commerce Model**—a non-commercial, Architectural Simulation project designed to explore integrated architectural patterns, administrative orchestration, and real-time business logic. It provides a comprehensive study of full-stack development, focusing on core application patterns rather than high-scale production throughput.
+> This is an **Advanced Full-Stack Q-commerce Model**—a non-commercial, feature-rich project built to explore integrated development, administrative systems, and real-time business logic. It provides a comprehensive study of application workflows, focusing on core logic patterns rather than high-scale production throughput.
 
 ---
 
@@ -12,7 +12,7 @@
 Quickzy leverages a modern, full-stack architecture designed for speed and reliability:
 
 ### **Frontend**
-*   **Framework:** [Next.js 16 (App Router)](https://nextjs.org/) with **React 19** and **JavaScript** - Utilizing Server Components, Client Components, and Turbopack for high-fidelity rendering.
+*   **Framework:** [Next.js 16 (App Router)](https://nextjs.org/) with **React 19** and **JavaScript** - Utilizing Server Components, Client Components, and Turbopack for premium rendering.
 *   **Styling:** [Tailwind CSS 4](https://tailwindcss.com/) - Leveraging the latest utility-first features for premium design.
 *   **Icons:** React Icons (Fi, Ri, Hi) for a consistent, professional aesthetic.
 *   **Notifications:** React Toastify for real-time user feedback.
@@ -32,7 +32,7 @@ Quickzy leverages a modern, full-stack architecture designed for speed and relia
 ## ✨ Features
 
 ### **🛒 Storefront (Customer Experience)**
-*   **Dynamic Discovery:** A rich, high-fidelity homepage featuring Hero Banners, Featured Categories, Popular Products (atleast 1-per-category), Daily Best Sells, Deals Of The Day, Top Selling, Trending, Top Picks, and Recently Added sections.
+*   **Dynamic Discovery:** A rich, premium homepage featuring Hero Banners, Featured Categories, Popular Products (atleast 1-per-category), Daily Best Sells, Deals Of The Day, Top Selling, Trending, Top Picks, and Recently Added sections.
 *   **Advanced Shopping:**
     *   Fuzzy search and category filtering in the Shop.
     *   Price-range sliders and recency-based "New Products" sidebar.
@@ -43,9 +43,9 @@ Quickzy leverages a modern, full-stack architecture designed for speed and relia
     *   **Idempotent Store:** Data only reshuffles on a hard reload, maintaining placement stability during navigation.
 *   **Responsive Experience:** Optimized for seamless navigation across Mobile, Tablet, and Desktop viewports.
 *   **Checkout, Location, Profile & Order History:**
-    *   **Checkout Orchestration:** A dedicated **Checkout page** with a streamlined multi-step process for address selection and payment confirmation.
+    *   **Checkout Process:** A dedicated **Checkout page** with a streamlined multi-step flow for address selection and payment confirmation.
     *   **Location-Aware Geocoding:** Integrated **LocationIQ** and **Leaflet** for real-time address discovery and interactive map visualization.
-    *   **Mock Payment Orchestration:** Secure, test-mode payment fulfillment powered by the **Razorpay API**.
+    *   **Mock Payment Integration:** Secure, test-mode payment fulfillment powered by the **Razorpay API**.
     *   **Status Tracking:** Personal profile management and comprehensive order history with simulated arrival times.
 *   **Content & Engagement:** Professional **About** and **Contact** outreach pages alongside an integrated **Blog** ecosystem for community insights.
 
@@ -58,13 +58,13 @@ Quickzy leverages a modern, full-stack architecture designed for speed and relia
     *   Hero and Footer banner control with live preview links.
 *   **Promotion Engine:** Full **Coupon Management** (CRUD) with support for fixed/percentage discounts, usage limits, and minimum order requirements.
 *   **Order Fulfillment:**
-    *   **Dynamic Status Orchestration:** Administrative control over order states (Pending, Processing, Delivered, Cancelled).
+    *   **Dynamic Status Management:** Administrative control over order states (Pending, Processing, Delivered, Cancelled).
     *   **Security Lockdown:** Admin retains full override control over internally-cancelled orders, while user-initiated cancellations remain immutable for security.
 *   **User Management:** Administrative role toggling (User to Admin) and security for "Genesis Admin" accounts.
 
 ---
 
-## 🏗 Architectural Highlights
+## 🏛 Technical & Logical Highlights
 
 ### **1. Sequential Sync Algorithm**
 To maintain a professional asset library in Cloudinary, the system calculates the next product or banner number based on database counts, ensuring assets are organized as `product-1`, `product-2`, etc., preventing the usual UUID chaos of most dummy apps.
@@ -79,7 +79,7 @@ The project separates concerns by using Mongoose Models (`/models`), Server Acti
 While Quickzy is technically advanced, the following features are not currently implemented for this version:
 *   **Mobile Login:** Currently relies on Email/Google; SMS-based OTP login is a future roadmap item.
 *   **Simulated Logistics:** No real products or physical delivery occurs; the system is a functional simulation featuring integrated **Changing Expected Order Arrival Time** logic, but without live GPS or a physical driver fleet.
-*   **Ultra-Scalability:** Some UI components are hardcoded for specific layouts (e.g., the 3-card promo banner) and may require refactoring for extreme modularity.
+*   **Component Modularity:** Some UI components are hardcoded for specific layouts (e.g., the 3-card promo banner) and may require refactoring for extreme modularity.
 *   **Traffic Capacity:** Not designed or optimized for high-traffic commercial use or large-scale concurrency.
 *   **Business Operations:** This is a **dummy application**; payment gateway integration is in test-mode and no real commerce is facilitated.
 
